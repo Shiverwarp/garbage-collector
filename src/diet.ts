@@ -424,8 +424,7 @@ function gregariousCount(): {
 } {
   const gregariousCharges =
     get("beGregariousCharges") +
-    (get("beGregariousFightsLeft") > 0 &&
-    get("beGregariousMonster") === $monster`Knob Goblin Embezzler`
+    (get("beGregariousFightsLeft") > 0 && get("beGregariousMonster") === $monster`Witchess Knight`
       ? 1
       : 0);
   const gregariousFightsPerCharge = expectedGregs();
@@ -445,7 +444,7 @@ function gregariousCount(): {
 
 function copiers(): MenuItem<Note>[] {
   // assuming embezzler is worth 4 * MPA and a marginal turn is 1 * MPA, the differential is 3 * MPA
-  const embezzlerDifferential = 3 * MPA;
+  const embezzlerDifferential = 2 * garboValue($item`jumping horseradish`) + MPA;
   const { expectedGregariousFights, marginalGregariousFights } = gregariousCount();
   const extros =
     myInebriety() > inebrietyLimit()

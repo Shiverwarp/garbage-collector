@@ -1,5 +1,4 @@
 import {
-  availableAmount,
   buy,
   canEquip,
   cliExecute,
@@ -8,7 +7,6 @@ import {
   guildStoreAvailable,
   inebrietyLimit,
   Item,
-  maximize,
   myAdventures,
   myClass,
   myGardenType,
@@ -28,11 +26,9 @@ import {
 import {
   $class,
   $classes,
-  $coinmaster,
   $item,
   $items,
   $skill,
-  $slots,
   Clan,
   get,
   getFoldGroup,
@@ -40,11 +36,10 @@ import {
   haveInCampground,
   JuneCleaver,
   set,
-  setDefaultMaximizeOptions,
   sinceKolmafiaRevision,
 } from "libram";
 import { nonOrganAdventures, runDiet } from "./diet";
-import { dailyFights, freeFights, printEmbezzlerLog } from "./fights";
+import { printEmbezzlerLog } from "./fights";
 import {
   bestJuneCleaverOption,
   checkGithubVersion,
@@ -58,15 +53,8 @@ import {
   safeRestore,
   userConfirmDialog,
 } from "./lib";
-import { meatMood } from "./mood";
-import postCombatActions from "./post";
 import { stashItems, withStash, withVIPClan } from "./clan";
-import { dailySetup, postFreeFightDailySetup } from "./dailies";
-import { potionSetup } from "./potions";
 import { garboAverageValue, printGarboSession, startSession } from "./session";
-import { yachtzeeChain } from "./yachtzee";
-import barfTurn from "./barfTurn";
-import { estimatedTurns } from "./turns";
 
 // Max price for tickets. You should rethink whether Barf is the best place if they're this expensive.
 const TICKET_MAX_PRICE = 500000;
@@ -417,57 +405,6 @@ export function main(argString = ""): void {
         } else if (!globalOptions.simulateDiet) {
           nonOrganAdventures();
         }
-
-        // 1. make an outfit (amulet coin, pantogram, etc), misc other stuff (VYKEA, songboom, robortender drinks)
-        dailySetup();
-
-        const preventEquip = $items`broken champagne bottle, Spooky Putty snake, Spooky Putty mitre, Spooky Putty leotard, Spooky Putty ball, papier-mitre, papier-mâchéte, papier-mâchine gun, papier-masque, papier-mâchuridars, smoke ball, stinky fannypack, dice-shaped backpack`;
-        if (globalOptions.quickMode) {
-          // Brimstone equipment explodes the number of maximize combinations
-          preventEquip.push(
-            ...$items`Brimstone Bludgeon, Brimstone Bunker, Brimstone Brooch, Brimstone Bracelet, Brimstone Boxers, Brimstone Beret`
-          );
-        }
-
-        setDefaultMaximizeOptions({
-          preventEquip: preventEquip,
-          preventSlot: $slots`buddy-bjorn, crown-of-thrones`,
-        });
-
-        // 2. do some embezzler stuff
-        freeFights();
-        postFreeFightDailySetup(); // setup stuff that can interfere with free fights (VYKEA)
-        yachtzeeChain();
-        dailyFights();
-
-        if (!globalOptions.noBarf) {
-          // 3. burn turns at barf
-          potionSetup(false);
-          maximize("MP", false);
-          meatMood().execute(estimatedTurns());
-          try {
-            while (canContinue()) {
-              barfTurn();
-              postCombatActions();
-            }
-
-            // buy one-day tickets with FunFunds if user desires
-            if (
-              get("garbo_buyPass", false) &&
-              availableAmount($item`FunFunds™`) >= 20 &&
-              !have($item`one-day ticket to Dinseylandfill`)
-            ) {
-              print("Buying a one-day ticket", HIGHLIGHT);
-              buy(
-                $coinmaster`The Dinsey Company Store`,
-                1,
-                $item`one-day ticket to Dinseylandfill`
-              );
-            }
-          } finally {
-            setAutoAttack(0);
-          }
-        } else setAutoAttack(0);
       });
     });
   } finally {
