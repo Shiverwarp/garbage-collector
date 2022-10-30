@@ -642,14 +642,13 @@ interface DietPlanner {
   (menu: MenuItem<Note>[]): Diet<Note>;
 }
 function balanceMenu(baseMenu: MenuItem<Note>[], dietPlanner: DietPlanner): MenuItem<Note>[] {
-  const baseEmbezzlers = embezzlerCount();
   function rebalance(
     menu: MenuItem<Note>[],
     iterations: number,
     embezzlers: number,
     adventures: number
   ): MenuItem<Note>[] {
-    const fullMenu = potionMenu(menu, baseEmbezzlers + embezzlers, estimatedTurns() + adventures);
+    const fullMenu = potionMenu(menu, 0, estimatedTurns() + adventures);
     if (iterations <= 0) {
       return fullMenu;
     } else {
