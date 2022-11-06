@@ -89,7 +89,11 @@ const Mayo = MayoClinic.Mayo;
 type Note = PotionTier | null;
 
 function eatSafe(qty: number, item: Item) {
-  if (have($item`Universal Seasoning`) && !get("_universalSeasoningUsed")) {
+  if (
+    have($item`Universal Seasoning`) &&
+    $item`Universal Seasoning`.dailyusesleft > 0 &&
+    !get("universalSeasoningActive")
+  ) {
     use($item`Universal Seasoning`);
   }
   if (myLevel() >= 15 && !get("_hungerSauceUsed") && mallPrice($item`Hunger™ Sauce`) < 3 * MPA) {
@@ -566,6 +570,10 @@ export function potionMenu(
         })
       : [];
 
+  const borisBread = !get("unknownRecipe11000") // this property is true if you don't know the recipe, false if you do
+    ? potion($item`Boris's bread`, { price: 2 * ingredientCost($item`Yeast of Boris`) })
+    : [];
+
   return [
     ...baseMenu,
     ...copiers(),
@@ -581,6 +589,7 @@ export function potionMenu(
     ...potion($item`haunted Hell ramen`),
     ...campfireHotdog,
     ...foodCone,
+    ...borisBread,
 
     // BOOZE POTIONS
     ...potion($item`dirt julep`),

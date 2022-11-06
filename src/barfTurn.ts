@@ -82,9 +82,10 @@ function freeFightPrep(requirements?: Requirement) {
   freeFightOutfit(requirements);
 }
 
-function logEmbezzler(encountertype: string) {
-  embezzlerLog.initialEmbezzlersFought++;
-  embezzlerLog.sources.push(encountertype === "Digitize" ? encountertype : "Unknown Source");
+function logEmbezzler(encounterType: string) {
+  const isDigitize = encounterType === "Digitize Wanderer";
+  isDigitize ? embezzlerLog.digitizedEmbezzlersFought++ : embezzlerLog.initialEmbezzlersFought++;
+  embezzlerLog.sources.push(isDigitize ? "Digitize" : "Unknown Source");
 }
 
 function shouldGoUnderwater(): boolean {
@@ -271,7 +272,7 @@ const turns: AdventureAction[] = [
   },
   {
     name: "Guaranteed Kramco",
-    available: () => kramcoGuaranteed(),
+    available: () => kramcoGuaranteed() && romanticMonsterImpossible(),
     execute: () => {
       freeFightPrep(new Requirement([], { forceEquip: $items`Kramco Sausage-o-Matic™` }));
       adventureMacroAuto(drunkSafeWander("wanderer"), Macro.basicCombat());
@@ -318,10 +319,17 @@ const turns: AdventureAction[] = [
       useFamiliar(familiar);
       freeFightOutfit(new Requirement([], { forceEquip: $items`Jurassic Parka` }));
       cliExecute("parka dilophosaur");
+      if (SourceTerminal.have() && SourceTerminal.duplicateUsesRemaining() > 0) {
+        SourceTerminal.educate([$skill`Extract`, $skill`Duplicate`]);
+      }
       const macro = Macro.if_(embezzler, Macro.meatKill())
         .familiarActions()
+        .trySkill($skill`Duplicate`)
         .skill($skill`Spit jurassic acid`);
       adventureMacroAuto(location, macro);
+      if (SourceTerminal.have()) {
+        SourceTerminal.educate([$skill`Extract`, $skill`Digitize`]);
+      }
       return have($effect`Everything Looks Yellow`);
     },
     spendsTurn: false,

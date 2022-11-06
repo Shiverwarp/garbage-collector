@@ -3,6 +3,7 @@ import {
   descToItem,
   equip,
   getWorkshed,
+  handlingChoice,
   Item,
   itemAmount,
   myAdventures,
@@ -79,6 +80,7 @@ function coldMedicineCabinet(): void {
     visitUrl("campground.php?action=workshed");
     runChoice(bestChoice);
   }
+  if (handlingChoice()) visitUrl("main.php");
 }
 
 function fillPantsgivingFullness(): void {
@@ -200,5 +202,7 @@ export default function postCombatActions(skipDiet = false): void {
   updateMallPrices();
   stillsuit();
   funguySpores();
-  AutumnAton.sendTo(autumnAtonZones);
+  if (globalOptions.ascending || AutumnAton.turnsForQuest() < myAdventures() + 10) {
+    AutumnAton.sendTo(autumnAtonZones);
+  }
 }
