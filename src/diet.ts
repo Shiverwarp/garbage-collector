@@ -83,6 +83,8 @@ import synthesize from "./synthesis";
 import { estimatedTurns } from "./turns";
 
 const MPA = get("valueOfAdventure");
+const freeFightValue = get("garbo_valueOfFreeFight", 2000);
+
 print(`Using adventure value ${MPA}.`, HIGHLIGHT);
 
 const Mayo = MayoClinic.Mayo;
@@ -448,7 +450,7 @@ function gregariousCount(): {
 
 function copiers(): MenuItem<Note>[] {
   // assuming embezzler is worth 4 * MPA and a marginal turn is 1 * MPA, the differential is 3 * MPA
-  const embezzlerDifferential = 2 * garboValue($item`jumping horseradish`) + MPA;
+  const embezzlerDifferential = 2 * garboValue($item`jumping horseradish`) + freeFightValue;
   const { expectedGregariousFights, marginalGregariousFights } = gregariousCount();
   const extros =
     myInebriety() > inebrietyLimit()
