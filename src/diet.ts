@@ -411,8 +411,10 @@ export function bestConsumable(
     const buff = getModifier("Effect", edible);
     const turnsPerUse = getModifier("Effect Duration", edible);
     const meatDrop = getModifier("Meat Drop", buff);
+    const itemDrop = getModifier("Item Drop", buff);
     const famWeight = getModifier("Familiar Weight", buff);
-    const buffValue = ((meatDrop + (famWeight * 25) / 10) * turnsPerUse * baseMeat) / 100;
+    const buffValue =
+      5 * itemDrop + ((meatDrop + (famWeight * 25) / 10) * turnsPerUse * baseMeat) / 100;
     const advValue = getAverageAdventures(edible) * get("valueOfAdventure");
     const organSpace = consumable.size;
     return {
@@ -572,6 +574,13 @@ export function potionMenu(
         })
       : [];
 
+  const whinskey =
+    realmAvailable("stench") || (globalOptions.simulateDiet && !globalOptions.noBarf)
+      ? limitedPotion($item`Dinsey Whinskey`, Math.floor(availableAmount($item`FunFunds™`) / 2), {
+          price: 2 * garboValue($item`FunFunds™`),
+        })
+      : [];
+
   const borisBread = !get("unknownRecipe11000", true) // this property is true if you don't know the recipe, false if you do
     ? potion($item`Boris's bread`, { price: 2 * ingredientCost($item`Yeast of Boris`) })
     : [];
@@ -589,6 +598,11 @@ export function potionMenu(
     ...potion($item`Every Day is Like This Sundae`),
     ...potion($item`bowl of mummy guts`),
     ...potion($item`haunted Hell ramen`),
+    ...potion($item`Ludovico Pastaco`),
+    ...potion($item`bowl of Bounty-Os`),
+    ...potion($item`pixel banana`),
+    ...potion($item`honey-dew`),
+    ...potion($item`bowl of eyeballs`),
     ...campfireHotdog,
     ...foodCone,
     ...borisBread,
@@ -606,9 +620,20 @@ export function potionMenu(
     ...potion($item`Feliz Navidad`),
     ...potion($item`broberry brogurt`),
     ...potion($item`haunted martini`),
+    ...potion($item`bottle of Lambada Lambic`),
+    ...potion($item`Sacramento wine`),
+    ...potion($item`moreltini`),
+    ...potion($item`Highest Bitter`),
+    ...potion($item`non-aged vinegar`),
+    ...potion($item`swirling mushroom wine`),
+    ...potion($item`Oreille Divisée brandy`),
+    ...potion($item`crystal skeleton vodka`),
+    ...potion($item`brocolate brogurt`),
+    ...potion($item`Agitated Turkey`),
     ...potion($item`twice-haunted screwdriver`, { price: twiceHauntedPrice }),
     ...limitedPotion($item`high-end ginger wine`, availableAmount($item`high-end ginger wine`)),
     ...limitedPotion($item`Hot Socks`, hasSpeakeasy ? 3 : 0, { price: 5000 }),
+    ...whinskey,
     ...(realmAvailable("sleaze") &&
     sellsItem($coinmaster`The Frozen Brogurt Stand`, $item`broberry brogurt`)
       ? limitedPotion($item`broberry brogurt`, Math.floor(itemAmount($item`Beach Buck`) / 10), {
@@ -625,9 +650,13 @@ export function potionMenu(
     ...potion($item`black paisley oyster egg`),
     ...potion($item`black polka-dot oyster egg`),
     ...potion($item`lustrous oyster egg`),
+    ...potion($item`pearlescent oyster egg`),
     ...potion($item`glimmering buzzard feather`),
+    ...potion($item`glimmering raven feather`),
     ...potion($item`Knob Goblin pet-buffing spray`),
+    ...potion($item`Knob Goblin eyedrops`),
     ...potion($item`abstraction: joy`),
+    ...potion($item`abstraction: certainty`),
     ...potion($item`beastly paste`),
     ...potion($item`gleaming oyster egg`),
     ...potion($item`Party-in-a-Can™`),
