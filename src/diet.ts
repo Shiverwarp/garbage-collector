@@ -603,6 +603,9 @@ export function potionMenu(
     ...potion($item`pixel banana`),
     ...potion($item`honey-dew`),
     ...potion($item`bowl of eyeballs`),
+    ...potion($item`roasted vegetable of Jarlsberg`, {
+      price: 2 * ingredientCost($item`Vegetable of Jarlsberg`),
+    }),
     ...campfireHotdog,
     ...foodCone,
     ...borisBread,
