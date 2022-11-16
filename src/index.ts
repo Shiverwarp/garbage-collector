@@ -53,8 +53,6 @@ import {
   safeRestore,
   userConfirmDialog,
 } from "./lib";
-import { meatMood, useBuffExtenders } from "./mood";
-import postCombatActions from "./post";
 import { stashItems, withStash, withVIPClan } from "./clan";
 import { garboAverageValue, printGarboSession, startSession } from "./session";
 
