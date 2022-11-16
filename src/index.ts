@@ -53,6 +53,8 @@ import {
   safeRestore,
   userConfirmDialog,
 } from "./lib";
+import { meatMood, useBuffExtenders } from "./mood";
+import postCombatActions from "./post";
 import { stashItems, withStash, withVIPClan } from "./clan";
 import { garboAverageValue, printGarboSession, startSession } from "./session";
 
@@ -83,7 +85,7 @@ export function canContinue(): boolean {
 }
 
 export function main(argString = ""): void {
-  sinceKolmafiaRevision(26897);
+  sinceKolmafiaRevision(26924);
   checkGithubVersion();
 
   if (get("garbo_autoUserConfirm", false)) {
