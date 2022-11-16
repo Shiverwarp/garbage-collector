@@ -340,10 +340,8 @@ function menu(): MenuItem<Note>[] {
 
     // BOOZE
     new MenuItem($item`elemental caipiroska`),
-    new MenuItem($item`moreltini`),
     new MenuItem($item`Dreadsylvanian grimlet`),
     new MenuItem($item`Hodgman's blanket`),
-    new MenuItem($item`Sacramento wine`),
     new MenuItem($item`iced plum wine`),
     new MenuItem($item`splendid martini`),
     new MenuItem($item`Eye and a Twist`),
