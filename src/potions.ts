@@ -129,6 +129,11 @@ export class Potion {
     );
   }
 
+  itemDrop(): number {
+    setLocation($location`none`);
+    return getModifier("Item Drop", this.effect());
+  }
+
   familiarWeight(): number {
     return getModifier("Familiar Weight", this.effect());
   }
@@ -156,6 +161,7 @@ export class Potion {
 
   gross(embezzlers: number, maxTurns?: number): number {
     const bonusMeat = this.bonusMeat();
+    const itemDrop = this.itemDrop();
     const duration = Math.max(this.effectDuration(), maxTurns ?? 0);
     // Number of embezzlers this will actually be in effect for.
     const embezzlersApplied = Math.max(
@@ -163,7 +169,10 @@ export class Potion {
       0
     );
 
-    return (bonusMeat / 100) * (baseMeat * duration + 750 * embezzlersApplied);
+    return (
+      (bonusMeat / 100) * (baseMeat * duration + 750 * embezzlersApplied) +
+      5.5 * itemDrop * duration
+    );
   }
 
   static gross(item: Item, embezzlers: number): number {
