@@ -885,7 +885,7 @@ export const embezzlerSources = [
 ];
 
 export function embezzlerCount(): number {
-  return sum(embezzlerSources, (source: EmbezzlerFight) => source.potential());
+  return 0;
 }
 
 /**
