@@ -44,7 +44,6 @@ import {
   Requirement,
   set,
   SourceTerminal,
-  sum,
 } from "libram";
 import { acquire } from "./acquire";
 import { Macro, shouldRedigitize, withMacro } from "./combat";
