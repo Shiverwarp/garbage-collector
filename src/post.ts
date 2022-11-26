@@ -24,18 +24,17 @@ import {
   $locations,
   $skill,
   $slot,
-  adventureMacro,
   AutumnAton,
   get,
   getRemainingStomach,
   have,
   JuneCleaver,
-  Macro,
   property,
   uneffect,
   withProperty,
 } from "libram";
 import { acquire } from "./acquire";
+import { garboAdventure, Macro } from "./combat";
 import { computeDiet, consumeDiet } from "./diet";
 import {
   bestJuneCleaverOption,
@@ -95,12 +94,12 @@ function fillPantsgivingFullness(): void {
 function fillSweatyLiver(): void {
   if (globalOptions.yachtzeeChain && !get("_garboYachtzeeChainCompleted", false)) return;
 
-  const castsWanted = 3 - get("_sweatOutSomeBoozeUsed", 0);
+  const castsWanted = 3 - get("_sweatOutSomeBoozeUsed");
   if (castsWanted <= 0 || !have($item`designer sweatpants`)) return;
 
   const sweatNeeded = 25 * castsWanted;
-  if (get("sweat", 0) >= sweatNeeded) {
-    while (get("_sweatOutSomeBoozeUsed", 0) < 3) {
+  if (get("sweat") >= sweatNeeded) {
+    while (get("_sweatOutSomeBoozeUsed") < 3) {
       useSkill($skill`Sweat Out Some Booze`);
     }
     consumeDiet(computeDiet().sweatpants(), "SWEATPANTS");
@@ -148,7 +147,7 @@ function juneCleave(): void {
     equip($slot`weapon`, $item`June cleaver`);
     skipJuneCleaverChoices();
     withProperty("recoveryScript", "", () => {
-      adventureMacro($location`Noob Cave`, Macro.abort());
+      garboAdventure($location`Noob Cave`, Macro.abort());
       if (["Poetic Justice", "Lost and Found"].includes(get("lastEncounter"))) {
         uneffect($effect`Beaten Up`);
       }

@@ -17,14 +17,13 @@ import {
   $item,
   $location,
   $skill,
-  adventureMacro,
   get,
   getActiveSongs,
   have,
-  Macro,
   set,
   uneffect,
 } from "libram";
+import { garboAdventure, Macro } from "../combat";
 import { runDiet } from "../diet";
 import { embezzlerCount } from "../embezzler";
 import { doSausage, freeRunFights } from "../fights";
@@ -35,7 +34,7 @@ import { potionSetup } from "../potions";
 import { prepRobortender } from "../tasks/dailyFamiliars";
 import { yachtzeePotionSetup } from "./buffs";
 import { executeNextDietStep, yachtzeeChainDiet } from "./diet";
-import { pyecAvailable } from "./lib";
+import { pyecAvailable, shrugIrrelevantSongs } from "./lib";
 import {
   getBestWaterBreathingEquipment,
   maximizeMeat,
@@ -115,7 +114,7 @@ function _yachtzeeChain(): void {
         useSkill($skill`The Polka of Plenty`);
       }
     }
-    adventureMacro($location`The Sunken Party Yacht`, Macro.abort());
+    garboAdventure($location`The Sunken Party Yacht`, Macro.abort());
     postCombatActions();
     if (myTurncount() > turncount || haveEffect($effect`Fishy`) < fishyTurns) {
       fishyTurns -= 1;
@@ -146,6 +145,7 @@ export function yachtzeeChain(): void {
   set("_garboYachtzeeChainCompleted", true);
   globalOptions.yachtzeeChain = false;
   if (!globalOptions.noDiet) {
+    shrugIrrelevantSongs();
     runDiet();
     prepRobortender(); // Recompute robo drinks' worth after diet is finally consumed
   }
