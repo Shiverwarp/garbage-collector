@@ -330,6 +330,12 @@ export const DailyTasks: Task[] = [
     do: () => cliExecute("bastille myst brutalist gesture"),
   },
   {
+    name: "11th Precinct",
+    ready: () => get("hasDetectiveSchool"),
+    completed: () => get("_detectiveCasesCompleted") >= 3,
+    do: () => cliExecute("Detective Solver.ash"),
+  },
+  {
     name: "Getaway Campsite Buffs",
     ready: () => get("getawayCampsiteUnlocked"),
     completed: () => get("_campAwayCloudBuffs") + get("_campAwaySmileBuffs") === 4,
@@ -374,7 +380,7 @@ export const DailyTasks: Task[] = [
   },
   {
     name: "Summon Demon",
-    ready: () => get("demonName2", false) && get("questL11Manor") === "finished",
+    ready: () => !!get("demonName2") && get("questL11Manor") === "finished",
     completed: () => get("demonSummoned"),
     do: () => cliExecute("summon Preternatural Greed"),
   },

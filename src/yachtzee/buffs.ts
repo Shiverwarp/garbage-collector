@@ -30,7 +30,7 @@ import { garboValue } from "../session";
 import { executeNextDietStep } from "./diet";
 import { expectedEmbezzlers, pyecAvailable, shrugIrrelevantSongs } from "./lib";
 
-function yachtzeePotionProfits(potion: Potion, yachtzeeTurns: number): number {
+export function yachtzeePotionProfits(potion: Potion, yachtzeeTurns: number): number {
   // If we have an unused PYEC then
   // 1) If we don't have an effect, +5 to gained effect duration
   // 2) If we already have an effect, +5 to existing effect duration
@@ -68,7 +68,7 @@ export function yachtzeePotionSetup(yachtzeeTurns: number, simOnly?: boolean): n
 
   shrugIrrelevantSongs();
 
-  if (have($item`Eight Days a Week Pill Keeper`) && !get("_freePillKeeperUsed", false)) {
+  if (have($item`Eight Days a Week Pill Keeper`) && !get("_freePillKeeperUsed")) {
     const doublingPotions = farmingPotions
       .filter(
         (potion) =>

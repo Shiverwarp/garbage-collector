@@ -30,6 +30,7 @@ import {
   sellsItem,
   setProperty,
   spleenLimit,
+  toInt,
   toItem,
   turnsPerCast,
   use,
@@ -572,8 +573,34 @@ export function potionMenu(
         })
       : [];
 
-  const borisBread = !get("unknownRecipe11000", true) // this property is true if you don't know the recipe, false if you do
+  const borisBread = !get("unknownRecipe10978") // this property is true if you don't know the recipe, false if you do
     ? potion($item`Boris's bread`, { price: 2 * ingredientCost($item`Yeast of Boris`) })
+    : [];
+
+  // Replace string with BooleanProperty later
+  const ofLegendPotion = (item: Item, prefName: string) => {
+    if (get(prefName, true)) return [];
+
+    const recipes = [
+      item,
+      ...$items`roasted vegetable of Jarlsberg, Pete's rich ricotta, Boris's bread`,
+    ].map((i) => toInt(i));
+
+    if (recipes.some((id) => get(`unknownRecipe${id}`, true))) return [];
+
+    return limitedPotion(item, 1, {
+      price:
+        2 *
+        sum($items`Vegetable of Jarlsberg, St. Sneaky Pete's Whey, Yeast of Boris`, ingredientCost),
+    });
+  };
+
+  const ofLegendMenuItems = globalOptions.ascending
+    ? [
+        ...ofLegendPotion($item`Calzone of Legend`, "calzoneOfLegendEaten"),
+        ...ofLegendPotion($item`Pizza of Legend`, "pizzaOfLegendEaten"),
+        ...ofLegendPotion($item`Deep Dish of Legend`, "deepDishOfLegendEaten"),
+      ]
     : [];
 
   return [
@@ -592,6 +619,7 @@ export function potionMenu(
     ...campfireHotdog,
     ...foodCone,
     ...borisBread,
+    ...ofLegendMenuItems,
 
     // BOOZE POTIONS
     ...potion($item`dirt julep`),
@@ -720,7 +748,7 @@ export function computeDiet(): {
           menu().filter(
             (menuItem) =>
               (itemType(menuItem.item) === "food" && menuItem.size === 1) ||
-              [Mayo.flex, Mayo.zapine].includes(menuItem.item)
+              [Mayo.flex, Mayo.zapine, $item`Special Seasoning`].includes(menuItem.item)
           ),
           pantsgivingDietPlanner
         )

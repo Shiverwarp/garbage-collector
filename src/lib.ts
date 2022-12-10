@@ -372,8 +372,8 @@ export function safeRestore(): void {
       );
     }
   }
-  if (myHp() < myMaxhp() * 0.5) {
-    restoreHp(myMaxhp() * 0.9);
+  if (myHp() < Math.min(myMaxhp() * 0.5, get("garbo_restoreHpTarget", 2000))) {
+    restoreHp(Math.min(myMaxhp() * 0.9, get("garbo_restoreHpTarget", 2000)));
   }
   const mpTarget = safeRestoreMpTarget();
   const shouldRestoreMp = () => myMp() < mpTarget;
@@ -415,7 +415,7 @@ export function checkGithubVersion(): void {
           gitInfo("Loathing-Associates-Scripting-Society-garbage-collector-release").commit
         }.`
       );
-      print(`Release Version: ${releaseCommit}.`);
+      print(`Release Version: ${releaseCommit?.sha}.`);
     }
   }
 }
