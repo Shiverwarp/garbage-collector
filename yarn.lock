@@ -2801,10 +2801,10 @@ klona@^2.0.4:
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.5.tgz#d166574d90076395d9963aa7a928fabb8d76afbc"
   integrity sha512-pJiBpiXMbt7dkzXe8Ghj/u4FfXOOa98fPW+bihOJ4SjnoijweJrNThJfd3ifXpXhREjpoF2mZVH1GfS9LV3kHQ==
 
-kolmafia@^5.26897.0:
-  version "5.26897.0"
-  resolved "https://registry.yarnpkg.com/kolmafia/-/kolmafia-5.26897.0.tgz#a387a3f7971cd68c5f6d595aca8a707549976185"
-  integrity sha512-tYoOXOROO0zOqD4bMgpJjXHc0aZNiKKDWaHF9sY2r3lc18nx4n/0cfeMIPS07p+BKmGQNakZIbklQS2s4mOmjw==
+kolmafia@^5.26995.0:
+  version "5.26995.0"
+  resolved "https://registry.yarnpkg.com/kolmafia/-/kolmafia-5.26995.0.tgz#e0eb5bbee43e9e89a37914d05bdcb3d0a44a58ae"
+  integrity sha512-Nhkqu0kC8WbSNNMkfXq8rGK/Z20Oab7gtQm117vjZRgfz9DOh3QyXV2lRE18Pe+Zwuv5I4IQfEZLQBoDNp1WHQ==
 
 levn@^0.4.1:
   version "0.4.1"
