@@ -3,7 +3,6 @@ import {
   Effect,
   getClanLounge,
   getWorkshed,
-  haveEffect,
   itemAmount,
   mallPrice,
   myClass,
@@ -29,7 +28,6 @@ import {
 } from "libram";
 import { baseMeat, burnLibrams, questStep, safeRestoreMpTarget, setChoice } from "./lib";
 import { withStash } from "./clan";
-import { usingPurse } from "./outfit";
 
 Mood.setDefaultOptions({
   songSlots: [

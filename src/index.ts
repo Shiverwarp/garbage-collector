@@ -1,5 +1,4 @@
 import {
-  availableAmount,
   buy,
   canEquip,
   cliExecute,
@@ -9,7 +8,6 @@ import {
   inebrietyLimit,
   Item,
   logprint,
-  maximize,
   myAdventures,
   myBasestat,
   myClass,
@@ -31,7 +29,6 @@ import {
 import {
   $class,
   $classes,
-  $coinmaster,
   $item,
   $items,
   $skill,
@@ -47,7 +44,7 @@ import {
   sinceKolmafiaRevision,
 } from "libram";
 import { nonOrganAdventures, runDiet } from "./diet";
-import { dailyFights, freeFights, printEmbezzlerLog } from "./fights";
+import { freeFights, printEmbezzlerLog } from "./fights";
 import {
   bestJuneCleaverOption,
   checkGithubVersion,
@@ -59,15 +56,11 @@ import {
   safeRestore,
   userConfirmDialog,
 } from "./lib";
-import { meatMood, useBuffExtenders } from "./mood";
-import postCombatActions from "./post";
+import { useBuffExtenders } from "./mood";
 import { stashItems, withStash, withVIPClan } from "./clan";
 import { dailySetup, postFreeFightDailySetup } from "./dailies";
-import { potionSetup } from "./potions";
 import { endSession, garboAverageValue, startSession } from "./session";
 import { yachtzeeChain } from "./yachtzee";
-import barfTurn from "./barfTurn";
-import { estimatedTurns } from "./turns";
 import { Args } from "grimoire-kolmafia";
 import { globalOptions } from "./config";
 
