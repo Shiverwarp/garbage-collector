@@ -5,19 +5,16 @@ import {
   myAdventures,
   myLocation,
   reverseNumberology,
-  useSkill,
 } from "kolmafia";
 import {
   $effect,
   $familiar,
   $item,
   $location,
-  $skill,
   $slot,
   AutumnAton,
   FloristFriar,
   get,
-  getRemainingStomach,
   have,
   JuneCleaver,
   uneffect,
@@ -26,7 +23,6 @@ import {
 import bestAutumnatonLocation from "./autumnaton";
 import { garboAdventure, Macro } from "../combat";
 import { globalOptions } from "../config";
-import { computeDiet, consumeDiet } from "../diet";
 import {
   bestJuneCleaverOption,
   juneCleaverChoiceValues,
@@ -47,30 +43,6 @@ function floristFriars(): void {
   [FloristFriar.StealingMagnolia, FloristFriar.AloeGuvnor, FloristFriar.PitcherPlant].forEach(
     (flower) => flower.plant()
   );
-}
-
-function fillPantsgivingFullness(): void {
-  if (
-    getRemainingStomach() > 0 &&
-    (!globalOptions.prefs.yachtzeechain || get("_garboYachtzeeChainCompleted", false))
-  ) {
-    consumeDiet(computeDiet().pantsgiving(), "PANTSGIVING");
-  }
-}
-
-function fillSweatyLiver(): void {
-  if (globalOptions.prefs.yachtzeechain && !get("_garboYachtzeeChainCompleted", false)) return;
-
-  const castsWanted = 3 - get("_sweatOutSomeBoozeUsed");
-  if (castsWanted <= 0 || !have($item`designer sweatpants`)) return;
-
-  const sweatNeeded = 25 * castsWanted;
-  if (get("sweat") >= sweatNeeded) {
-    while (get("_sweatOutSomeBoozeUsed") < 3) {
-      useSkill($skill`Sweat Out Some Booze`);
-    }
-    consumeDiet(computeDiet().sweatpants(), "SWEATPANTS");
-  }
 }
 
 function numberology(): void {
@@ -129,13 +101,9 @@ function stillsuit() {
   }
 }
 
-export default function postCombatActions(skipDiet = false): void {
+export default function postCombatActions(): void {
   juneCleave();
   numberology();
-  if (!skipDiet && !globalOptions.nodiet) {
-    fillPantsgivingFullness();
-    fillSweatyLiver();
-  }
   floristFriars();
   handleWorkshed();
   safeInterrupt();
