@@ -45,13 +45,6 @@ export function meatMood(urKels = false, meat = baseMeat): Mood {
   // Reserve the amount of MP we try to restore before each fight.
   const mood = new Mood({ reserveMp: safeRestoreMpTarget() });
 
-  mood.potion($item`How to Avoid Scams`, 3 * baseMeat);
-  mood.potion($item`resolution: be wealthier`, 0.3 * baseMeat);
-  mood.potion($item`resolution: be happier`, 0.15 * 0.45 * 0.8 * 200);
-
-  const flaskValue = usingPurse() ? 0.3 * baseMeat : 5;
-  mood.potion($item`Flaskfull of Hollow`, flaskValue);
-
   mood.skill($skill`Blood Bond`);
   mood.skill($skill`Leash of Linguini`);
   mood.skill($skill`Empathy of the Newt`);
@@ -169,11 +162,6 @@ export function freeFightMood(...additionalEffects: Effect[]): Mood {
   if (getClanLounge()["Clan pool table"] !== undefined) {
     while (get("_poolGames") < 3) cliExecute("pool aggressive");
   }
-
-  if (haveEffect($effect`Blue Swayed`) < 50) {
-    use(Math.ceil((50 - haveEffect($effect`Blue Swayed`)) / 10), $item`pulled blue taffy`);
-  }
-  mood.potion($item`white candy heart`, 30);
 
   mood.skill($skill`Curiosity of Br'er Tarrypin`);
 

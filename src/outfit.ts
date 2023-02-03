@@ -140,14 +140,14 @@ export function tryFillLatte(): boolean {
     have($item`latte lovers member's mug`) &&
     get("_latteRefillsUsed") < 3 &&
     (get("_latteCopyUsed") ||
-      (get("latteUnlocks").includes("cajun") &&
+      (get("latteUnlocks").includes("vitamins") &&
         get("latteUnlocks").includes("rawhide") &&
         (numericModifier($item`latte lovers member's mug`, "Familiar Weight") !== 5 ||
-          numericModifier($item`latte lovers member's mug`, "Meat Drop") !== 40 ||
+          numericModifier($item`latte lovers member's mug`, "Familiar Experience") !== 3 ||
           (get("latteUnlocks").includes("carrot") &&
             numericModifier($item`latte lovers member's mug`, "Item Drop") !== 20))))
   ) {
-    const goodLatteIngredients = ["cajun", "rawhide", "carrot"];
+    const goodLatteIngredients = ["vitamins", "rawhide", "carrot"];
     const latteIngredients = goodLatteIngredients.filter((ingredient) =>
       get("latteUnlocks").includes(ingredient)
     );
@@ -159,7 +159,7 @@ export function tryFillLatte(): boolean {
 
   return (
     numericModifier($item`latte lovers member's mug`, "Familiar Weight") === 5 &&
-    numericModifier($item`latte lovers member's mug`, "Meat Drop") === 40
+    numericModifier($item`latte lovers member's mug`, "Familiar Experience") === 3
   );
 }
 

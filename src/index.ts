@@ -211,7 +211,7 @@ export function main(argString = ""): void {
   if (globalOptions.prefs.valueOfAdventure && globalOptions.prefs.valueOfAdventure <= 3500) {
     throw `Your valueOfAdventure is set to ${globalOptions.prefs.valueOfAdventure}, which is too low for barf farming to be worthwhile. If you forgot to set it, use "set valueOfAdventure = XXXX" to set it to your marginal turn meat value.`;
   }
-  if (globalOptions.prefs.valueOfAdventure && globalOptions.prefs.valueOfAdventure >= 10000) {
+  if (globalOptions.prefs.valueOfAdventure && globalOptions.prefs.valueOfAdventure >= 50000) {
     throw `Your valueOfAdventure is set to ${globalOptions.prefs.valueOfAdventure}, which is definitely incorrect. Please set it to your reliable marginal turn value.`;
   }
 
@@ -428,7 +428,7 @@ export function main(argString = ""): void {
           !globalOptions.nodiet &&
           (!globalOptions.prefs.yachtzeechain || get("_garboYachtzeeChainCompleted", false))
         ) {
-          runDiet();
+          // runDiet();
         } else if (!globalOptions.simdiet) {
           nonOrganAdventures();
         }
@@ -453,36 +453,35 @@ export function main(argString = ""): void {
         freeFights();
         postFreeFightDailySetup(); // setup stuff that can interfere with free fights (VYKEA)
         yachtzeeChain();
-        dailyFights();
+        // dailyFights(); // Don't do this, it's just embezzler fights
+        useBuffExtenders();
 
         if (!globalOptions.nobarf) {
-          // 3. burn turns at barf
-          potionSetup(false);
-          maximize("MP", false);
-          meatMood().execute(estimatedTurns());
-          useBuffExtenders();
-          try {
-            while (canContinue()) {
-              barfTurn();
-              postCombatActions();
-            }
-
-            // buy one-day tickets with FunFunds if user desires
-            if (
-              globalOptions.prefs.buyPass &&
-              availableAmount($item`FunFunds™`) >= 20 &&
-              !have($item`one-day ticket to Dinseylandfill`)
-            ) {
-              print("Buying a one-day ticket", HIGHLIGHT);
-              buy(
-                $coinmaster`The Dinsey Company Store`,
-                1,
-                $item`one-day ticket to Dinseylandfill`
-              );
-            }
-          } finally {
-            setAutoAttack(0);
-          }
+          // // 3. burn turns at barf
+          // potionSetup(false);
+          // maximize("MP", false);
+          // meatMood().execute(estimatedTurns());
+          // try {
+          //   while (canContinue()) {
+          //     barfTurn();
+          //     postCombatActions();
+          //   }
+          //   // buy one-day tickets with FunFunds if user desires
+          //   if (
+          //     globalOptions.prefs.buyPass &&
+          //     availableAmount($item`FunFunds™`) >= 20 &&
+          //     !have($item`one-day ticket to Dinseylandfill`)
+          //   ) {
+          //     print("Buying a one-day ticket", HIGHLIGHT);
+          //     buy(
+          //       $coinmaster`The Dinsey Company Store`,
+          //       1,
+          //       $item`one-day ticket to Dinseylandfill`
+          //     );
+          //   }
+          // } finally {
+          //   setAutoAttack(0);
+          // }
         } else setAutoAttack(0);
       });
     });

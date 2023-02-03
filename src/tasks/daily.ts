@@ -427,12 +427,12 @@ export const DailyTasks: Task[] = [
     completed: () => get("_clanFortuneBuffUsed"),
     do: () => cliExecute("fortune buff meat"),
   },
-  {
-    name: "Summon Demon",
-    ready: () => !!get("demonName2") && get("questL11Manor") === "finished",
-    completed: () => get("demonSummoned"),
-    do: () => cliExecute("summon Preternatural Greed"),
-  },
+  // {
+  //   name: "Summon Demon",
+  //   ready: () => !!get("demonName2") && get("questL11Manor") === "finished",
+  //   completed: () => get("demonSummoned"),
+  //   do: () => cliExecute("summon Preternatural Greed"),
+  // },
   {
     name: "Source Terminal Enhance",
     ready: () => SourceTerminal.have(),
@@ -503,14 +503,14 @@ export const DailyTasks: Task[] = [
     acquire: [{ item: $item`water wings` }],
     outfit: { acc1: $item`water wings` },
   },
-  {
-    name: "Check Neverending Party Quest",
-    ready: () =>
-      (get("neverendingPartyAlways") || get("_neverendingPartyToday")) &&
-      get("_questPartyFair") === "unstarted",
-    completed: () => get("_questPartyFair") !== "unstarted",
-    do: () => nepQuest(),
-  },
+  // {
+  //   name: "Check Neverending Party Quest",
+  //   ready: () =>
+  //     (get("neverendingPartyAlways") || get("_neverendingPartyToday")) &&
+  //     get("_questPartyFair") === "unstarted",
+  //   completed: () => get("_questPartyFair") !== "unstarted",
+  //   do: () => nepQuest(),
+  // },
   {
     name: "Check Barf Mountain Quest",
     ready: () => get("stenchAirportAlways") || get("_stenchAirportToday"),

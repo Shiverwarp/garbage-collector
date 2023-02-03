@@ -197,13 +197,13 @@ export const DailyFamiliarTasks: Task[] = [
     do: () => cliExecute("mummery meat"),
     outfit: { familiar: meatFamiliar() },
   },
-  {
-    name: "Mummery Item",
-    ready: () => have($item`mumming trunk`) && have($familiar`Trick-or-Treating Tot`),
-    completed: () => get("_mummeryMods").includes("Item Drop"),
-    do: () => cliExecute("mummery item"),
-    outfit: { familiar: $familiar`Trick-or-Treating Tot` },
-  },
+  // {
+  //   name: "Mummery Item",
+  //   ready: () => have($item`mumming trunk`) && have($familiar`Trick-or-Treating Tot`),
+  //   completed: () => get("_mummeryMods").includes("Item Drop"),
+  //   do: () => cliExecute("mummery item"),
+  //   outfit: { familiar: $familiar`Trick-or-Treating Tot` },
+  // },
   {
     name: "Moveable feast",
     ready: () => have($item`moveable feast`) || globalOptions.prefs.stashClan !== "none",
@@ -212,7 +212,7 @@ export const DailyFamiliarTasks: Task[] = [
       withStash($items`moveable feast`, () => {
         if (have($item`moveable feast`)) {
           [
-            ...$familiars`Pocket Professor, Frumious Bandersnatch, Pair of Stomping Boots`,
+            ...$familiars`Jumpsuited Hound Dog, Frumious Bandersnatch, Pair of Stomping Boots`,
             meatFamiliar(),
           ].forEach(tryFeast);
         }
