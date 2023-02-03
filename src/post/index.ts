@@ -172,7 +172,6 @@ export default function postCombatActions(skipDiet = false): void {
   safeRestore();
   updateMallPrices();
   stillsuit();
-  funguySpores();
   if (globalOptions.ascend || AutumnAton.turnsForQuest() < estimatedTurns()) {
     AutumnAton.sendTo(bestAutumnatonLocation);
   }
