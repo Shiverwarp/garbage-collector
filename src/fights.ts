@@ -206,24 +206,24 @@ function embezzlerSetup() {
   freeFightMood().execute(50);
   useBuffExtenders();
   burnLibrams(400);
-  if (
-    globalOptions.ascend &&
-    questStep("questM16Temple") > 0 &&
-    get("lastTempleAdventures") < myAscensions() &&
-    acquire(1, $item`stone wool`, 3 * get("valueOfAdventure") + 100, false) > 0
-  ) {
-    ensureEffect($effect`Stone-Faced`);
-    setChoice(582, 1);
-    setChoice(579, 3);
-    while (get("lastTempleAdventures") < myAscensions()) {
-      const run = tryFindFreeRun() ?? ltbRun();
-      if (!run) break;
-      useFamiliar(run.constraints.familiar?.() ?? freeFightFamiliar());
-      run.constraints.preparation?.();
-      freeFightOutfit(run.constraints.equipmentRequirements?.());
-      garboAdventure($location`The Hidden Temple`, run.macro);
-    }
-  }
+  // if (
+  //   globalOptions.ascend &&
+  //   questStep("questM16Temple") > 0 &&
+  //   get("lastTempleAdventures") < myAscensions() &&
+  //   acquire(1, $item`stone wool`, 3 * get("valueOfAdventure") + 100, false) > 0
+  // ) {
+  //   ensureEffect($effect`Stone-Faced`);
+  //   setChoice(582, 1);
+  //   setChoice(579, 3);
+  //   while (get("lastTempleAdventures") < myAscensions()) {
+  //     const run = tryFindFreeRun() ?? ltbRun();
+  //     if (!run) break;
+  //     useFamiliar(run.constraints.familiar?.() ?? freeFightFamiliar());
+  //     run.constraints.preparation?.();
+  //     freeFightOutfit(run.constraints.equipmentRequirements?.());
+  //     garboAdventure($location`The Hidden Temple`, run.macro);
+  //   }
+  // }
 
   bathroomFinance(embezzlerCount());
 
