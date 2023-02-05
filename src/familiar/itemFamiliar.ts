@@ -6,9 +6,9 @@ import { menu } from "./freeFightFamiliar";
 let bestNonCheerleaderFairy: Familiar;
 
 export function bestFairy(): Familiar {
-  if (have($familiar`Trick-or-Treating Tot`) && have($item`li'l ninja costume`)) {
-    return $familiar`Trick-or-Treating Tot`;
-  }
+  // if (have($familiar`Trick-or-Treating Tot`) && have($item`li'l ninja costume`)) {
+  //   return $familiar`Trick-or-Treating Tot`;
+  // }
 
   if (!bestNonCheerleaderFairy) {
     const viableFairies = Familiar.all().filter(
