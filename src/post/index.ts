@@ -32,7 +32,7 @@ import {
   valueJuneCleaverOption,
 } from "../lib";
 import { teleportEffects } from "../mood";
-import { garboAverageValue, garboValue, sessionSinceStart } from "../session";
+import { garboValue, sessionSinceStart } from "../session";
 import { estimatedGarboTurns, estimatedNonGarboTurns } from "../turns";
 import handleWorkshed from "./workshed";
 
@@ -110,7 +110,6 @@ export default function postCombatActions(): void {
   safeRestore();
   updateMallPrices();
   stillsuit();
-  funguySpores();
   if (
     globalOptions.ascend ||
     AutumnAton.turnsForQuest() < estimatedGarboTurns() + estimatedNonGarboTurns()
