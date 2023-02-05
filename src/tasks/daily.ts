@@ -25,7 +25,6 @@ import {
   retrievePrice,
   runChoice,
   toSlot,
-  toUrl,
   use,
   visitUrl,
   votingBoothInitiatives,
@@ -54,7 +53,7 @@ import { globalOptions } from "../config";
 import { embezzlerCount } from "../embezzler";
 import { meatFamiliar } from "../familiar";
 import { estimatedTentacles } from "../fights";
-import { baseMeat, HIGHLIGHT, maxBy } from "../lib";
+import { baseMeat, maxBy } from "../lib";
 import { garboValue } from "../session";
 import { digitizedMonstersRemaining, estimatedGarboTurns } from "../turns";
 
@@ -201,23 +200,23 @@ function pantogram(): void {
   );
 }
 
-function nepQuest(): void {
-  if (!(get("neverendingPartyAlways") || get("_neverendingPartyToday"))) return;
-
-  if (get("_questPartyFair") === "unstarted") {
-    visitUrl(toUrl($location`The Neverending Party`));
-    if (["food", "booze", "trash", "dj"].includes(get("_questPartyFairQuest"))) {
-      runChoice(1); // Accept quest
-    } else {
-      runChoice(2); // Decline quest
-    }
-  }
-
-  if (["food", "booze"].includes(get("_questPartyFairQuest"))) {
-    print("Gerald/ine quest!", HIGHLIGHT);
-    globalOptions.clarasBellClaimed = true;
-  }
-}
+//  function nepQuest(): void {
+//    if (!(get("neverendingPartyAlways") || get("_neverendingPartyToday"))) return;
+//
+//    if (get("_questPartyFair") === "unstarted") {
+//      visitUrl(toUrl($location`The Neverending Party`));
+//      if (["food", "booze", "trash", "dj"].includes(get("_questPartyFairQuest"))) {
+//        runChoice(1); // Accept quest
+//      } else {
+//        runChoice(2); // Decline quest
+//      }
+//    }
+//
+//    if (["food", "booze"].includes(get("_questPartyFairQuest"))) {
+//      print("Gerald/ine quest!", HIGHLIGHT);
+//      globalOptions.clarasBellClaimed = true;
+//    }
+//  }
 
 export function completeBarfQuest(): void {
   if (!attemptCompletingBarfQuest) return;
