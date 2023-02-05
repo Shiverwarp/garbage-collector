@@ -1256,40 +1256,6 @@ const freeFightSources = [
   ),
 
   new FreeFight(
-    () =>
-      get("neverendingPartyAlways") && questStep("_questPartyFair") < 999
-        ? clamp(
-            10 -
-              get("_neverendingPartyFreeTurns") -
-              (get("_thesisDelivered") || !have($familiar`Pocket Professor`) ? 0 : 1),
-            0,
-            10
-          )
-        : 0,
-    () => {
-      const constructedMacro = Macro.tryHaveSkill($skill`Feel Pride`).basicCombat();
-      setNepQuestChoicesAndPrepItems();
-      garboAdventure($location`The Neverending Party`, constructedMacro);
-    },
-    true,
-    {
-      requirements: () => [
-        new Requirement(
-          [
-            ...(get("_questPartyFairQuest") === "trash" ? ["100 Item Drop"] : []),
-            ...(get("_questPartyFairQuest") === "dj" ? ["100 Meat Drop"] : []),
-          ],
-          {
-            forceEquip: [
-              ...(have($item`January's Garbage Tote`) ? $items`makeshift garbage shirt` : []),
-            ],
-          }
-        ),
-      ],
-    }
-  ),
-
-  new FreeFight(
     () => (get("ownsSpeakeasy") ? 3 - get("_speakeasyFreeFights") : 0),
     () => adv1($location`An Unusually Quiet Barroom Brawl`, -1, ""),
     true
