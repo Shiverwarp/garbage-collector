@@ -589,10 +589,10 @@ class VariableMeatPotion {
 
 export function variableMeatPotionsSetup(yachtzees: number, embezzlers: number): void {
   const potions = [
-    new VariableMeatPotion($item`love song of sugary cuteness`, 20, 2),
-    new VariableMeatPotion($item`pulled yellow taffy`, 50, 2),
+    new VariableMeatPotion($item`love song of sugary cuteness`, 20, 0),
+    new VariableMeatPotion($item`pulled yellow taffy`, 50, 0),
     ...(globalOptions.prefs.candydish
-      ? [new VariableMeatPotion($item`porcelain candy dish`, 500, 1)]
+      ? [new VariableMeatPotion($item`porcelain candy dish`, 500, 0)]
       : []),
   ];
 
