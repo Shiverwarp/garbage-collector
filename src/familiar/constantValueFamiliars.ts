@@ -96,6 +96,10 @@ const standardFamiliars: ConstantValueFamiliar[] = [
         )) /
       11,
   },
+  {
+    familiar: $familiar`Melodramedary`,
+    value: () => (get("camelSpit") < 100 ? 99999 : 0),
+  },
 ];
 
 export default function getConstantValueFamiliars(): GeneralFamiliar[] {
