@@ -75,7 +75,7 @@ function ensureConsumable(
   inebriety: number,
   spleenUse: number
 ): void {
-  if (myFullness() + n * fullness > fullnessLimit()) {
+  if (9999 + n * fullness > fullnessLimit()) {
     throw new Error(`Eating ${n} ${name} exceeds our stomach capacity!`);
   } else if (myInebriety() + n * inebriety > inebrietyLimit()) {
     throw new Error(`Drinking ${n} ${name} exceeds our liver capacity!`);
@@ -276,7 +276,7 @@ export function executeNextDietStep(stopBeforeJellies?: boolean): void {
               use(1, $item`synthetic dog hair pill`);
             }
           }
-          if (myFullness() + entry.fullness > fullnessLimit()) {
+          if (9999 + entry.fullness > fullnessLimit()) {
             throw new Error(`consuming ${entry.name} will exceed our fullness limit`);
           } else if (myInebriety() + entry.drunkenness > inebrietyLimit()) {
             throw new Error(`consuming ${entry.name} will exceed our inebriety limit`);
@@ -392,14 +392,14 @@ function yachtzeeDietScheduler(
   }
 
   // Print diet schedule
-  print(`Fullness:    ${myFullness()}/${fullnessLimit() + toInt(haveDistentionPill)}`, "blue");
+  print(`Fullness:    ${9999}/${fullnessLimit() + toInt(haveDistentionPill)}`, "blue");
   print(`Drunkenness: ${myInebriety()}/${inebrietyLimit()}`, "blue");
   print(`Spleen Use:  ${mySpleenUse()}/${spleenLimit()}`, "blue");
   print("Diet schedule:", "blue");
   for (const entry of dietSchedule) print(`Use ${entry.quantity} ${entry.name}`, "blue");
 
   // Finally, run a check to ensure everything is fine
-  let fullness = myFullness();
+  let fullness = 9999;
   let drunkenness = myInebriety();
   let spleenUse = mySpleenUse();
   let sweatOutsAvailable = clamp(
@@ -450,15 +450,9 @@ export function yachtzeeChainDiet(simOnly?: boolean): boolean {
   set("_garboYachtzeeChainDiet", "");
 
   const havePYECCharge = pyecAvailable();
-  const haveDistentionPill = !get("_distentionPillUsed") && have($item`distention pill`);
-  visitUrl(`desc_item.php?whichitem=${$item`designer sweatpants`.descid}`); // Ensure that our sweat tracker is updated
-  const sweatOutsAvailable = clamp(
-    Math.floor(get("sweat") / 25),
-    0,
-    3 - get("_sweatOutSomeBoozeUsed")
-  );
-  const syntheticPillsAvailable =
-    !get("_syntheticDogHairPillUsed") && have($item`synthetic dog hair pill`) ? 1 : 0;
+  const haveDistentionPill = false;
+  const sweatOutsAvailable = 0;
+  const syntheticPillsAvailable = 0;
 
   const currentSpleenLeft = spleenLimit() - mySpleenUse();
   let filters = 3 - get("currentMojoFilters");
@@ -474,11 +468,8 @@ export function yachtzeeChainDiet(simOnly?: boolean): boolean {
           0,
           Math.round((estimatedGarboTurns() - haveEffect($effect`Synthesis: Greed`)) / 30)
         );
-  const fullnessAvailable = fullnessLimit() - myFullness() + toInt(haveDistentionPill);
-  const inebrietyAvailable =
-    myLevel() >= 13
-      ? inebrietyLimit() - myInebriety() + syntheticPillsAvailable + sweatOutsAvailable
-      : 0;
+  const fullnessAvailable = 0;
+  const inebrietyAvailable = 0;
   const spleenAvailable = currentSpleenLeft + filters;
   const organsAvailable = fullnessAvailable + inebrietyAvailable + spleenAvailable;
 
@@ -505,13 +496,8 @@ export function yachtzeeChainDiet(simOnly?: boolean): boolean {
 
   // Plan our diet
 
-  const sliders = Math.floor((fullnessLimit() + toInt(haveDistentionPill) - myFullness()) / 5);
-  const pickleJuice =
-    myLevel() >= 13
-      ? Math.floor(
-          (inebrietyLimit() - myInebriety() + sweatOutsAvailable + syntheticPillsAvailable) / 5
-        )
-      : 0;
+  const sliders = 0;
+  const pickleJuice = 0;
 
   const reqSynthTurns = 30; // We will be left with max(0, 30 - yachtzeeTurns) after chaining
   const synthTurnsWanted = reqSynthTurns - haveEffect($effect`Synthesis: Greed`);
@@ -584,7 +570,7 @@ export function yachtzeeChainDiet(simOnly?: boolean): boolean {
     while (
       pickleJuiceToDrink > 0 &&
       jelliesToChew >= 5 &&
-      myFullness() + slidersToEat * 5 + toastsToEat + 5 <=
+      9999 + slidersToEat * 5 + toastsToEat + 5 <=
         fullnessLimit() + (haveDistentionPill ? 1 : 0) - 1
     ) {
       toastsToEat += 5;
@@ -613,14 +599,14 @@ export function yachtzeeChainDiet(simOnly?: boolean): boolean {
   const horseradishes =
     mallPrice($item`jumping horseradish`) <= 60000 &&
     haveEffect($effect`Kicked in the Sinuses`) < yachtzeeTurns &&
-    myFullness() + 1 + slidersToEat * 5 + toastsToEat <= fullnessLimit() + toInt(haveDistentionPill)
+    9999 + 1 + slidersToEat * 5 + toastsToEat <= fullnessLimit() + toInt(haveDistentionPill)
       ? 1
       : 0;
   const borisBreads =
     !get("unknownRecipe10978") &&
     retrievePrice($item`Boris's bread`) <= 60000 &&
     haveEffect($effect`Inspired Chef`) < yachtzeeTurns &&
-    myFullness() + 1 + slidersToEat * 5 + toastsToEat + horseradishes <=
+    9999 + 1 + slidersToEat * 5 + toastsToEat + horseradishes <=
       fullnessLimit() + toInt(haveDistentionPill)
       ? 1
       : 0;
@@ -636,7 +622,7 @@ export function yachtzeeChainDiet(simOnly?: boolean): boolean {
     !get("unknownRecipe11000") &&
     !get("unknownRecipe10988") &&
     !get("unknownRecipe10978") &&
-    myFullness() + 2 + slidersToEat * 5 + toastsToEat + horseradishes + borisBreads <=
+    9999 + 2 + slidersToEat * 5 + toastsToEat + horseradishes + borisBreads <=
       fullnessLimit() + toInt(haveDistentionPill)
       ? 1
       : 0;
