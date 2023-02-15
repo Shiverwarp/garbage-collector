@@ -890,72 +890,72 @@ const freeFightSources = [
     }
   ),
 
-  new FreeFight(
-    () => (wantPills() ? 5 - get("_saberForceUses") : 0),
-    () => {
-      if (have($familiar`Red-Nosed Snapper`)) cliExecute(`snapper ${$phylum`dude`}`);
-      setChoice(1387, 3);
-      if (
-        have($skill`Comprehensive Cartography`) &&
-        get("_monstersMapped") <
-          (getBestItemStealZone(true) && get("_fireExtinguisherCharge") >= 10 ? 2 : 3) // Save a map to use for polar vortex
-      ) {
-        withMacro(Macro.skill($skill`Use the Force`), () => {
-          mapMonster($location`Domed City of Grimacia`, $monster`grizzled survivor`);
-          runCombat();
-          runChoice(-1);
-        });
-      } else {
-        if (numericModifier($item`Grimacite guayabera`, "Monster Level") < 40) {
-          retrieveItem(1, $item`tennis ball`);
-          retrieveItem(1, $item`Louder Than Bomb`);
-          retrieveItem(1, $item`divine champagne popper`);
-        }
-        garboAdventure(
-          $location`Domed City of Grimacia`,
-          Macro.if_(
-            $monster`alielf`,
-            Macro.trySkill($skill`Asdon Martin: Spring-Loaded Front Bumper`).tryItem(
-              $item`Louder Than Bomb`
-            )
-          )
-            .if_($monster`cat-alien`, Macro.trySkill($skill`Snokebomb`).tryItem($item`tennis ball`))
-            .if_(
-              $monster`dog-alien`,
-              Macro.trySkill($skill`Feel Hatred`).tryItem($item`divine champagne popper`)
-            )
-            .step("pickpocket")
-            .skill($skill`Use the Force`)
-        );
-      }
-    },
-    false,
-    {
-      requirements: () => {
-        const canPickPocket = myPrimestat() === $stat`Moxie`;
-        const bestPickpocketItem = $items`tiny black hole, mime army infiltration glove`.find(
-          (item) => have(item) && canEquip(item)
-        );
-
-        const reqs = [
-          new Requirement(["1000 Pickpocket Chance"], {
-            forceEquip: $items`Fourth of May Cosplay Saber`,
-          }),
-        ];
-        if (!canPickPocket && bestPickpocketItem) {
-          reqs.push(
-            new Requirement([], {
-              forceEquip: [bestPickpocketItem],
-            })
-          );
-        }
-        return reqs;
-      },
-      familiar: () => (have($familiar`Red-Nosed Snapper`) ? $familiar`Red-Nosed Snapper` : null),
-      effects: () => $effects`Transpondent`,
-      macroAllowsFamiliarActions: false,
-    }
-  ),
+  // new FreeFight(
+  //   () => (wantPills() ? 5 - get("_saberForceUses") : 0),
+  //   () => {
+  //     if (have($familiar`Red-Nosed Snapper`)) cliExecute(`snapper ${$phylum`dude`}`);
+  //     setChoice(1387, 3);
+  //     if (
+  //       have($skill`Comprehensive Cartography`) &&
+  //       get("_monstersMapped") <
+  //         (getBestItemStealZone(true) && get("_fireExtinguisherCharge") >= 10 ? 2 : 3) // Save a map to use for polar vortex
+  //     ) {
+  //       withMacro(Macro.skill($skill`Use the Force`), () => {
+  //         mapMonster($location`Domed City of Grimacia`, $monster`grizzled survivor`);
+  //         runCombat();
+  //         runChoice(-1);
+  //       });
+  //     } else {
+  //       if (numericModifier($item`Grimacite guayabera`, "Monster Level") < 40) {
+  //         retrieveItem(1, $item`tennis ball`);
+  //         retrieveItem(1, $item`Louder Than Bomb`);
+  //         retrieveItem(1, $item`divine champagne popper`);
+  //       }
+  //       garboAdventure(
+  //         $location`Domed City of Grimacia`,
+  //         Macro.if_(
+  //           $monster`alielf`,
+  //           Macro.trySkill($skill`Asdon Martin: Spring-Loaded Front Bumper`).tryItem(
+  //             $item`Louder Than Bomb`
+  //           )
+  //         )
+  //           .if_($monster`cat-alien`, Macro.trySkill($skill`Snokebomb`).tryItem($item`tennis ball`))
+  //           .if_(
+  //             $monster`dog-alien`,
+  //             Macro.trySkill($skill`Feel Hatred`).tryItem($item`divine champagne popper`)
+  //           )
+  //           .step("pickpocket")
+  //           .skill($skill`Use the Force`)
+  //       );
+  //     }
+  //   },
+  //   false,
+  //   {
+  //     requirements: () => {
+  //       const canPickPocket = myPrimestat() === $stat`Moxie`;
+  //       const bestPickpocketItem = $items`tiny black hole, mime army infiltration glove`.find(
+  //         (item) => have(item) && canEquip(item)
+  //       );
+  //
+  //       const reqs = [
+  //         new Requirement(["1000 Pickpocket Chance"], {
+  //           forceEquip: $items`Fourth of May Cosplay Saber`,
+  //         }),
+  //       ];
+  //       if (!canPickPocket && bestPickpocketItem) {
+  //         reqs.push(
+  //           new Requirement([], {
+  //             forceEquip: [bestPickpocketItem],
+  //           })
+  //         );
+  //       }
+  //       return reqs;
+  //     },
+  //     familiar: () => (have($familiar`Red-Nosed Snapper`) ? $familiar`Red-Nosed Snapper` : null),
+  //     effects: () => $effects`Transpondent`,
+  //     macroAllowsFamiliarActions: false,
+  //   }
+  // ),
 
   // Initial 9 Pygmy fights
   new FreeFight(

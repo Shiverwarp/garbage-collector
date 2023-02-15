@@ -338,27 +338,27 @@ const turns: AdventureAction[] = [
     spendsTurn: false,
     sobriety: Sobriety.SOBER,
   },
-  {
-    name: "Map for Pills",
-    available: () =>
-      globalOptions.ascend &&
-      clamp(myAdventures() - digitizedMonstersRemaining(), 1, myAdventures()) <=
-        availableAmount($item`Map to Safety Shelter Grimace Prime`),
-    execute: () => {
-      const choiceToSet =
-        availableAmount($item`distention pill`) <
-        availableAmount($item`synthetic dog hair pill`) +
-          availableAmount($item`Map to Safety Shelter Grimace Prime`)
-          ? 1
-          : 2;
-      setChoice(536, choiceToSet);
-      ensureEffect($effect`Transpondent`);
-      use($item`Map to Safety Shelter Grimace Prime`);
-      return true;
-    },
-    spendsTurn: true,
-    sobriety: Sobriety.DRUNK,
-  },
+  // {
+  //   name: "Map for Pills",
+  //   available: () =>
+  //     globalOptions.ascend &&
+  //     clamp(myAdventures() - digitizedMonstersRemaining(), 1, myAdventures()) <=
+  //       availableAmount($item`Map to Safety Shelter Grimace Prime`),
+  //   execute: () => {
+  //     const choiceToSet =
+  //       availableAmount($item`distention pill`) <
+  //       availableAmount($item`synthetic dog hair pill`) +
+  //         availableAmount($item`Map to Safety Shelter Grimace Prime`)
+  //         ? 1
+  //         : 2;
+  //     setChoice(536, choiceToSet);
+  //     ensureEffect($effect`Transpondent`);
+  //     use($item`Map to Safety Shelter Grimace Prime`);
+  //     return true;
+  //   },
+  //   spendsTurn: true,
+  //   sobriety: Sobriety.DRUNK,
+  // },
   {
     name: "Barf",
     available: () => true,
