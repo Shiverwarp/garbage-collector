@@ -487,5 +487,6 @@ export function main(argString = ""): void {
     endSession();
     printLog(HIGHLIGHT);
   }
-  set(completedProperty, `garbo ${argString}`);
+  //Hardcode this I guess since it's all that I'll use
+  set(completedProperty, `CrazyRandomGarbo nobarf nodiet`);
 }
