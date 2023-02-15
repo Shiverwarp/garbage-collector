@@ -448,14 +448,14 @@ export const DailyTasks: Task[] = [
     completed: () => get("sourceTerminalEnquiry") === "familiar.enq",
     do: () => SourceTerminal.enquiry($effect`familiar.enq`),
   },
-  {
-    name: "Mad Tea Party Buff",
-    ready: () => !get("_madTeaParty"),
-    completed: () => get("_madTeaParty"),
-    do: () => cliExecute("hatter 22"),
-    acquire: [{ item: $item`filthy knitted dread sack` }],
-    effects: [$effect`Down the Rabbit Hole`],
-  },
+  // {
+  //   name: "Mad Tea Party Buff",
+  //   ready: () => !get("_madTeaParty"),
+  //   completed: () => get("_madTeaParty"),
+  //   do: () => cliExecute("hatter 22"),
+  //   acquire: [{ item: $item`filthy knitted dread sack` }],
+  //   effects: [$effect`Down the Rabbit Hole`],
+  // },
   {
     name: "SongBoom Buff",
     ready: () =>
