@@ -487,6 +487,6 @@ export function main(argString = ""): void {
     endSession();
     printLog(HIGHLIGHT);
   }
-  //Hardcode this I guess since it's all that I'll use
+  // Hardcode this I guess since it's all that I'll use
   set(completedProperty, `CrazyRandomGarbo nobarf nodiet`);
 }
