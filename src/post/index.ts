@@ -2,7 +2,6 @@ import {
   cliExecute,
   equip,
   itemAmount,
-  mallPrice,
   myAdventures,
   myLocation,
   reverseNumberology,
@@ -99,35 +98,6 @@ function stillsuit() {
   if (itemAmount($item`tiny stillsuit`)) {
     const familiarTarget = $familiar`Blood-Faced Volleyball`;
     if (have(familiarTarget)) equip(familiarTarget, $item`tiny stillsuit`);
-  }
-}
-
-let funguyWorthIt = true;
-function funguySpores() {
-  // Mush-Mouth will drop an expensive mushroom if you do a combat with one turn of it left
-  if (
-    myLevel() >= 15 && // It applies -100 to all stats, and Level 15 seems to be a reasonable place where you will survive -100 to all stats
-    !have($effect`Mush-Mouth`) &&
-    (!globalOptions.ascend || myAdventures() > 11) &&
-    get("dinseyRollercoasterNext") && // If it were to expire on a rails adventure, you'd waste the cost of the spore. Using it when next turn is rails is easiest way to make sure it won't
-    funguyWorthIt
-  ) {
-    // According to wiki, it has a 75% chance of being a stat mushroom and 25% chance of being another mushroom
-    const value =
-      0.75 *
-        garboAverageValue(
-          ...$items`Boletus Broletus mushroom, Omphalotus Omphaloskepsis mushroom, Gyromitra Dynomita mushroom`
-        ) +
-      0.25 *
-        garboAverageValue(
-          ...$items`Helvella Haemophilia mushroom, Stemonitis Staticus mushroom, Tremella Tarantella mushroom`
-        );
-    if (
-      mallPrice($item`Fun-Guy spore`) < value &&
-      acquire(1, $item`Fun-Guy spore`, value, false) > 0
-    ) {
-      use($item`Fun-Guy spore`);
-    } else funguyWorthIt = false;
   }
 }
 
