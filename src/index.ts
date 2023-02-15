@@ -485,7 +485,8 @@ export function main(argString = ""): void {
     if (startingGarden && have(startingGarden)) use(startingGarden);
     printEmbezzlerLog();
     endSession();
-    printLog(HIGHLIGHT);
+    // This errors I don't know why
+    // printLog(HIGHLIGHT);
   }
   // Hardcode this I guess since it's all that I'll use
   set(completedProperty, `CrazyRandomGarbo nobarf nodiet`);
