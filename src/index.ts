@@ -183,7 +183,7 @@ export function main(argString = ""): void {
     );
   }
 
-  if (!get("kingLiberated") || myLevel() < 13 || Stat.all().some((s) => myBasestat(s) < 75)) {
+  if (myLevel() < 13 || Stat.all().some((s) => myBasestat(s) < 75)) {
     if (globalOptions.prefs.skipAscensionCheck) {
       logprint("This player is a silly goose, who ignored our warnings about being underleveled.");
     } else {
