@@ -221,9 +221,7 @@ export function main(argString = ""): void {
   set(completedProperty, "");
 
   startSession();
-  if (!globalOptions.nobarf && !globalOptions.simdiet) {
-    ensureBarfAccess();
-  }
+  ensureBarfAccess();
   if (globalOptions.simdiet) {
     propertyManager.set({
       logPreferenceChange: true,
