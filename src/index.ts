@@ -445,7 +445,7 @@ export function main(argString = ""): void {
         postFreeFightDailySetup(); // setup stuff that can interfere with free fights (VYKEA)
         yachtzeeChain();
         // dailyFights(); // Don't do this, it's just embezzler fights
-        useBuffExtenders();
+        // useBuffExtenders(); // Don't do this either, we want to use them ourselves for yachtzee
 
         if (!globalOptions.nobarf) {
           // // 3. burn turns at barf
