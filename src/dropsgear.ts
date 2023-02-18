@@ -236,6 +236,18 @@ function mrCheengsSpectacles() {
   return new Map<Item, number>([[$item`Mr. Cheeng's spectacles`, 220]]);
 }
 
+function lilDocBag() {
+  if (!have($item`Lil' Doctor™ bag`)) {
+    return new Map<Item, number>([]);
+  }
+
+  if (get("questDoctorBag") === "unstarted") {
+    return new Map<Item, number>([[$item`Lil' Doctor™ bag`, 220]]);
+  } else {
+    return new Map<Item, number>([]);
+  }
+}
+
 function mrScreegesSpectacles() {
   if (!have($item`Mr. Screege's spectacles`)) {
     return new Map<Item, number>([]);
@@ -316,6 +328,7 @@ function bonusAccessories(equipMode: BonusEquipMode): Map<Item, number> {
   return new Map<Item, number>([
     ...mafiaThumbRing(equipMode),
     ...luckyGoldRing(equipMode),
+    ...lilDocBag(),
     ...mrCheengsSpectacles(),
     ...mrScreegesSpectacles(),
   ]);
