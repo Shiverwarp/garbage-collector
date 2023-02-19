@@ -9,7 +9,7 @@ export function docBagFactory(
 ): WandererTarget[] {
   const location = get("doctorBagQuestLocation");
   if (location !== null) {
-    if (locationSkiplist.includes(location)) {
+    if (locationSkiplist.includes(location) || location.environment === "outdoor") {
       return [];
     }
     const questItem = toItem(get("doctorBagQuestItem"));
