@@ -1,6 +1,7 @@
 import { Location, print } from "kolmafia";
 import { $location } from "libram";
 import { HIGHLIGHT, maxBy, propertyManager, sober } from "../lib";
+import { docBagFactory } from "./docbag";
 import { guzzlrFactory } from "./guzzlr";
 import {
   canAdventureOrUnlock,
@@ -19,6 +20,7 @@ export type { DraggableFight };
 
 const wanderFactories: WandererFactory[] = [
   defaultFactory,
+  docBagFactory,
   yellowRayFactory,
   lovebugsFactory,
   guzzlrFactory,
