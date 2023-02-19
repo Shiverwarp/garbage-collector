@@ -1274,53 +1274,53 @@ const freeFightSources = [
     }
   ),
 
-  // Get a li'l ninja costume for 150% item drop
-  new FreeFight(
-    () =>
-      !have($item`li'l ninja costume`) &&
-      have($familiar`Trick-or-Treating Tot`) &&
-      !get("_firedJokestersGun") &&
-      have($item`The Jokester's gun`) &&
-      canEquip($item`The Jokester's gun`) &&
-      questStep("questL08Trapper") >= 2,
-    () =>
-      garboAdventure(
-        $location`Lair of the Ninja Snowmen`,
-        Macro.skill($skill`Fire the Jokester's Gun`).abort()
-      ),
-    true,
-    {
-      requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
-      macroAllowsFamiliarActions: false,
-    }
-  ),
-
-  // Fallback for li'l ninja costume if Lair of the Ninja Snowmen is unavailable
-  new FreeFight(
-    () =>
-      !have($item`li'l ninja costume`) &&
-      have($familiar`Trick-or-Treating Tot`) &&
-      !get("_firedJokestersGun") &&
-      have($item`The Jokester's gun`) &&
-      canEquip($item`The Jokester's gun`) &&
-      have($skill`Comprehensive Cartography`) &&
-      get("_monstersMapped") < 3,
-    () => {
-      try {
-        Macro.skill($skill`Fire the Jokester's Gun`)
-          .abort()
-          .setAutoAttack();
-        mapMonster($location`The Haiku Dungeon`, $monster`amateur ninja`);
-      } finally {
-        setAutoAttack(0);
-      }
-    },
-    true,
-    {
-      requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
-      macroAllowsFamiliarActions: false,
-    }
-  ),
+  // // Get a li'l ninja costume for 150% item drop
+  // new FreeFight(
+  //   () =>
+  //     !have($item`li'l ninja costume`) &&
+  //     have($familiar`Trick-or-Treating Tot`) &&
+  //     !get("_firedJokestersGun") &&
+  //     have($item`The Jokester's gun`) &&
+  //     canEquip($item`The Jokester's gun`) &&
+  //     questStep("questL08Trapper") >= 2,
+  //   () =>
+  //     garboAdventure(
+  //       $location`Lair of the Ninja Snowmen`,
+  //       Macro.skill($skill`Fire the Jokester's Gun`).abort()
+  //     ),
+  //   true,
+  //   {
+  //     requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
+  //     macroAllowsFamiliarActions: false,
+  //   }
+  // ),
+  //
+  // // Fallback for li'l ninja costume if Lair of the Ninja Snowmen is unavailable
+  // new FreeFight(
+  //   () =>
+  //     !have($item`li'l ninja costume`) &&
+  //     have($familiar`Trick-or-Treating Tot`) &&
+  //     !get("_firedJokestersGun") &&
+  //     have($item`The Jokester's gun`) &&
+  //     canEquip($item`The Jokester's gun`) &&
+  //     have($skill`Comprehensive Cartography`) &&
+  //     get("_monstersMapped") < 3,
+  //   () => {
+  //     try {
+  //       Macro.skill($skill`Fire the Jokester's Gun`)
+  //         .abort()
+  //         .setAutoAttack();
+  //       mapMonster($location`The Haiku Dungeon`, $monster`amateur ninja`);
+  //     } finally {
+  //       setAutoAttack(0);
+  //     }
+  //   },
+  //   true,
+  //   {
+  //     requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
+  //     macroAllowsFamiliarActions: false,
+  //   }
+  // ),
 ];
 
 const freeRunFightSources = [
