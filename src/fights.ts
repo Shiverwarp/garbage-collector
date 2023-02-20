@@ -776,14 +776,14 @@ const freeFightSources = [
     false
   ),
 
-  new FreeFight(
-    () => clamp(3 - get("_lynyrdSnareUses"), 0, 3),
-    () => use($item`lynyrd snare`),
-    true,
-    {
-      cost: () => mallPrice($item`lynyrd snare`),
-    }
-  ),
+  // new FreeFight(
+  //   () => clamp(3 - get("_lynyrdSnareUses"), 0, 3),
+  //   () => use($item`lynyrd snare`),
+  //   true,
+  //   {
+  //     cost: () => mallPrice($item`lynyrd snare`),
+  //   }
+  // ),
 
   new FreeFight(
     () =>
