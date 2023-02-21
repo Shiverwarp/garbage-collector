@@ -352,14 +352,14 @@ export function safeRestore(): void {
   const mpTarget = safeRestoreMpTarget();
   const shouldRestoreMp = () => myMp() < mpTarget;
 
-  if (
+  /*   if (
     shouldRestoreMp() &&
     have($item`Kramco Sausage-o-Matic™`) &&
     (have($item`magical sausage`) || have($item`magical sausage casing`)) &&
     get("_sausagesEaten") < 23
   ) {
     eat($item`magical sausage`);
-  }
+  } */
 
   const soulFoodCasts = Math.floor(mySoulsauce() / soulsauceCost($skill`Soul Food`));
   if (shouldRestoreMp() && soulFoodCasts > 0) useSkill(soulFoodCasts, $skill`Soul Food`);
