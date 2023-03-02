@@ -1011,7 +1011,7 @@ const freeFightSources = [
   ),
 
   // 11th+ pygmy fight if we have a saber- saber friends
-  new FreeFight(
+  /* new FreeFight(
     () => {
       const rightTime =
         have($item`Fourth of May Cosplay Saber`) &&
@@ -1046,7 +1046,7 @@ const freeFightSources = [
     },
     false,
     pygmyOptions($items`Fourth of May Cosplay Saber`)
-  ),
+  ), */
 
   // Finally, saber or not, if we have a drunk pygmy in our crystal ball, let it out.
   new FreeFight(
