@@ -77,6 +77,9 @@ export function freeFightOutfit(requirement?: Requirement): void {
   );
 
   if (myFamiliar() !== $familiar`Grey Goose`) bonusEquip.set($item`tiny stillsuit`, 69);
+  if (myFamiliar() === $familiar`Melodramedary`) {
+    bonusEquip.set($item`dromedary drinking helmet`, 999);
+  }
 
   const finalRequirement = new Requirement(parameters, {
     forceEquip,
