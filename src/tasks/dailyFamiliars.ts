@@ -153,14 +153,14 @@ export const DailyFamiliarTasks: Task[] = [
     completed: () => get("_roboDrinks").toLowerCase().includes("drive-by shooting"),
     do: () => prepRobortender(),
   },
-  {
+  /*   {
     name: "Acquire amulet coin",
     ready: () => have($familiar`Cornbeefadon`),
     completed: () => have($item`amulet coin`),
     do: () => use($item`box of Familiar Jacks`),
     acquire: [{ item: $item`box of Familiar Jacks` }],
     outfit: { familiar: $familiar`Cornbeefadon` },
-  },
+  }, */
   {
     // TODO: Consider other familiars?
     name: "Equip tiny stillsuit",
