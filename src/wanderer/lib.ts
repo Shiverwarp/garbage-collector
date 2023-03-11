@@ -91,6 +91,9 @@ function canWanderTypeYellowRay(location: Location): boolean {
   if (location === $location`The Fun-Guy Mansion` && get("funGuyMansionKills", 0) >= 100) {
     return false;
   }
+  if (location.environment === "outdoor") {
+    return false;
+  }
   return canWanderTypeBackup(location);
 }
 
