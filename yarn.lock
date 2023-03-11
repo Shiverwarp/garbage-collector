@@ -2460,10 +2460,10 @@ klona@^2.0.4:
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.6.tgz#85bffbf819c03b2f53270412420a4555ef882e22"
   integrity sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==
 
-kolmafia@^5.27276.0:
-  version "5.27276.0"
-  resolved "https://registry.yarnpkg.com/kolmafia/-/kolmafia-5.27276.0.tgz#c1021dad03587d057f540af61581cc481fdd553f"
-  integrity sha512-JQfBoknj1/89VD+UVQTPWc/tUFnWXIndURulwdn3NP3iVe/fttYX+eNpACeRxQT+1WadtmLIQDYPnJ04bNqg+A==
+kolmafia@^5.27281.0:
+  version "5.27281.0"
+  resolved "https://registry.yarnpkg.com/kolmafia/-/kolmafia-5.27281.0.tgz#182360b2d673dd6b3e9a9a149e4804d7f95cdbad"
+  integrity sha512-zdC4iqXNwY5DhAY0+BWrDaKw427YXJH4GpY58XL7Jp/0alQWegZ0ARQXj+oX8/zk78CTKiJKiSDPt9qyXU38Iw==
 
 levn@^0.4.1:
   version "0.4.1"
@@ -2473,7 +2473,7 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libram@^0.7.10:
+libram@^0.7.11:
   version "0.7.11"
   resolved "https://registry.yarnpkg.com/libram/-/libram-0.7.11.tgz#c215ce008b1d7b79306937efbd3a87edf2c568f4"
   integrity sha512-x3VGeNV7j4580U/qaGhFUZFF7rpXYgF7/cQz24+jQVm9+az9vKp9xQCu0zJGqzXqg9Qp/KMIJpwh3htd8++skQ==
