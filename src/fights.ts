@@ -64,6 +64,7 @@ import {
   $location,
   $locations,
   $monster,
+  $monsters,
   $path,
   $phyla,
   $skill,

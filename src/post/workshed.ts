@@ -6,7 +6,6 @@ import { potionSetupCompleted } from "../potions";
 import { estimatedGarboTurns, estimatedTurnsTomorrow } from "../turns";
 import { getPrioritizedStations, grabMedicine, rotateToOptimalCycle } from "./workshed_utils";
 import { HIGHLIGHT } from "../lib";
-import { estimatedGarboTurns, estimatedTurnsTomorrow } from "../turns";
 type WorkshedOptions = {
   workshed: Item;
   done?: () => boolean;

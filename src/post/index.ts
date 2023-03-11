@@ -11,6 +11,7 @@ import {
   $effect,
   $familiar,
   $item,
+  $items,
   $location,
   $slot,
   AutumnAton,
@@ -116,7 +117,6 @@ export default function postCombatActions(skipDiet = false): void {
   safeRestore();
   updateMallPrices();
   stillsuit();
-  funguySpores();
   if (
     globalOptions.ascend ||
     AutumnAton.turnsForQuest() < estimatedGarboTurns() + remainingUserTurns()
