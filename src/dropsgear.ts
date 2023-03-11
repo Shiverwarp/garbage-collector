@@ -452,7 +452,8 @@ export function usingThumbRing(): boolean {
       ((myClass() === $class`Seal Clubber` && have($skill`Furious Wallop`)) ||
         have($item`haiku katana`) ||
         have($item`Operation Patriot Shield`) ||
-        have($item`unwrapped knock-off retro superhero cape`))
+        have($item`unwrapped knock-off retro superhero cape`) ||
+        have($skill`Head in the Game`))
     ) {
       accessoryValues.set($item`mafia pointer finger ring`, 500);
     }
@@ -466,10 +467,10 @@ export function usingThumbRing(): boolean {
 
 let juneCleaverEV: number | null = null;
 function juneCleaver(equipMode: BonusEquipMode): Map<Item, number> {
-  const estimatedJuneCleaverTurns = globalOptions.nobarf ? remainingUserTurns : estimatedGarboTurns;
+  const estimatedJuneCleaverTurns = remainingUserTurns() + estimatedGarboTurns();
   if (
     !have($item`June cleaver`) ||
-    get("_juneCleaverFightsLeft") > estimatedJuneCleaverTurns() ||
+    get("_juneCleaverFightsLeft") > estimatedJuneCleaverTurns ||
     !get("_juneCleaverFightsLeft")
   ) {
     return new Map();
@@ -483,7 +484,7 @@ function juneCleaver(equipMode: BonusEquipMode): Map<Item, number> {
   // If we're ascending then the chances of hitting choices in the queue is reduced
   if (
     globalOptions.ascend &&
-    estimatedJuneCleaverTurns() <= 180 &&
+    estimatedJuneCleaverTurns <= 180 &&
     JuneCleaver.getInterval() === 30
   ) {
     const availEV =
@@ -495,7 +496,7 @@ function juneCleaver(equipMode: BonusEquipMode): Map<Item, number> {
         const choiceValue = valueJuneCleaverOption(
           juneCleaverChoiceValues[choice][bestJuneCleaverOption(choice)]
         );
-        const cleaverEncountersLeft = Math.floor(estimatedJuneCleaverTurns() / 30);
+        const cleaverEncountersLeft = Math.floor(estimatedJuneCleaverTurns / 30);
         const encountersToQueueExit = 1 + JuneCleaver.queue().indexOf(choice);
         const chancesLeft = Math.max(0, cleaverEncountersLeft - encountersToQueueExit);
         const encounterProbability = 1 - Math.pow(2 / 3, chancesLeft);

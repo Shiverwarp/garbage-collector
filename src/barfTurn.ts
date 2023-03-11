@@ -108,7 +108,7 @@ function shouldGoUnderwater(): boolean {
     return false;
   }
 
-  if (have($item`envyfish egg`)) return false;
+  if (have($item`envyfish egg`) || (globalOptions.ascend && get("_envyfishEggUsed"))) return false;
   if (!canAdventure($location`The Briny Deeps`)) return false;
   if (mallPrice($item`pulled green taffy`) < EMBEZZLER_MULTIPLIER() * get("valueOfAdventure")) {
     return false;
@@ -309,6 +309,35 @@ const turns: AdventureAction[] = [
     sobriety: Sobriety.EITHER,
   },
   {
+    name: "Cheese Wizard Fondeluge",
+    available: () =>
+      have($skill`Fondeluge`) &&
+      !have($effect`Everything Looks Yellow`) &&
+      romanticMonsterImpossible(),
+    execute: () => {
+      const usingDuplicate = SourceTerminal.have() && SourceTerminal.duplicateUsesRemaining() > 0;
+
+      const location = wanderWhere("yellow ray");
+      const familiar = freeFightFamiliar({ location, allowAttackFamiliars: !usingDuplicate });
+      useFamiliar(familiar);
+      freeFightOutfit();
+      if (usingDuplicate) {
+        SourceTerminal.educate([$skill`Extract`, $skill`Duplicate`]);
+      }
+      const macro = Macro.if_(embezzler, Macro.meatKill())
+        .familiarActions()
+        .externalIf(usingDuplicate, Macro.trySkill($skill`Duplicate`))
+        .skill($skill`Fondeluge`);
+      garboAdventureAuto(location, macro);
+      if (SourceTerminal.have()) {
+        SourceTerminal.educate([$skill`Extract`, $skill`Digitize`]);
+      }
+      return have($effect`Everything Looks Yellow`);
+    },
+    spendsTurn: false,
+    sobriety: Sobriety.SOBER,
+  },
+  {
     name: "Spit Acid",
     available: () =>
       have($item`Jurassic Parka`) &&
@@ -334,6 +363,55 @@ const turns: AdventureAction[] = [
         SourceTerminal.educate([$skill`Extract`, $skill`Digitize`]);
       }
       return have($effect`Everything Looks Yellow`);
+    },
+    spendsTurn: false,
+    sobriety: Sobriety.SOBER,
+  },
+  {
+    name: "Pig Skinner Free-For-All",
+    available: () =>
+      have($skill`Free-For-All`) &&
+      !have($effect`Everything Looks Red`) &&
+      romanticMonsterImpossible(),
+    execute: () => {
+      const location = wanderWhere("backup");
+      const familiar = freeFightFamiliar({ location });
+      useFamiliar(familiar);
+      freeFightOutfit();
+      const macro = Macro.if_(embezzler, Macro.meatKill())
+        .familiarActions()
+        .skill($skill`Free-For-All`);
+      garboAdventureAuto(location, macro);
+      if (SourceTerminal.have()) {
+        SourceTerminal.educate([$skill`Extract`, $skill`Digitize`]);
+      }
+      return have($effect`Everything Looks Red`);
+    },
+    spendsTurn: false,
+    sobriety: Sobriety.SOBER,
+  },
+  {
+    name: "Shocking Lick",
+    available: () => get("shockingLickCharges") > 0 && romanticMonsterImpossible(),
+    execute: () => {
+      const curLicks = get("shockingLickCharges");
+      const usingDuplicate = SourceTerminal.have() && SourceTerminal.duplicateUsesRemaining() > 0;
+
+      const location = wanderWhere("yellow ray");
+      const familiar = freeFightFamiliar({ location });
+      useFamiliar(familiar);
+      if (usingDuplicate) {
+        SourceTerminal.educate([$skill`Extract`, $skill`Duplicate`]);
+      }
+      const macro = Macro.if_(embezzler, Macro.meatKill())
+        .familiarActions()
+        .externalIf(usingDuplicate, Macro.trySkill($skill`Duplicate`))
+        .skill($skill`Shocking Lick`);
+      garboAdventureAuto(location, macro);
+      if (SourceTerminal.have()) {
+        SourceTerminal.educate([$skill`Extract`, $skill`Digitize`]);
+      }
+      return get("shockingLickCharges") === curLicks - 1;
     },
     spendsTurn: false,
     sobriety: Sobriety.SOBER,

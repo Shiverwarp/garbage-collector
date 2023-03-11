@@ -4,6 +4,7 @@ import {
   itemAmount,
   myAdventures,
   myLocation,
+  putCloset,
   reverseNumberology,
 } from "kolmafia";
 import {
@@ -32,9 +33,13 @@ import {
   valueJuneCleaverOption,
 } from "../lib";
 import { teleportEffects } from "../mood";
-import { garboValue, sessionSinceStart } from "../session";
+import { garboAverageValue, garboValue, sessionSinceStart } from "../session";
 import { estimatedGarboTurns, remainingUserTurns } from "../turns";
 import handleWorkshed from "./workshed";
+
+function closetStuff(): void {
+  for (const i of $items`bowling ball, funky junk key`) putCloset(itemAmount(i), i);
+}
 
 function floristFriars(): void {
   if (!FloristFriar.have() || myLocation() !== $location`Barf Mountain` || FloristFriar.isFull()) {
@@ -102,6 +107,7 @@ function stillsuit() {
 }
 
 export default function postCombatActions(skipDiet = false): void {
+  closetStuff();
   juneCleave();
   numberology();
   floristFriars();
@@ -110,6 +116,7 @@ export default function postCombatActions(skipDiet = false): void {
   safeRestore();
   updateMallPrices();
   stillsuit();
+  funguySpores();
   if (
     globalOptions.ascend ||
     AutumnAton.turnsForQuest() < estimatedGarboTurns() + remainingUserTurns()
