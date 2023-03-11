@@ -323,7 +323,7 @@ export function main(argString = ""): void {
       mpAutoRecoveryTarget: 0.0,
       afterAdventureScript: "",
       betweenBattleScript: "",
-      choiceAdventureScript: "",
+      choiceAdventureScript: "choiceAdv.ash",
       counterScript: "",
       familiarScript: "",
       currentMood: "apathetic",
