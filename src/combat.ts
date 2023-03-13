@@ -29,6 +29,7 @@ import {
   myThrall,
   numericModifier,
   retrieveItem,
+  runChoice,
   runCombat,
   setAutoAttack,
   setCcs,
@@ -651,7 +652,7 @@ function runCombatBy<T>(initiateCombatAction: () => T) {
   try {
     const result = initiateCombatAction();
     while (inMultiFight()) runCombat();
-    if (choiceFollowsFight()) visitUrl("choice.php");
+    if (choiceFollowsFight()) runChoice(-1);
     return result;
   } catch (e) {
     throw `Combat exception! Last macro error: ${get("lastMacroError")}. Exception ${e}.`;
