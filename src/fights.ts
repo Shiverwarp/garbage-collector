@@ -1817,6 +1817,32 @@ const freeKillSources = [
     }
   ),
 
+  // Shadow Bricks.
+  // Estimated value of killing a sandworm is value of spice melange * 0.066 (our item drop bonus is about 6.5k with champagne, but should only consider when champagne runs out). We'll underestimate a bit.
+  new FreeFight(
+    () =>
+      mallPrice($item`shadow brick`) + mallPrice($item`drum machine`) <
+        garboValue($item`spice melange`) * 0.031 && have($item`shadow brick`)
+        ? clamp(13 - get("_shadowBricksUsed", 13), 0, 13)
+        : 0,
+    () => {
+      ensureBeachAccess();
+      withMacro(
+        Macro.trySkill($skill`Sing Along`)
+          .tryHaveSkill($skill`Otoscope`)
+          .item($item`shadow brick`),
+        () => use($item`drum machine`)
+      );
+    },
+    true,
+    {
+      familiar: bestFairy,
+      requirements: () => [sandwormRequirement()],
+      effects: () =>
+        have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
+    }
+  ),
+
   new FreeFight(
     () => have($item`Jurassic Parka`) && !have($effect`Everything Looks Yellow`),
     () => {
