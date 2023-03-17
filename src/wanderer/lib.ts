@@ -84,6 +84,9 @@ export function unlock(loc: Location, value: number): boolean {
 
 const backupSkiplist = $locations`The Overgrown Lot, The Skeleton Store, The Mansion of Dr. Weirdeaux`;
 function canWanderTypeBackup(location: Location): boolean {
+  if (location.environment === "outdoor") {
+    return false;
+  }
   return !backupSkiplist.includes(location) && location.combatPercent >= 100;
 }
 
@@ -99,6 +102,9 @@ function canWanderTypeYellowRay(location: Location): boolean {
 
 const wandererSkiplist = $locations`The Batrat and Ratbat Burrow, Guano Junction, The Beanbat Chamber, A-Boo Peak`;
 function canWanderTypeWander(location: Location): boolean {
+  if (location.environment === "outdoor") {
+    return false;
+  }
   return !wandererSkiplist.includes(location) && location.wanderers;
 }
 
