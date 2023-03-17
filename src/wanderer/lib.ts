@@ -83,11 +83,15 @@ export function unlock(loc: Location, value: number): boolean {
 }
 
 const backupSkiplist = $locations`The Overgrown Lot, The Skeleton Store, The Mansion of Dr. Weirdeaux`;
+const backupSafelist = $locations`The Haunted Gallery, The Penultimate Fantasy Airship`;
 function canWanderTypeBackup(location: Location): boolean {
   if (location.environment === "outdoor") {
     return false;
   }
-  return !backupSkiplist.includes(location) && location.combatPercent >= 100;
+  return (
+    !backupSkiplist.includes(location) &&
+    (location.combatPercent >= 100 || backupSafelist.includes(location))
+  );
 }
 
 function canWanderTypeYellowRay(location: Location): boolean {
