@@ -84,7 +84,7 @@ export function unlock(loc: Location, value: number): boolean {
 
 const backupSkiplist = $locations`The Overgrown Lot, The Skeleton Store, The Mansion of Dr. Weirdeaux`;
 // The Haunted Pantry, The Haunted Bathroom <- Not appropriate for normal garbo
-const backupSafelist = $locations`The Haunted Gallery, The Haunted Ballroom, The Haunted Bathroom, The Haunted Library, The Haunted Billiards Room, The Penultimate Fantasy Airship, The Haunted Pantry, Cobb's Knob Barracks`;
+const backupSafelist = $locations`The Haunted Gallery, The Haunted Ballroom, The Haunted Bathroom, The Haunted Library, The Haunted Billiards Room, The Penultimate Fantasy Airship, The Haunted Pantry, Cobb's Knob Barracks, The Castle in the Clouds in the Sky (Basement), The Castle in the Clouds in the Sky (Ground Floor), The Castle in the Clouds in the Sky (Top Floor), The Haiku Dungeon, Twin Peak`;
 function canWanderTypeBackup(location: Location): boolean {
   if (location.environment === "outdoor") {
     return false;
