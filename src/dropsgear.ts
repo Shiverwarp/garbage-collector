@@ -145,21 +145,17 @@ function sweatpants(equipMode: BonusEquipMode) {
   if (!have($item`designer sweatpants`) || equipMode === "embezzler") return new Map();
 
   const needSweat =
-    (!globalOptions.ascend && get("sweat", 0) < 75) ||
+    (!globalOptions.ascend && get("sweat", 0) < 100) ||
     get("sweat", 0) < 25 * (3 - get("_sweatOutSomeBoozeUsed", 0));
 
   if (!needSweat) return new Map();
 
   const VOA = get("valueOfAdventure");
 
-  const bestPerfectDrink = mallMin(
-    $items`perfect cosmopolitan, perfect negroni, perfect dark and stormy, perfect mimosa, perfect old-fashioned, perfect paloma`
-  );
-  const perfectDrinkValuePerDrunk =
-    ((getAverageAdventures(bestPerfectDrink) + 3) * VOA - mallPrice(bestPerfectDrink)) / 3;
-  const splendidMartiniValuePerDrunk = (getAverageAdventures($item`splendid martini`) + 2) * VOA;
+  // Underestimate at 11 adventures per limbos, value limbos as horseradish (min copier)
+  const valuePerDrunk = 11 * VOA - mallPrice($item`jumping horseradish`);
 
-  const bonus = (Math.max(perfectDrinkValuePerDrunk, splendidMartiniValuePerDrunk) * 2) / 25;
+  const bonus = (valuePerDrunk * 2) / 25;
   return new Map([[$item`designer sweatpants`, bonus]]);
 }
 
