@@ -118,24 +118,10 @@ function pantsgiving() {
       : turnArray.findIndex((x) => count < x);
   const turns = turnArray[index] || 50000;
 
-  if (turns - count > estimatedGarboTurns()) return new Map<Item, number>();
-
   const cachedBonus = pantsgivingBonuses.get(turns);
   if (cachedBonus) return new Map([[$item`Pantsgiving`, cachedBonus]]);
 
-  const expectedSinusTurns = getWorkshed() === $item`portable Mayo Clinic` ? 100 : 50;
-  const expectedUseableSinusTurns = globalOptions.ascend
-    ? clamp(
-        estimatedGarboTurns() - (turns - count) - haveEffect($effect`Kicked in the Sinuses`),
-        0,
-        expectedSinusTurns
-      )
-    : expectedSinusTurns;
-  const sinusVal = expectedUseableSinusTurns * 1.0 * baseMeat;
-  const fullnessValue =
-    sinusVal +
-    get("valueOfAdventure") * 6.5 -
-    (mallPrice($item`jumping horseradish`) + mallPrice($item`Special Seasoning`));
+  const fullnessValue = get("valueOfAdventure") * 11 - mallPrice($item`jumping horseradish`);
   const pantsgivingBonus = fullnessValue / (turns * 0.9);
   pantsgivingBonuses.set(turns, pantsgivingBonus);
   return new Map<Item, number>([[$item`Pantsgiving`, pantsgivingBonus]]);
