@@ -67,18 +67,9 @@ let snojoConfigured = false;
 
 function voterSetup(): void {
   const initPriority: Map<string, number> = new Map([
-    [
-      "Meat Drop: +30",
-      0.3 *
-        ((baseMeat + 750) * embezzlerCount() +
-          baseMeat * (estimatedGarboTurns() - embezzlerCount())),
-    ],
-    [
-      "Item Drop: +15",
-      0.15 *
-        (4 * 100 * 0.3 * embezzlerCount() +
-          3 * 200 * 0.15 * (estimatedGarboTurns() - embezzlerCount())),
-    ],
+    // Estimating 2crs turns at 900, meat drop eff at 1
+    ["Meat Drop: +30", 30 * 900],
+    ["Item Drop: +15", 15 * 7 * 900],
     ["Adventures: +1", globalOptions.ascend ? 0 : get("valueOfAdventure")],
     ["Familiar Experience: +2", 8],
     ["Monster Level: +10", 5],
