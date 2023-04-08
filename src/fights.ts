@@ -904,72 +904,72 @@ const freeFightSources = [
     }
   ),
 
-  new FreeFight(
-    () => (wantPills() ? 5 - get("_saberForceUses") : 0),
-    () => {
-      if (have($familiar`Red-Nosed Snapper`)) cliExecute(`snapper ${$phylum`dude`}`);
-      setChoice(1387, 3);
-      if (
-        have($skill`Comprehensive Cartography`) &&
-        get("_monstersMapped") <
-          (getBestItemStealZone(true) && get("_fireExtinguisherCharge") >= 10 ? 2 : 3) // Save a map to use for polar vortex
-      ) {
-        withMacro(Macro.skill($skill`Use the Force`), () => {
-          mapMonster($location`Domed City of Grimacia`, $monster`grizzled survivor`);
-          runCombat();
-          runChoice(-1);
-        });
-      } else {
-        if (numericModifier($item`Grimacite guayabera`, "Monster Level") < 40) {
-          retrieveItem(1, $item`tennis ball`);
-          retrieveItem(1, $item`Louder Than Bomb`);
-          retrieveItem(1, $item`divine champagne popper`);
-        }
-        garboAdventure(
-          $location`Domed City of Grimacia`,
-          Macro.if_(
-            $monster`alielf`,
-            Macro.trySkill($skill`Asdon Martin: Spring-Loaded Front Bumper`).tryItem(
-              $item`Louder Than Bomb`
-            )
-          )
-            .if_($monster`cat-alien`, Macro.trySkill($skill`Snokebomb`).tryItem($item`tennis ball`))
-            .if_(
-              $monster`dog-alien`,
-              Macro.trySkill($skill`Feel Hatred`).tryItem($item`divine champagne popper`)
-            )
-            .step("pickpocket")
-            .skill($skill`Use the Force`)
-        );
-      }
-    },
-    false,
-    {
-      requirements: () => {
-        const canPickPocket = myPrimestat() === $stat`Moxie`;
-        const bestPickpocketItem = $items`tiny black hole, mime army infiltration glove`.find(
-          (item) => have(item) && canEquip(item)
-        );
-
-        const reqs = [
-          new Requirement(["1000 Pickpocket Chance"], {
-            forceEquip: $items`Fourth of May Cosplay Saber`,
-          }),
-        ];
-        if (!canPickPocket && bestPickpocketItem) {
-          reqs.push(
-            new Requirement([], {
-              forceEquip: [bestPickpocketItem],
-            })
-          );
-        }
-        return reqs;
-      },
-      familiar: () => (have($familiar`Red-Nosed Snapper`) ? $familiar`Red-Nosed Snapper` : null),
-      effects: () => $effects`Transpondent`,
-      macroAllowsFamiliarActions: false,
-    }
-  ),
+  // new FreeFight(
+  //   () => (wantPills() ? 5 - get("_saberForceUses") : 0),
+  //   () => {
+  //     if (have($familiar`Red-Nosed Snapper`)) cliExecute(`snapper ${$phylum`dude`}`);
+  //     setChoice(1387, 3);
+  //     if (
+  //       have($skill`Comprehensive Cartography`) &&
+  //       get("_monstersMapped") <
+  //         (getBestItemStealZone(true) && get("_fireExtinguisherCharge") >= 10 ? 2 : 3) // Save a map to use for polar vortex
+  //     ) {
+  //       withMacro(Macro.skill($skill`Use the Force`), () => {
+  //         mapMonster($location`Domed City of Grimacia`, $monster`grizzled survivor`);
+  //         runCombat();
+  //         runChoice(-1);
+  //       });
+  //     } else {
+  //       if (numericModifier($item`Grimacite guayabera`, "Monster Level") < 40) {
+  //         retrieveItem(1, $item`tennis ball`);
+  //         retrieveItem(1, $item`Louder Than Bomb`);
+  //         retrieveItem(1, $item`divine champagne popper`);
+  //       }
+  //       garboAdventure(
+  //         $location`Domed City of Grimacia`,
+  //         Macro.if_(
+  //           $monster`alielf`,
+  //           Macro.trySkill($skill`Asdon Martin: Spring-Loaded Front Bumper`).tryItem(
+  //             $item`Louder Than Bomb`
+  //           )
+  //         )
+  //           .if_($monster`cat-alien`, Macro.trySkill($skill`Snokebomb`).tryItem($item`tennis ball`))
+  //           .if_(
+  //             $monster`dog-alien`,
+  //             Macro.trySkill($skill`Feel Hatred`).tryItem($item`divine champagne popper`)
+  //           )
+  //           .step("pickpocket")
+  //           .skill($skill`Use the Force`)
+  //       );
+  //     }
+  //   },
+  //   false,
+  //   {
+  //     requirements: () => {
+  //       const canPickPocket = myPrimestat() === $stat`Moxie`;
+  //       const bestPickpocketItem = $items`tiny black hole, mime army infiltration glove`.find(
+  //         (item) => have(item) && canEquip(item)
+  //       );
+  //
+  //       const reqs = [
+  //         new Requirement(["1000 Pickpocket Chance"], {
+  //           forceEquip: $items`Fourth of May Cosplay Saber`,
+  //         }),
+  //       ];
+  //       if (!canPickPocket && bestPickpocketItem) {
+  //         reqs.push(
+  //           new Requirement([], {
+  //             forceEquip: [bestPickpocketItem],
+  //           })
+  //         );
+  //       }
+  //       return reqs;
+  //     },
+  //     familiar: () => (have($familiar`Red-Nosed Snapper`) ? $familiar`Red-Nosed Snapper` : null),
+  //     effects: () => $effects`Transpondent`,
+  //     macroAllowsFamiliarActions: false,
+  //   }
+  // ),
 
   // Initial 9 Pygmy fights
   new FreeFight(
@@ -1269,39 +1269,39 @@ const freeFightSources = [
     false
   ),
 
-  new FreeFight(
-    () =>
-      get("neverendingPartyAlways") && questStep("_questPartyFair") < 999
-        ? clamp(
-            10 -
-              get("_neverendingPartyFreeTurns") -
-              (get("_thesisDelivered") || !have($familiar`Pocket Professor`) ? 0 : 1),
-            0,
-            10
-          )
-        : 0,
-    () => {
-      const constructedMacro = Macro.tryHaveSkill($skill`Feel Pride`).basicCombat();
-      setNepQuestChoicesAndPrepItems();
-      garboAdventure($location`The Neverending Party`, constructedMacro);
-    },
-    true,
-    {
-      requirements: () => [
-        new Requirement(
-          [
-            ...(get("_questPartyFairQuest") === "trash" ? ["100 Item Drop"] : []),
-            ...(get("_questPartyFairQuest") === "dj" ? ["100 Meat Drop"] : []),
-          ],
-          {
-            forceEquip: [
-              ...(have($item`January's Garbage Tote`) ? $items`makeshift garbage shirt` : []),
-            ],
-          }
-        ),
-      ],
-    }
-  ),
+  // new FreeFight(
+  //   () =>
+  //     get("neverendingPartyAlways") && questStep("_questPartyFair") < 999
+  //       ? clamp(
+  //           10 -
+  //             get("_neverendingPartyFreeTurns") -
+  //             (get("_thesisDelivered") || !have($familiar`Pocket Professor`) ? 0 : 1),
+  //           0,
+  //           10
+  //         )
+  //       : 0,
+  //   () => {
+  //     const constructedMacro = Macro.tryHaveSkill($skill`Feel Pride`).basicCombat();
+  //     setNepQuestChoicesAndPrepItems();
+  //     garboAdventure($location`The Neverending Party`, constructedMacro);
+  //   },
+  //   true,
+  //   {
+  //     requirements: () => [
+  //       new Requirement(
+  //         [
+  //           ...(get("_questPartyFairQuest") === "trash" ? ["100 Item Drop"] : []),
+  //           ...(get("_questPartyFairQuest") === "dj" ? ["100 Meat Drop"] : []),
+  //         ],
+  //         {
+  //           forceEquip: [
+  //             ...(have($item`January's Garbage Tote`) ? $items`makeshift garbage shirt` : []),
+  //           ],
+  //         }
+  //       ),
+  //     ],
+  //   }
+  // ),
 
   new FreeFight(
     () => (get("ownsSpeakeasy") ? 3 - get("_speakeasyFreeFights") : 0),
@@ -1322,82 +1322,82 @@ const freeFightSources = [
     }
   ),
 
-  // Get a li'l ninja costume for 150% item drop
-  new FreeFight(
-    () =>
-      !have($item`li'l ninja costume`) &&
-      have($familiar`Trick-or-Treating Tot`) &&
-      !get("_firedJokestersGun") &&
-      have($item`The Jokester's gun`) &&
-      canEquip($item`The Jokester's gun`) &&
-      questStep("questL08Trapper") >= 2,
-    () =>
-      garboAdventure(
-        $location`Lair of the Ninja Snowmen`,
-        Macro.skill($skill`Fire the Jokester's Gun`).abort()
-      ),
-    true,
-    {
-      requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
-      macroAllowsFamiliarActions: false,
-    }
-  ),
-
-  // Fallback for li'l ninja costume if Lair of the Ninja Snowmen is unavailable
-  new FreeFight(
-    () =>
-      !have($item`li'l ninja costume`) &&
-      have($familiar`Trick-or-Treating Tot`) &&
-      !get("_firedJokestersGun") &&
-      have($item`The Jokester's gun`) &&
-      canEquip($item`The Jokester's gun`) &&
-      have($skill`Comprehensive Cartography`) &&
-      get("_monstersMapped") < 3,
-    () => {
-      try {
-        Macro.skill($skill`Fire the Jokester's Gun`)
-          .abort()
-          .setAutoAttack();
-        mapMonster($location`The Haiku Dungeon`, $monster`amateur ninja`);
-      } finally {
-        setAutoAttack(0);
-      }
-    },
-    true,
-    {
-      requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
-      macroAllowsFamiliarActions: false,
-    }
-  ),
-  new FreeFight(
-    () => {
-      if (!have($item`closed-circuit pay phone`)) return false;
-      if (have($effect`Shadow Affinity`)) return true;
-      if (get("_shadowAffinityToday")) return false;
-
-      if (!ClosedCircuitPayphone.rufusTarget()) return true;
-      if (get("rufusQuestType") === "items") {
-        return false; // We deemed it unprofitable to complete the quest in potionSetup
-      }
-      if (get("encountersUntilSRChoice", 0) === 0) {
-        // Target is either an artifact or a boss
-        return true; // Get the artifact or kill the boss immediately for free
-      }
-      return false; // We have to spend turns to get the artifact or kill the boss
-    },
-    () => {
-      propertyManager.set({ shadowLabyrinthGoal: "effects" });
-      if (!get("_shadowAffinityToday") && !ClosedCircuitPayphone.rufusTarget()) {
-        ClosedCircuitPayphone.chooseQuest(() => 2); // Choose an artifact (not supporting boss for now)
-      }
-      adv1(bestShadowRift(), -1, "");
-      if (get("encountersUntilSRChoice") === 0) adv1(bestShadowRift(), -1, ""); // grab the NC
-      if (!have($effect`Shadow Affinity`) && get("encountersUntilSRChoice") !== 0) {
-        setLocation($location.none); // Reset location to not affect mafia's item drop calculations
-      }
-    },
-    true
-  ),
+  // // Get a li'l ninja costume for 150% item drop
+  // new FreeFight(
+  //   () =>
+  //     !have($item`li'l ninja costume`) &&
+  //     have($familiar`Trick-or-Treating Tot`) &&
+  //     !get("_firedJokestersGun") &&
+  //     have($item`The Jokester's gun`) &&
+  //     canEquip($item`The Jokester's gun`) &&
+  //     questStep("questL08Trapper") >= 2,
+  //   () =>
+  //     garboAdventure(
+  //       $location`Lair of the Ninja Snowmen`,
+  //       Macro.skill($skill`Fire the Jokester's Gun`).abort()
+  //     ),
+  //   true,
+  //   {
+  //     requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
+  //     macroAllowsFamiliarActions: false,
+  //   }
+  // ),
+  //
+  // // Fallback for li'l ninja costume if Lair of the Ninja Snowmen is unavailable
+  // new FreeFight(
+  //   () =>
+  //     !have($item`li'l ninja costume`) &&
+  //     have($familiar`Trick-or-Treating Tot`) &&
+  //     !get("_firedJokestersGun") &&
+  //     have($item`The Jokester's gun`) &&
+  //     canEquip($item`The Jokester's gun`) &&
+  //     have($skill`Comprehensive Cartography`) &&
+  //     get("_monstersMapped") < 3,
+  //   () => {
+  //     try {
+  //       Macro.skill($skill`Fire the Jokester's Gun`)
+  //         .abort()
+  //         .setAutoAttack();
+  //       mapMonster($location`The Haiku Dungeon`, $monster`amateur ninja`);
+  //     } finally {
+  //       setAutoAttack(0);
+  //     }
+  //   },
+  //   true,
+  //   {
+  //     requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
+  //     macroAllowsFamiliarActions: false,
+  //   }
+  // ),
+  // new FreeFight(
+  //  () => {
+  //    if (!have($item`closed-circuit pay phone`)) return false;
+  //    if (have($effect`Shadow Affinity`)) return true;
+  //    if (get("_shadowAffinityToday")) return false;
+  //
+  //    if (!ClosedCircuitPayphone.rufusTarget()) return true;
+  //    if (get("rufusQuestType") === "items") {
+  //      return false; // We deemed it unprofitable to complete the quest in potionSetup
+  //    }
+  //    if (get("encountersUntilSRChoice", 0) === 0) {
+  //      // Target is either an artifact or a boss
+  //      return true; // Get the artifact or kill the boss immediately for free
+  //    }
+  //    return false; // We have to spend turns to get the artifact or kill the boss
+  //  },
+  //  () => {
+  //    propertyManager.set({ shadowLabyrinthGoal: "effects" });
+  //    if (!get("_shadowAffinityToday") && !ClosedCircuitPayphone.rufusTarget()) {
+  //      ClosedCircuitPayphone.chooseQuest(() => 2); // Choose an artifact (not supporting boss for now)
+  //    }
+  //    adv1(bestShadowRift(), -1, "");
+  //    if (get("encountersUntilSRChoice") === 0) adv1(bestShadowRift(), -1, ""); // grab the NC
+  //    if (!have($effect`Shadow Affinity`) && get("encountersUntilSRChoice") !== 0) {
+  //      setLocation($location.none); // Reset location to not affect mafia's item drop calculations
+  //    }
+  //  },
+  //  true
+  // ),
 ];
 
 const freeRunFightSources = [
