@@ -7,6 +7,7 @@ import {
   itemAmount,
   Location,
   mallPrice,
+  maximize,
   myAdventures,
   myInebriety,
   myLevel,
@@ -264,7 +265,9 @@ const turns: AdventureAction[] = [
         Macro.if_(
           `(monsterid ${embezzler.id}) && !gotjump && !(pastround 2)`,
           Macro.externalIf(underwater, Macro.item($item`pulled green taffy`)).meatKill()
-        ).abort()
+        ).abortWithMsg(
+          `Expected a digitized ${SourceTerminal.getDigitizeMonster()}, but encountered something else.`
+        )
       );
       return get("_sourceTerminalDigitizeMonsterCount") !== start;
     },
@@ -519,6 +522,7 @@ function generateTurnsAtEndOfDay(): void {
       0,
       itemAmount($item`magical sausage`) + itemAmount($item`magical sausage casing`)
     );
+    maximize("MP", false);
     eat(available, $item`magical sausage`);
   }
 

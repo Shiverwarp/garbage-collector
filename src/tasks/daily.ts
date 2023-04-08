@@ -2,6 +2,7 @@ import { Task } from "grimoire-kolmafia";
 import {
   adv1,
   canadiaAvailable,
+  canEquip,
   changeMcd,
   cliExecute,
   currentMcd,
@@ -500,7 +501,12 @@ export const DailyTasks: Task[] = [
     completed: () => have($effect`Eldritch Attunement`),
     do: () => adv1($location`Generic Summer Holiday Swimming!`),
     acquire: [{ item: $item`water wings` }],
-    outfit: { acc1: $item`water wings` },
+    outfit: () =>
+      myInebriety() > inebrietyLimit() &&
+      have($item`Drunkula's wineglass`) &&
+      canEquip($item`Drunkula's wineglass`)
+        ? { offhand: $item`Drunkula's wineglass`, acc1: $item`water wings` }
+        : { acc1: $item`water wings` },
   },
   // {
   //   name: "Check Neverending Party Quest",
