@@ -3,7 +3,9 @@ import {
   availableAmount,
   buy,
   canAdventure,
+  canEquip,
   cliExecute,
+  closetAmount,
   create,
   Effect,
   equip,
@@ -30,6 +32,7 @@ import {
   myLevel,
   myMaxhp,
   myPath,
+  myPrimestat,
   myThrall,
   numericModifier,
   outfit,
@@ -45,6 +48,7 @@ import {
   setLocation,
   Skill,
   stashAmount,
+  takeCloset,
   toInt,
   toItem,
   totalTurnsPlayed,
@@ -67,8 +71,10 @@ import {
   $monsters,
   $path,
   $phyla,
+  $phylum,
   $skill,
   $slot,
+  $stat,
   $thrall,
   ActionSource,
   AsdonMartin,
@@ -201,24 +207,24 @@ function embezzlerSetup() {
   freeFightMood().execute(50);
   useBuffExtenders();
   burnLibrams(400);
-  // if (
-  //   globalOptions.ascend &&
-  //   questStep("questM16Temple") > 0 &&
-  //   get("lastTempleAdventures") < myAscensions() &&
-  //   acquire(1, $item`stone wool`, 3 * get("valueOfAdventure") + 100, false) > 0
-  // ) {
-  //   ensureEffect($effect`Stone-Faced`);
-  //   setChoice(582, 1);
-  //   setChoice(579, 3);
-  //   while (get("lastTempleAdventures") < myAscensions()) {
-  //     const run = tryFindFreeRun() ?? ltbRun();
-  //     if (!run) break;
-  //     useFamiliar(run.constraints.familiar?.() ?? freeFightFamiliar());
-  //     run.constraints.preparation?.();
-  //     freeFightOutfit(run.constraints.equipmentRequirements?.());
-  //     garboAdventure($location`The Hidden Temple`, run.macro);
-  //   }
-  // }
+  if (
+    globalOptions.ascend &&
+    questStep("questM16Temple") > 0 &&
+    get("lastTempleAdventures") < myAscensions() &&
+    acquire(1, $item`stone wool`, 3 * get("valueOfAdventure") + 100, false) > 0
+  ) {
+    ensureEffect($effect`Stone-Faced`);
+    setChoice(582, 1);
+    setChoice(579, 3);
+    while (get("lastTempleAdventures") < myAscensions()) {
+      const run = tryFindFreeRun() ?? ltbRun();
+      if (!run) break;
+      useFamiliar(run.constraints.familiar?.() ?? freeFightFamiliar());
+      run.constraints.preparation?.();
+      freeFightOutfit(run.constraints.equipmentRequirements?.());
+      garboAdventure($location`The Hidden Temple`, run.macro);
+    }
+  }
 
   bathroomFinance(embezzlerCount());
 
@@ -771,14 +777,14 @@ const freeFightSources = [
     false
   ),
 
-  // new FreeFight(
-  //   () => clamp(3 - get("_lynyrdSnareUses"), 0, 3),
-  //   () => use($item`lynyrd snare`),
-  //   true,
-  //   {
-  //     cost: () => mallPrice($item`lynyrd snare`),
-  //   }
-  // ),
+  new FreeFight(
+    () => clamp(3 - get("_lynyrdSnareUses"), 0, 3),
+    () => use($item`lynyrd snare`),
+    true,
+    {
+      cost: () => mallPrice($item`lynyrd snare`),
+    }
+  ),
 
   new FreeFight(
     () =>
@@ -885,72 +891,72 @@ const freeFightSources = [
     }
   ),
 
-  // new FreeFight(
-  //   () => (wantPills() ? 5 - get("_saberForceUses") : 0),
-  //   () => {
-  //     if (have($familiar`Red-Nosed Snapper`)) cliExecute(`snapper ${$phylum`dude`}`);
-  //     setChoice(1387, 3);
-  //     if (
-  //       have($skill`Comprehensive Cartography`) &&
-  //       get("_monstersMapped") <
-  //         (getBestItemStealZone(true) && get("_fireExtinguisherCharge") >= 10 ? 2 : 3) // Save a map to use for polar vortex
-  //     ) {
-  //       withMacro(Macro.skill($skill`Use the Force`), () => {
-  //         mapMonster($location`Domed City of Grimacia`, $monster`grizzled survivor`);
-  //         runCombat();
-  //         runChoice(-1);
-  //       });
-  //     } else {
-  //       if (numericModifier($item`Grimacite guayabera`, "Monster Level") < 40) {
-  //         retrieveItem(1, $item`tennis ball`);
-  //         retrieveItem(1, $item`Louder Than Bomb`);
-  //         retrieveItem(1, $item`divine champagne popper`);
-  //       }
-  //       garboAdventure(
-  //         $location`Domed City of Grimacia`,
-  //         Macro.if_(
-  //           $monster`alielf`,
-  //           Macro.trySkill($skill`Asdon Martin: Spring-Loaded Front Bumper`).tryItem(
-  //             $item`Louder Than Bomb`
-  //           )
-  //         )
-  //           .if_($monster`cat-alien`, Macro.trySkill($skill`Snokebomb`).tryItem($item`tennis ball`))
-  //           .if_(
-  //             $monster`dog-alien`,
-  //             Macro.trySkill($skill`Feel Hatred`).tryItem($item`divine champagne popper`)
-  //           )
-  //           .step("pickpocket")
-  //           .skill($skill`Use the Force`)
-  //       );
-  //     }
-  //   },
-  //   false,
-  //   {
-  //     requirements: () => {
-  //       const canPickPocket = myPrimestat() === $stat`Moxie`;
-  //       const bestPickpocketItem = $items`tiny black hole, mime army infiltration glove`.find(
-  //         (item) => have(item) && canEquip(item)
-  //       );
-  //
-  //       const reqs = [
-  //         new Requirement(["1000 Pickpocket Chance"], {
-  //           forceEquip: $items`Fourth of May Cosplay Saber`,
-  //         }),
-  //       ];
-  //       if (!canPickPocket && bestPickpocketItem) {
-  //         reqs.push(
-  //           new Requirement([], {
-  //             forceEquip: [bestPickpocketItem],
-  //           })
-  //         );
-  //       }
-  //       return reqs;
-  //     },
-  //     familiar: () => (have($familiar`Red-Nosed Snapper`) ? $familiar`Red-Nosed Snapper` : null),
-  //     effects: () => $effects`Transpondent`,
-  //     macroAllowsFamiliarActions: false,
-  //   }
-  // ),
+  new FreeFight(
+    () => (wantPills() ? 5 - get("_saberForceUses") : 0),
+    () => {
+      if (have($familiar`Red-Nosed Snapper`)) cliExecute(`snapper ${$phylum`dude`}`);
+      setChoice(1387, 3);
+      if (
+        have($skill`Comprehensive Cartography`) &&
+        get("_monstersMapped") <
+          (getBestItemStealZone(true) && get("_fireExtinguisherCharge") >= 10 ? 2 : 3) // Save a map to use for polar vortex
+      ) {
+        withMacro(Macro.skill($skill`Use the Force`), () => {
+          mapMonster($location`Domed City of Grimacia`, $monster`grizzled survivor`);
+          runCombat();
+          runChoice(-1);
+        });
+      } else {
+        if (numericModifier($item`Grimacite guayabera`, "Monster Level") < 40) {
+          retrieveItem(1, $item`tennis ball`);
+          retrieveItem(1, $item`Louder Than Bomb`);
+          retrieveItem(1, $item`divine champagne popper`);
+        }
+        garboAdventure(
+          $location`Domed City of Grimacia`,
+          Macro.if_(
+            $monster`alielf`,
+            Macro.trySkill($skill`Asdon Martin: Spring-Loaded Front Bumper`).tryItem(
+              $item`Louder Than Bomb`
+            )
+          )
+            .if_($monster`cat-alien`, Macro.trySkill($skill`Snokebomb`).tryItem($item`tennis ball`))
+            .if_(
+              $monster`dog-alien`,
+              Macro.trySkill($skill`Feel Hatred`).tryItem($item`divine champagne popper`)
+            )
+            .step("pickpocket")
+            .skill($skill`Use the Force`)
+        );
+      }
+    },
+    false,
+    {
+      requirements: () => {
+        const canPickPocket = myPrimestat() === $stat`Moxie`;
+        const bestPickpocketItem = $items`tiny black hole, mime army infiltration glove`.find(
+          (item) => have(item) && canEquip(item)
+        );
+
+        const reqs = [
+          new Requirement(["1000 Pickpocket Chance"], {
+            forceEquip: $items`Fourth of May Cosplay Saber`,
+          }),
+        ];
+        if (!canPickPocket && bestPickpocketItem) {
+          reqs.push(
+            new Requirement([], {
+              forceEquip: [bestPickpocketItem],
+            })
+          );
+        }
+        return reqs;
+      },
+      familiar: () => (have($familiar`Red-Nosed Snapper`) ? $familiar`Red-Nosed Snapper` : null),
+      effects: () => $effects`Transpondent`,
+      macroAllowsFamiliarActions: false,
+    }
+  ),
 
   // Initial 9 Pygmy fights
   new FreeFight(
@@ -1006,7 +1012,7 @@ const freeFightSources = [
   ),
 
   // 11th+ pygmy fight if we have a saber- saber friends
-  /* new FreeFight(
+  new FreeFight(
     () => {
       const rightTime =
         have($item`Fourth of May Cosplay Saber`) &&
@@ -1041,7 +1047,7 @@ const freeFightSources = [
     },
     false,
     pygmyOptions($items`Fourth of May Cosplay Saber`)
-  ), */
+  ),
 
   // Finally, saber or not, if we have a drunk pygmy in our crystal ball, let it out.
   new FreeFight(
@@ -1251,6 +1257,40 @@ const freeFightSources = [
   ),
 
   new FreeFight(
+    () =>
+      get("neverendingPartyAlways") && questStep("_questPartyFair") < 999
+        ? clamp(
+            10 -
+              get("_neverendingPartyFreeTurns") -
+              (get("_thesisDelivered") || !have($familiar`Pocket Professor`) ? 0 : 1),
+            0,
+            10
+          )
+        : 0,
+    () => {
+      const constructedMacro = Macro.tryHaveSkill($skill`Feel Pride`).basicCombat();
+      setNepQuestChoicesAndPrepItems();
+      garboAdventure($location`The Neverending Party`, constructedMacro);
+    },
+    true,
+    {
+      requirements: () => [
+        new Requirement(
+          [
+            ...(get("_questPartyFairQuest") === "trash" ? ["100 Item Drop"] : []),
+            ...(get("_questPartyFairQuest") === "dj" ? ["100 Meat Drop"] : []),
+          ],
+          {
+            forceEquip: [
+              ...(have($item`January's Garbage Tote`) ? $items`makeshift garbage shirt` : []),
+            ],
+          }
+        ),
+      ],
+    }
+  ),
+
+  new FreeFight(
     () => (get("ownsSpeakeasy") ? 3 - get("_speakeasyFreeFights") : 0),
     () => adv1($location`An Unusually Quiet Barroom Brawl`, -1, ""),
     true
@@ -1269,53 +1309,53 @@ const freeFightSources = [
     }
   ),
 
-  // // Get a li'l ninja costume for 150% item drop
-  // new FreeFight(
-  //   () =>
-  //     !have($item`li'l ninja costume`) &&
-  //     have($familiar`Trick-or-Treating Tot`) &&
-  //     !get("_firedJokestersGun") &&
-  //     have($item`The Jokester's gun`) &&
-  //     canEquip($item`The Jokester's gun`) &&
-  //     questStep("questL08Trapper") >= 2,
-  //   () =>
-  //     garboAdventure(
-  //       $location`Lair of the Ninja Snowmen`,
-  //       Macro.skill($skill`Fire the Jokester's Gun`).abort()
-  //     ),
-  //   true,
-  //   {
-  //     requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
-  //     macroAllowsFamiliarActions: false,
-  //   }
-  // ),
-  //
-  // // Fallback for li'l ninja costume if Lair of the Ninja Snowmen is unavailable
-  // new FreeFight(
-  //   () =>
-  //     !have($item`li'l ninja costume`) &&
-  //     have($familiar`Trick-or-Treating Tot`) &&
-  //     !get("_firedJokestersGun") &&
-  //     have($item`The Jokester's gun`) &&
-  //     canEquip($item`The Jokester's gun`) &&
-  //     have($skill`Comprehensive Cartography`) &&
-  //     get("_monstersMapped") < 3,
-  //   () => {
-  //     try {
-  //       Macro.skill($skill`Fire the Jokester's Gun`)
-  //         .abort()
-  //         .setAutoAttack();
-  //       mapMonster($location`The Haiku Dungeon`, $monster`amateur ninja`);
-  //     } finally {
-  //       setAutoAttack(0);
-  //     }
-  //   },
-  //   true,
-  //   {
-  //     requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
-  //     macroAllowsFamiliarActions: false,
-  //   }
-  // ),
+  // Get a li'l ninja costume for 150% item drop
+  new FreeFight(
+    () =>
+      !have($item`li'l ninja costume`) &&
+      have($familiar`Trick-or-Treating Tot`) &&
+      !get("_firedJokestersGun") &&
+      have($item`The Jokester's gun`) &&
+      canEquip($item`The Jokester's gun`) &&
+      questStep("questL08Trapper") >= 2,
+    () =>
+      garboAdventure(
+        $location`Lair of the Ninja Snowmen`,
+        Macro.skill($skill`Fire the Jokester's Gun`).abort()
+      ),
+    true,
+    {
+      requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
+      macroAllowsFamiliarActions: false,
+    }
+  ),
+
+  // Fallback for li'l ninja costume if Lair of the Ninja Snowmen is unavailable
+  new FreeFight(
+    () =>
+      !have($item`li'l ninja costume`) &&
+      have($familiar`Trick-or-Treating Tot`) &&
+      !get("_firedJokestersGun") &&
+      have($item`The Jokester's gun`) &&
+      canEquip($item`The Jokester's gun`) &&
+      have($skill`Comprehensive Cartography`) &&
+      get("_monstersMapped") < 3,
+    () => {
+      try {
+        Macro.skill($skill`Fire the Jokester's Gun`)
+          .abort()
+          .setAutoAttack();
+        mapMonster($location`The Haiku Dungeon`, $monster`amateur ninja`);
+      } finally {
+        setAutoAttack(0);
+      }
+    },
+    true,
+    {
+      requirements: () => [new Requirement([], { forceEquip: $items`The Jokester's gun` })],
+      macroAllowsFamiliarActions: false,
+    }
+  ),
 ];
 
 const freeRunFightSources = [
@@ -1438,7 +1478,10 @@ const freeRunFightSources = [
       propertyManager.setChoices({
         1215: 1, // Gingerbread Civic Center advance clock
       });
-      garboAdventure($location`Gingerbread Civic Center`, Macro.abort());
+      garboAdventure(
+        $location`Gingerbread Civic Center`,
+        Macro.abortWithMsg(`Expected "Setting the Clock" but ended up in combat.`)
+      );
     },
     false,
     {
@@ -1481,7 +1524,10 @@ const freeRunFightSources = [
       propertyManager.setChoices({
         1204: 1, // Gingerbread Train Station Noon random candy
       });
-      garboAdventure($location`Gingerbread Train Station`, Macro.abort());
+      garboAdventure(
+        $location`Gingerbread Train Station`,
+        Macro.abortWithMsg(`Expected "Noon at the Train Station" but ended up in combat.`)
+      );
     },
     false,
     {
@@ -1610,6 +1656,30 @@ const freeRunFightSources = [
       },
     }
   ),
+  // Try for an ultra-rare with mayfly runs ;)
+  new FreeRunFight(
+    () =>
+      have($item`mayfly bait necklace`) &&
+      canAdventure($location`Cobb's Knob Menagerie, Level 1`) &&
+      get("_mayflySummons") < 30,
+    (runSource: ActionSource) => {
+      garboAdventure(
+        $location`Cobb's Knob Menagerie, Level 1`,
+        Macro.if_($monster`QuickBASIC elemental`, Macro.basicCombat())
+          .step("pickpocket")
+          .if_($monster`BASIC Elemental`, Macro.trySkill($skill`Summon Mayfly Swarm`))
+          .step(runSource.macro)
+      );
+    },
+    {
+      requirements: () => [
+        new Requirement([], {
+          forceEquip: $items`mayfly bait necklace`,
+          bonusEquip: new Map($items`carnivorous potted plant`.map((item) => [item, 100])),
+        }),
+      ],
+    }
+  ),
   // Try for mini-hipster\goth kid free fights with any remaining non-familiar free runs
   new FreeRunFight(
     () =>
@@ -1653,7 +1723,6 @@ const freeRunFightSources = [
       garboAdventure(
         $location`Cobb's Knob Menagerie, Level 1`,
         Macro.if_($monster`QuickBASIC elemental`, Macro.basicCombat())
-          .step("pickpocket")
           .if_($monster`BASIC Elemental`, Macro.trySkill($skill`Summon Mayfly Swarm`))
           .step(runSource.macro)
       );
@@ -1817,32 +1886,6 @@ const freeKillSources = [
     }
   ),
 
-  // Shadow Bricks.
-  // Estimated value of killing a sandworm is value of spice melange * 0.066 (our item drop bonus is about 6.5k with champagne, but should only consider when champagne runs out). We'll underestimate a bit.
-  new FreeFight(
-    () =>
-      mallPrice($item`shadow brick`) + mallPrice($item`drum machine`) <
-        garboValue($item`spice melange`) * 0.031 && have($item`shadow brick`)
-        ? clamp(13 - get("_shadowBricksUsed", 13), 0, 13)
-        : 0,
-    () => {
-      ensureBeachAccess();
-      withMacro(
-        Macro.trySkill($skill`Sing Along`)
-          .tryHaveSkill($skill`Otoscope`)
-          .item($item`shadow brick`),
-        () => use($item`drum machine`)
-      );
-    },
-    true,
-    {
-      familiar: bestFairy,
-      requirements: () => [sandwormRequirement()],
-      effects: () =>
-        have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
-  ),
-
   new FreeFight(
     () => have($item`Jurassic Parka`) && !have($effect`Everything Looks Yellow`),
     () => {
@@ -1909,10 +1952,6 @@ export function freeFights(): void {
     1324: 5, // Fight a random partier
   });
 
-  for (const freeFightSource of freeFightSources) {
-    freeFightSource.runAll();
-  }
-
   freeRunFights();
 
   killRobortCreaturesForFree();
@@ -1949,6 +1988,10 @@ export function freeFights(): void {
       $item`glark cable`,
       globalOptions.prefs.valueOfFreeFight
     );
+  }
+
+  for (const freeFightSource of freeFightSources) {
+    freeFightSource.runAll();
   }
 
   tryFillLatte();
@@ -2042,11 +2085,12 @@ export function doSausage(): void {
   useFamiliar(freeFightFamiliar());
   freeFightOutfit(new Requirement([], { forceEquip: $items`Kramco Sausage-o-Matic™` }));
   do {
+    const goblin = $monster`sausage goblin`;
     garboAdventureAuto(
       wanderWhere("wanderer"),
-      Macro.if_($monster`sausage goblin`, Macro.basicCombat())
+      Macro.if_(goblin, Macro.basicCombat())
         .ifHolidayWanderer(Macro.basicCombat())
-        .abort()
+        .abortWithMsg(`Expected ${goblin} but got something else.`)
     );
   } while (dogOrHolidayWanderer());
   if (getAutoAttack() !== 0) setAutoAttack(0);
