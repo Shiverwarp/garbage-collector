@@ -1672,8 +1672,7 @@ const freeRunFightSources = [
       );
     },
     {
-      familiar: () =>
-        have($familiar`Mini-Hipster`) ? $familiar`Mini-Hipster` : $familiar`Artistic Goth Kid`,
+      familiar: () => freeFightFamiliar({ allowAttackFamiliars: false }),
       requirements: () => [
         new Requirement([], {
           forceEquip: $items`mayfly bait necklace`,
