@@ -445,10 +445,10 @@ export function main(argString = ""): void {
         });
 
         // 2. do some embezzler stuff
-        potionSetup(globalOptions.nobarf);
+        // potionSetup(globalOptions.nobarf);
         freeFights();
-        postFreeFightDailySetup(); // setup stuff that can interfere with free fights (VYKEA)
-        yachtzeeChain();
+        // postFreeFightDailySetup(); // setup stuff that can interfere with free fights (VYKEA)
+        // yachtzeeChain();
         // dailyFights(); // Don't do this, it's just embezzler fights
         // useBuffExtenders(); // Don't do this either, we want to use them ourselves for yachtzee
 
