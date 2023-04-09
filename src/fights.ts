@@ -1972,6 +1972,10 @@ export function freeFights(): void {
     1324: 5, // Fight a random partier
   });
 
+  for (const freeFightSource of freeFightSources) {
+    freeFightSource.runAll();
+  }
+
   freeRunFights();
 
   killRobortCreaturesForFree();
@@ -2008,10 +2012,6 @@ export function freeFights(): void {
       $item`glark cable`,
       globalOptions.prefs.valueOfFreeFight
     );
-  }
-
-  for (const freeFightSource of freeFightSources) {
-    freeFightSource.runAll();
   }
 
   tryFillLatte();
