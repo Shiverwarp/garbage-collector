@@ -13,6 +13,7 @@ import {
   getAutoAttack,
   getCampground,
   handlingChoice,
+  haveEffect,
   haveEquipped,
   haveOutfit,
   inebrietyLimit,
@@ -1702,6 +1703,9 @@ const freeRunFightSources = [
       canAdventure($location`Cobb's Knob Menagerie, Level 1`) &&
       get("_mayflySummons") < 30,
     (runSource: ActionSource) => {
+      if (haveEffect($effect`Third Based`) < 1) {
+        use($item`crident`);
+      }
       garboAdventure(
         $location`Cobb's Knob Menagerie, Level 1`,
         Macro.if_($monster`QuickBASIC elemental`, Macro.basicCombat())
