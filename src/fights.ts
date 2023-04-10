@@ -1011,10 +1011,7 @@ const freeFightSources = [
   ),
   // 11th pygmy fight if we lack a saber
   new FreeFight(
-    () =>
-      get("questL11Worship") !== "unstarted" &&
-      get("_drunkPygmyBanishes") === 10 &&
-      (!have($item`Fourth of May Cosplay Saber`) || crateStrategy() === "Saber"),
+    () => get("questL11Worship") !== "unstarted" && get("_drunkPygmyBanishes") === 10,
     () => {
       putCloset(itemAmount($item`bowling ball`), $item`bowling ball`);
       retrieveItem($item`Bowl of Scorpions`);
@@ -1024,43 +1021,43 @@ const freeFightSources = [
     pygmyOptions()
   ),
 
-  // 11th+ pygmy fight if we have a saber- saber friends
-  new FreeFight(
-    () => {
-      const rightTime =
-        have($item`Fourth of May Cosplay Saber`) &&
-        crateStrategy() !== "Saber" &&
-        get("_drunkPygmyBanishes") >= 10;
-      const saberedMonster = get("_saberForceMonster");
-      const wrongPygmySabered =
-        saberedMonster &&
-        $monsters`pygmy orderlies, pygmy bowler, pygmy janitor`.includes(saberedMonster);
-      const drunksCanAppear =
-        get("_drunkPygmyBanishes") === 10 ||
-        (saberedMonster === $monster`drunk pygmy` && get("_saberForceMonsterCount"));
-      return (
-        get("questL11Worship") !== "unstarted" && rightTime && !wrongPygmySabered && drunksCanAppear
-      );
-    },
-    () => {
-      if (
-        (get("_saberForceMonster") !== $monster`drunk pygmy` ||
-          get("_saberForceMonsterCount") === 1) &&
-        get("_saberForceUses") < 5
-      ) {
-        putCloset(itemAmount($item`bowling ball`), $item`bowling ball`);
-        putCloset(itemAmount($item`Bowl of Scorpions`), $item`Bowl of Scorpions`);
-        garboAdventure($location`The Hidden Bowling Alley`, Macro.skill($skill`Use the Force`));
-      } else {
-        if (closetAmount($item`Bowl of Scorpions`) > 0) {
-          takeCloset(closetAmount($item`Bowl of Scorpions`), $item`Bowl of Scorpions`);
-        } else retrieveItem($item`Bowl of Scorpions`);
-        garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro);
-      }
-    },
-    false,
-    pygmyOptions($items`Fourth of May Cosplay Saber`)
-  ),
+  // // 11th+ pygmy fight if we have a saber- saber friends
+  // new FreeFight(
+  //   () => {
+  //     const rightTime =
+  //       have($item`Fourth of May Cosplay Saber`) &&
+  //       crateStrategy() !== "Saber" &&
+  //       get("_drunkPygmyBanishes") >= 10;
+  //     const saberedMonster = get("_saberForceMonster");
+  //     const wrongPygmySabered =
+  //       saberedMonster &&
+  //       $monsters`pygmy orderlies, pygmy bowler, pygmy janitor`.includes(saberedMonster);
+  //     const drunksCanAppear =
+  //       get("_drunkPygmyBanishes") === 10 ||
+  //       (saberedMonster === $monster`drunk pygmy` && get("_saberForceMonsterCount"));
+  //     return (
+  //       get("questL11Worship") !== "unstarted" && rightTime && !wrongPygmySabered && drunksCanAppear
+  //     );
+  //   },
+  //   () => {
+  //     if (
+  //       (get("_saberForceMonster") !== $monster`drunk pygmy` ||
+  //         get("_saberForceMonsterCount") === 1) &&
+  //       get("_saberForceUses") < 5
+  //     ) {
+  //       putCloset(itemAmount($item`bowling ball`), $item`bowling ball`);
+  //       putCloset(itemAmount($item`Bowl of Scorpions`), $item`Bowl of Scorpions`);
+  //       garboAdventure($location`The Hidden Bowling Alley`, Macro.skill($skill`Use the Force`));
+  //     } else {
+  //       if (closetAmount($item`Bowl of Scorpions`) > 0) {
+  //         takeCloset(closetAmount($item`Bowl of Scorpions`), $item`Bowl of Scorpions`);
+  //       } else retrieveItem($item`Bowl of Scorpions`);
+  //       garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro);
+  //     }
+  //   },
+  //   false,
+  //   pygmyOptions($items`Fourth of May Cosplay Saber`)
+  // ),
 
   // Finally, saber or not, if we have a drunk pygmy in our crystal ball, let it out.
   new FreeFight(
