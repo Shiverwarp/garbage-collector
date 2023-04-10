@@ -1713,7 +1713,7 @@ const freeRunFightSources = [
     {
       familiar: () => freeFightFamiliar({ allowAttackFamiliars: false }),
       requirements: () => [
-        new Requirement([], {
+        new Requirement(["1000 Pickpocket Chance"], {
           forceEquip: $items`mayfly bait necklace`,
           bonusEquip: new Map($items`carnivorous potted plant`.map((item) => [item, 100])),
         }),
