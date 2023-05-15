@@ -69,41 +69,16 @@ let horseryRefreshed = false;
 let attemptCompletingBarfQuest = true;
 let snojoConfigured = false;
 
-function chibiBuffAvailable(): boolean {
-  if (!have($item`ChibiBuddy™ (on)`) && !have($item`ChibiBuddy™ (off)`)) return false;
+function chibiSetup(): void {
+  if (!have($item`ChibiBuddy™ (on)`) && !have($item`ChibiBuddy™ (off)`)) return;
   // We need to name our buddy when we turn it on!
   const chibiNames = [
-    "Oliver",
-    "Neil",
-    "William",
-    "Guillermo",
-    "Aaron",
-    "Isobel",
-    "Pope Gregory",
-    "Harvey Keitel",
-    "Angel Olsen",
-    "The Olsen Twins",
-    "Maryam Mirzakhani",
-    "Shrek",
-    "Donkey",
-    "Fiona",
-    "Fargus",
     "SSBBHax",
     "Frasier Crane",
-    "Brendan Fraser",
-    "Professor Plum",
-    "John H. Conway",
-    "John B. Conway",
-    "Butts McGruff",
-    "Samuel Gaus",
+    "William",
     "Gamuel Sauce",
     "Axis Shadowbaenimus",
     "Dale Cooper",
-    "G",
-    "Twink",
-    "Alice",
-    "Mädchen Amick",
-    "Peter Falk",
   ];
   // It is possible our Buddy died after rollover, and will turn to (off) after using it
   // It is also possible we ascended with a Buddy(on) in which case it will reset immediately without the choice adventure on use
@@ -111,7 +86,10 @@ function chibiBuffAvailable(): boolean {
     directlyUse($item`ChibiBuddy™ (on)`);
     if (handlingChoice()) {
       // This is the choice option for chibi chat
-      if (availableChoiceOptions()[5]) return true;
+      if (availableChoiceOptions()[5]) {
+        runChoice(5);
+        return;
+      }
       // Exit the choice, if our buddy died, this will give us back a buddy (off)
       runChoice(7);
     }
@@ -129,11 +107,13 @@ function chibiBuffAvailable(): boolean {
     }
     // We should now have our fresh buddy
     if (handlingChoice()) {
-      if (availableChoiceOptions()[5]) return true;
+      if (availableChoiceOptions()[5]) {
+        runChoice(5);
+        return;
+      }
       runChoice(7);
     }
   }
-  return false;
 }
 
 function voterSetup(): void {
@@ -407,16 +387,9 @@ export function configureSnojo(): void {
 export const DailyTasks: Task[] = [
   {
     name: "Chibi Buddy",
-    ready: () => chibiBuffAvailable(),
+    ready: () => have($item`ChibiBuddy™ (on)`) || have($item`ChibiBuddy™ (off)`),
     completed: () => have($effect`ChibiChanged™`),
-    do: (): void => {
-      directlyUse($item`ChibiBuddy™ (on)`);
-      if (handlingChoice()) {
-        // Chibi chat
-        runChoice(5);
-        runChoice(7);
-      }
-    },
+    do: () => chibiSetup(),
   },
   {
     name: "Refresh Latte",
