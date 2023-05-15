@@ -414,7 +414,6 @@ export const DailyTasks: Task[] = [
       if (handlingChoice()) {
         // Chibi chat
         runChoice(5);
-        // Exit the choice, if our buddy died, this will give us back a buddy (off)
         runChoice(7);
       }
     },
