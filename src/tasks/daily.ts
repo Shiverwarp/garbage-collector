@@ -110,8 +110,6 @@ function chibiSetup(): void {
     if (handlingChoice()) {
       if (availableChoiceOptions()[5]) {
         runChoice(5);
-        runChoice(7);
-        return;
       }
       runChoice(7);
     }
