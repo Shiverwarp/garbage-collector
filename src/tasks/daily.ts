@@ -69,51 +69,6 @@ let horseryRefreshed = false;
 let attemptCompletingBarfQuest = true;
 let snojoConfigured = false;
 
-function chibiSetup(): void {
-  if (!have($item`ChibiBuddy™ (on)`) && !have($item`ChibiBuddy™ (off)`)) return;
-  // We need to name our buddy when we turn it on!
-  const chibiNames = [
-    "SSBBHax",
-    "Frasier Crane",
-    "William",
-    "Gamuel Sauce",
-    "Axis Shadowbaenimus",
-    "Dale Cooper",
-  ];
-  // It is possible our Buddy died after rollover, and will turn to (off) after using it
-  // It is also possible we ascended with a Buddy(on) in which case it will reset immediately without the choice adventure on use
-  if (have($item`ChibiBuddy™ (on)`)) {
-    directlyUse($item`ChibiBuddy™ (on)`);
-    if (handlingChoice()) {
-      // This is the choice option for chibi chat
-      if (availableChoiceOptions()[5]) {
-        runChoice(5);
-        runChoice(7);
-        return;
-      }
-      // Exit the choice, if our buddy died, this will give us back a buddy (off)
-      runChoice(7);
-    }
-  }
-  // If we only have an (off) chibibuddy (whether from the beginning, or we just turned it off)
-  // Turn it back on and confirm availability of the buff
-  if (have($item`ChibiBuddy™ (off)`) && !have($item`ChibiBuddy™ (on)`)) {
-    directlyUse($item`ChibiBuddy™ (off)`);
-    if (handlingChoice()) {
-      // Naming
-      const chibiName = chibiNames[Math.floor(Math.random() * chibiNames.length)];
-      runChoice(1, `&chibiname=${chibiName}`);
-    }
-    // We should now have our fresh buddy
-    if (handlingChoice()) {
-      if (availableChoiceOptions()[5]) {
-        runChoice(5);
-      }
-      runChoice(7);
-    }
-  }
-}
-
 function voterSetup(): void {
   const initPriority: Map<string, number> = new Map([
     // Estimating 2crs turns at 900, meat drop eff at 1
@@ -385,11 +340,9 @@ export function configureSnojo(): void {
 export const DailyTasks: Task[] = [
   {
     name: "Chibi Buddy",
-    ready: () =>
-      !get("_chibiChanged", true) &&
-      (have($item`ChibiBuddy™ (on)`) || have($item`ChibiBuddy™ (off)`)),
+    ready: () => have($item`ChibiBuddy™ (on)`) || have($item`ChibiBuddy™ (off)`),
     completed: () => get("_chibiChanged", true),
-    do: () => chibiSetup(),
+    do: () => cliExecute("chibi chat"),
     limit: { soft: 1 },
   },
   {
