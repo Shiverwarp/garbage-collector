@@ -1719,12 +1719,14 @@ const freeRunFightSources = [
       garboAdventure(
         $location`Cobb's Knob Menagerie, Level 1`,
         Macro.if_($monster`QuickBASIC elemental`, Macro.basicCombat())
+          .step("pickpocket")
           .if_($monster`BASIC Elemental`, Macro.trySkill($skill`Summon Mayfly Swarm`))
           .step(runSource.macro)
       );
     },
     {
       spec: {
+        modifier: ["1000 Pickpocket Chance"],
         familiar: freeFightFamiliar({ allowAttackFamiliars: false }),
         equip: $items`mayfly bait necklace`,
         bonuses: new Map([[$item`carnivorous potted plant`, 100]]),
