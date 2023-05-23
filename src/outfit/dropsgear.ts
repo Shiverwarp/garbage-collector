@@ -290,6 +290,7 @@ export function bonusGear(
     ...bagOfManyConfections(),
     ...stickers(mode),
     ...powerGlove(),
+    ...sneegleeb(),
     ...(valueCircumstantialBonus
       ? new Map<Item, number>([
           ...pantsgiving(mode),
@@ -439,4 +440,9 @@ function powerGlove(): Map<Item, number> {
       0.25 * garboAverageValue(...$items`blue pixel, green pixel, red pixel, white pixel`),
     ],
   ]);
+}
+
+function sneegleeb(): Map<Item, number> {
+  if (!have($item`KoL Con 13 snowglobe`)) return new Map();
+  return new Map([[$item`KoL Con 13 snowglobe`, 220]]);
 }
