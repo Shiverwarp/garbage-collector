@@ -35,6 +35,9 @@ export function freeFightOutfit(spec: OutfitSpec = {}, options: MenuOptions = {}
   outfit.bonuses = bonusGear(mode);
 
   if (outfit.familiar !== $familiar`Grey Goose`) outfit.setBonus($item`tiny stillsuit`, 500);
+  if (outfit.familiar === $familiar`Melodramedary`) {
+    outfit.setBonus($item`dromedary drinking helmet`, 999);
+  }
 
   const bjornalike = $items`Crown of Thrones, Buddy Bjorn`.find((item) => outfit.canEquip(item));
   if (bjornalike) {

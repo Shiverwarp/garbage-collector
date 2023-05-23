@@ -71,10 +71,7 @@ function pantsgiving(mode: BonusEquipMode) {
       )
     : expectedSinusTurns;
   const sinusVal = expectedUseableSinusTurns * 1.0 * baseMeat;
-  const fullnessValue =
-    sinusVal +
-    get("valueOfAdventure") * 6.5 -
-    (mallPrice($item`jumping horseradish`) + mallPrice($item`Special Seasoning`));
+  const fullnessValue = get("valueOfAdventure") * 11 - mallPrice($item`jumping horseradish`);
   const pantsgivingBonus = fullnessValue / (turns * 0.9);
   pantsgivingBonuses.set(turns, pantsgivingBonus);
   return new Map<Item, number>([[$item`Pantsgiving`, pantsgivingBonus]]);
@@ -97,8 +94,8 @@ function sweatpants(mode: BonusEquipMode) {
   const perfectDrinkValuePerDrunk =
     ((getAverageAdventures(bestPerfectDrink) + 3) * VOA - mallPrice(bestPerfectDrink)) / 3;
   const splendidMartiniValuePerDrunk = (getAverageAdventures($item`splendid martini`) + 2) * VOA;
-
-  const bonus = (Math.max(perfectDrinkValuePerDrunk, splendidMartiniValuePerDrunk) * 2) / 25;
+  const valuePerDrunk = 11 * VOA - mallPrice($item`jumping horseradish`);
+  const bonus = valuePerDrunk / 25;
   return new Map([[$item`designer sweatpants`, bonus]]);
 }
 
@@ -193,6 +190,18 @@ function pantogramPants() {
   return new Map<Item, number>([[$item`pantogram pants`, 100]]);
 }
 
+function lilDocBag() {
+  if (!have($item`Lil' Doctor™ bag`)) {
+    return new Map<Item, number>([]);
+  }
+
+  if (get("questDoctorBag") === "unstarted") {
+    return new Map<Item, number>([[$item`Lil' Doctor™ bag`, 220]]);
+  } else {
+    return new Map<Item, number>([]);
+  }
+}
+
 function bagOfManyConfections() {
   if (!have($item`bag of many confections`) || !have($familiar`Stocking Mimic`)) {
     return new Map<Item, number>([]);
@@ -251,6 +260,7 @@ function bonusAccessories(mode: BonusEquipMode): Map<Item, number> {
   return new Map<Item, number>([
     ...mafiaThumbRing(mode),
     ...luckyGoldRing(mode),
+    ...lilDocBag(),
     ...mrCheengsSpectacles(),
     ...mrScreegesSpectacles(),
   ]);

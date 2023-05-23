@@ -1719,19 +1719,16 @@ const freeRunFightSources = [
       garboAdventure(
         $location`Cobb's Knob Menagerie, Level 1`,
         Macro.if_($monster`QuickBASIC elemental`, Macro.basicCombat())
-          .step("pickpocket")
           .if_($monster`BASIC Elemental`, Macro.trySkill($skill`Summon Mayfly Swarm`))
           .step(runSource.macro)
       );
     },
     {
-      familiar: () => freeFightFamiliar({ allowAttackFamiliars: false }),
-      requirements: () => [
-        new Requirement(["1000 Pickpocket Chance"], {
-          forceEquip: $items`mayfly bait necklace`,
-          bonusEquip: new Map($items`carnivorous potted plant`.map((item) => [item, 100])),
-        }),
-      ],
+      spec: {
+        familiar: freeFightFamiliar({ allowAttackFamiliars: false }),
+        equip: $items`mayfly bait necklace`,
+        bonuses: new Map([[$item`carnivorous potted plant`, 100]]),
+      },
     }
   ),
   // Try for mini-hipster\goth kid free fights with any remaining non-familiar free runs
@@ -1763,27 +1760,6 @@ const freeRunFightSources = [
         } else {
           return { familiar: $familiar`Artistic Goth Kid` };
         }
-      },
-    }
-  ),
-  // Try for an ultra-rare with mayfly runs ;)
-  new FreeRunFight(
-    () =>
-      have($item`mayfly bait necklace`) &&
-      canAdventure($location`Cobb's Knob Menagerie, Level 1`) &&
-      get("_mayflySummons") < 30,
-    (runSource: ActionSource) => {
-      garboAdventure(
-        $location`Cobb's Knob Menagerie, Level 1`,
-        Macro.if_($monster`QuickBASIC elemental`, Macro.basicCombat())
-          .if_($monster`BASIC Elemental`, Macro.trySkill($skill`Summon Mayfly Swarm`))
-          .step(runSource.macro)
-      );
-    },
-    {
-      spec: {
-        equip: $items`mayfly bait necklace`,
-        bonuses: new Map([[$item`carnivorous potted plant`, 100]]),
       },
     }
   ),
@@ -1942,32 +1918,6 @@ const freeKillSources = [
     true,
     {
       spec: sandwormSpec,
-      effects: () =>
-        have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
-  ),
-
-  // Shadow Bricks.
-  // Estimated value of killing a sandworm is value of spice melange * 0.066 (our item drop bonus is about 6.5k with champagne, but should only consider when champagne runs out). We'll underestimate a bit.
-  new FreeFight(
-    () =>
-      mallPrice($item`shadow brick`) + mallPrice($item`drum machine`) <
-        garboValue($item`spice melange`) * 0.031 && have($item`shadow brick`)
-        ? clamp(13 - get("_shadowBricksUsed", 13), 0, 13)
-        : 0,
-    () => {
-      ensureBeachAccess();
-      withMacro(
-        Macro.trySkill($skill`Sing Along`)
-          .tryHaveSkill($skill`Otoscope`)
-          .item($item`shadow brick`),
-        () => use($item`drum machine`)
-      );
-    },
-    true,
-    {
-      familiar: bestFairy,
-      requirements: () => [sandwormRequirement()],
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
     }
