@@ -1,11 +1,5 @@
-import {
-  appearanceRates,
-  getLocationMonsters,
-  itemDropsArray,
-  Location,
-  toMonster,
-} from "kolmafia";
-import { SourceTerminal, sum } from "libram";
+import { appearanceRates, getMonsters, itemDropsArray, Location } from "kolmafia";
+import { maxBy, SourceTerminal, sum } from "libram";
 import { freeFightFamiliarData } from "../familiar/freeFightFamiliar";
 import { garboValue } from "../session";
 import {
@@ -16,14 +10,13 @@ import {
   UnlockableZones,
   WandererTarget,
 } from "./lib";
-import { maxBy } from "../lib";
 
 function averageYrValue(location: Location) {
   const badAttributes = ["LUCKY", "ULTRARARE", "BOSS"];
   const rates = appearanceRates(location);
-  const monsters = Object.keys(getLocationMonsters(location))
-    .map((m) => toMonster(m))
-    .filter((m) => !badAttributes.some((s) => m.attributes.includes(s)) && rates[m.name] > 0);
+  const monsters = getMonsters(location).filter(
+    (m) => !badAttributes.some((s) => m.attributes.includes(s)) && rates[m.name] > 0
+  );
 
   const canDuplicate = SourceTerminal.have() && SourceTerminal.duplicateUsesRemaining() > 0;
   if (monsters.length === 0) {

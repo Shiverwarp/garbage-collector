@@ -136,6 +136,21 @@ const specialValueLookup = new Map<Item, () => number>([
       ),
   ],
   [$item`fake hand`, () => 50000],
+  [
+    $item`psychoanalytic jar`,
+    () =>
+      // Exclude jick because he's rate-limited
+      Math.max(
+        ...$items`jar of psychoses (The Meatsmith), jar of psychoses (The Captain of the Gourd), jar of psychoses (The Crackpot Mystic), jar of psychoses (The Pretentious Artist), jar of psychoses (The Old Man), jar of psychoses (The Suspicious-Looking Guy)`.map(
+          (jar) => garboValue(jar)
+        )
+      ),
+  ],
+]);
+
+const exclusions = new Set([
+  // For tradeable items which can be "consumed" infinitely
+  $item`ChibiBuddy™ (off)`,
 ]);
 
 function printSession(session: Session): void {
@@ -176,6 +191,7 @@ function garboSaleValue(item: Item, useHistorical: boolean): number {
 const garboRegularValueCache = new Map<Item, number>();
 const garboHistoricalValueCache = new Map<Item, number>();
 export function garboValue(item: Item, useHistorical = false): number {
+  if (exclusions.has(item)) return 0;
   useHistorical ||= globalOptions.quick;
   const cachedValue =
     garboRegularValueCache.get(item) ??

@@ -19,6 +19,7 @@ import {
   $items,
   $skill,
   AsdonMartin,
+  BeachComb,
   get,
   have,
   Mood,
@@ -171,8 +172,8 @@ export function freeFightMood(...additionalEffects: Effect[]): Mood {
   if (have($item`redwood rain stick`) && !get("_redwoodRainStickUsed")) {
     use($item`redwood rain stick`);
   }
-  const beachHeadsUsed: number | string = get("_beachHeadsUsed");
-  if (have($item`Beach Comb`) && !beachHeadsUsed.toString().split(",").includes("10")) {
+
+  if (BeachComb.freeCombs() > 0 && BeachComb.headAvailable("FAMILIAR")) {
     mood.effect($effect`Do I Know You From Somewhere?`);
   }
   if (Witchess.have() && !get("_witchessBuff")) {

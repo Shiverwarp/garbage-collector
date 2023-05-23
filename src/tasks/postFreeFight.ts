@@ -1,7 +1,16 @@
-import { Task } from "grimoire-kolmafia";
-import { cliExecute, mallPrice, myClass, myThrall, use, useSkill } from "kolmafia";
-import { $class, $item, $skill, $thrall, get, have } from "libram";
-import { baseMeat, maxBy } from "../lib";
+import { OutfitSpec, Task } from "grimoire-kolmafia";
+import {
+  cliExecute,
+  mallPrice,
+  myClass,
+  myMaxmp,
+  myThrall,
+  restoreMp,
+  use,
+  useSkill,
+} from "kolmafia";
+import { $class, $item, $skill, $thrall, get, have, maxBy } from "libram";
+import { baseMeat } from "../lib";
 import { estimatedGarboTurns } from "../turns";
 
 function bestVykeaLevel(): number {
@@ -40,6 +49,11 @@ export const PostFreeFightTasks: Task[] = [
     ready: () => myClass() === $class`Pastamancer` && have($skill`Bind Lasagmbie`),
     completed: () => myThrall() === $thrall`Lasagmbie`,
     do: () => useSkill($skill`Bind Lasagmbie`),
+    outfit: (): OutfitSpec => {
+      if (myMaxmp() >= 200) return {};
+      return { modifier: "MP" };
+    },
+    prepare: () => restoreMp(200),
   },
   {
     name: "Level Up Thrall",

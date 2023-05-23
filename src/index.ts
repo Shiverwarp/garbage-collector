@@ -1,10 +1,14 @@
 import {
+  abort,
+  availableAmount,
   buy,
   canEquip,
   cliExecute,
+  currentRound,
   getCampground,
   getClanName,
   guildStoreAvailable,
+  handlingChoice,
   inebrietyLimit,
   Item,
   logprint,
@@ -34,11 +38,13 @@ import {
   $skill,
   $slots,
   Clan,
+  examine,
   get,
   getFoldGroup,
   have,
   haveInCampground,
   JuneCleaver,
+  maxBy,
   set,
   setDefaultMaximizeOptions,
   sinceKolmafiaRevision,
@@ -49,7 +55,6 @@ import {
   bestJuneCleaverOption,
   checkGithubVersion,
   HIGHLIGHT,
-  maxBy,
   printLog,
   propertyManager,
   questStep,
@@ -58,7 +63,8 @@ import {
 } from "./lib";
 import { useBuffExtenders } from "./mood";
 import { stashItems, withStash, withVIPClan } from "./clan";
-import { dailySetup, postFreeFightDailySetup } from "./dailies";
+import { dailySetup } from "./dailies";
+import { potionSetup } from "./potions";
 import { endSession, garboAverageValue, startSession } from "./session";
 import { yachtzeeChain } from "./yachtzee";
 import barfTurn from "./barfTurn";
@@ -93,8 +99,19 @@ export function canContinue(): boolean {
 }
 
 export function main(argString = ""): void {
-  sinceKolmafiaRevision(27149);
+  sinceKolmafiaRevision(27360);
   checkGithubVersion();
+
+  // Hit up main.php to get out of easily escapable choices
+  visitUrl("main.php");
+  if (currentRound() > 0) {
+    abort("It seems like you're a bit busy right now. Don't run garbo when you're in combat!");
+  }
+  if (handlingChoice()) {
+    abort(
+      "It seems like you're a bit busy right now. Don't run garbo when you're in the middle of a choice adventure."
+    );
+  }
 
   Args.fill(globalOptions, argString);
   if (globalOptions.version) return; // Since we always print the version, all done!
@@ -223,6 +240,9 @@ export function main(argString = ""): void {
   const completedProperty = "_garboCompleted";
   set(completedProperty, "");
 
+  // re-align sweat (useful for diet and outfit)
+  examine($item`designer sweatpants`);
+
   startSession();
   ensureBarfAccess();
   if (globalOptions.simdiet) {
@@ -238,6 +258,7 @@ export function main(argString = ""): void {
       autoGarish: true,
       valueOfInventory: 2,
       suppressMallPriceCacheMessages: true,
+      shadowLabyrinthGoal: "effects",
     });
     runDiet();
     propertyManager.resetAll();
@@ -295,6 +316,25 @@ export function main(argString = ""): void {
       ? 100000
       : get("maximizerCombinationLimit");
 
+    const bannedAutoRestorers = have($item`Cincho de Mayo`)
+      ? [
+          "sleep on your clan sofa",
+          "rest in your campaway tent",
+          "rest at the chateau",
+          "rest at your campground",
+          "free rest",
+        ]
+      : [];
+
+    const hpItems = get("hpAutoRecoveryItems")
+      .split(";")
+      .filter((s) => !bannedAutoRestorers.includes(s))
+      .join(";");
+    const mpItems = get("mpAutoRecoveryItems")
+      .split(";")
+      .filter((s) => !bannedAutoRestorers.includes(s))
+      .join(";");
+
     propertyManager.set({
       logPreferenceChange: true,
       logPreferenceChangeFilter: [
@@ -324,6 +364,8 @@ export function main(argString = ""): void {
       hpAutoRecoveryTarget: 0.0,
       mpAutoRecovery: -0.05,
       mpAutoRecoveryTarget: 0.0,
+      hpAutoRecoveryItems: hpItems,
+      mpAutoRecoveryItems: mpItems,
       afterAdventureScript: "",
       betweenBattleScript: "",
       choiceAdventureScript: "choiceAdv.ash",
@@ -372,6 +414,7 @@ export function main(argString = ""): void {
         )
       );
     }
+    propertyManager.set({ shadowLabyrinthGoal: "effects" }); // Automate Shadow Labyrinth Quest
 
     safeRestore();
 

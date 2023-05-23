@@ -24,6 +24,7 @@ import {
   myFamiliar,
   myHp,
   myInebriety,
+  myLocation,
   myMaxhp,
   myMaxmp,
   myMp,
@@ -70,6 +71,7 @@ import {
   have,
   JuneCleaver,
   Macro,
+  maxBy,
   PropertiesManager,
   property,
   set,
@@ -532,44 +534,6 @@ export function freeCrafts(): number {
   );
 }
 
-/**
- * Find the best element of an array, where "best" is defined by some given criteria.
- * @param array The array to traverse and find the best element of.
- * @param optimizer Either a key on the objects we're looking at that corresponds to numerical values, or a function for mapping these objects to numbers. Essentially, some way of assigning value to the elements of the array.
- * @param reverse Make this true to find the worst element of the array, and false to find the best. Defaults to false.
- */
-export function maxBy<T>(
-  array: T[] | readonly T[],
-  optimizer: (element: T) => number,
-  reverse?: boolean
-): T;
-export function maxBy<S extends string | number | symbol, T extends { [x in S]: number }>(
-  array: T[] | readonly T[],
-  key: S,
-  reverse?: boolean
-): T;
-export function maxBy<S extends string | number | symbol, T extends { [x in S]: number }>(
-  array: T[] | readonly T[],
-  optimizer: ((element: T) => number) | S,
-  reverse = false
-): T {
-  if (!array.length) throw new Error("Don't call maxBy on an empty array!");
-
-  if (typeof optimizer === "function") {
-    return [...array].reduce(
-      ({ value, item }, other) => {
-        const otherValue = optimizer(other);
-        return value >= otherValue !== reverse
-          ? { value, item }
-          : { value: otherValue, item: other };
-      },
-      { item: array[0], value: optimizer(array[0]) }
-    ).item;
-  } else {
-    return array.reduce((a, b) => (a[optimizer] >= b[optimizer] !== reverse ? a : b));
-  }
-}
-
 export type GarboItemLists = { Newark: string[]; "Feliz Navidad": string[]; trainset: string[] };
 
 export const asArray = <T>(singleOrArray: T | T[]): T[] =>
@@ -578,24 +542,36 @@ export const asArray = <T>(singleOrArray: T | T[]): T[] =>
 let _bestShadowRift: Location | null = null;
 export function bestShadowRift(): Location {
   if (!_bestShadowRift) {
-    _bestShadowRift = ClosedCircuitPayphone.chooseRift({
-      canAdventure: true,
-      sortBy: (l: Location) => {
-        setLocation(l);
-        // We probably aren't capping item drops with the penalty
-        // so we don't really need to compute the actual outfit (or the dropModifier for that matter actually)
-        const dropModifier = 1 + numericModifier("Item Drop") / 100;
-        return sum(getMonsters(l), (m) => {
-          return sum(
-            itemDropsArray(m),
-            ({ drop, rate }) => garboValue(drop) * clamp((rate * dropModifier) / 100, 0, 1)
-          );
-        });
-      },
-    });
+    _bestShadowRift = withLocation($location`Shadow Rift`, () =>
+      ClosedCircuitPayphone.chooseRift({
+        canAdventure: true,
+        otherFilter: (l: Location) => l !== $location`Shadow Rift (The 8-Bit Realm)`,
+        sortBy: (l: Location) => {
+          // We probably aren't capping item drops with the penalty
+          // so we don't really need to compute the actual outfit (or the dropModifier for that matter actually)
+          const dropModifier = 1 + numericModifier("Item Drop") / 100;
+          return sum(getMonsters(l), (m) => {
+            return sum(
+              itemDropsArray(m),
+              ({ drop, rate }) => garboValue(drop) * clamp((rate * dropModifier) / 100, 0, 1)
+            );
+          });
+        },
+      })
+    );
     if (!_bestShadowRift) {
       throw new Error("Failed to find a suitable Shadow Rift to adventure in");
     }
   }
   return _bestShadowRift;
+}
+
+export function withLocation<T>(location: Location, action: () => T): T {
+  const start = myLocation();
+  try {
+    setLocation(location);
+    return action();
+  } finally {
+    setLocation(start);
+  }
 }

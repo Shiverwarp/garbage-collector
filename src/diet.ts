@@ -25,6 +25,7 @@ import {
   myLevel,
   myMaxhp,
   mySpleenUse,
+  npcPrice,
   print,
   retrievePrice,
   sellsItem,
@@ -57,6 +58,7 @@ import {
   getRemainingLiver,
   have,
   Kmail,
+  maxBy,
   maximizeCached,
   MayoClinic,
   MenuItem,
@@ -74,7 +76,6 @@ import {
   baseMeat,
   EMBEZZLER_MULTIPLIER,
   HIGHLIGHT,
-  maxBy,
   realmAvailable,
   userConfirmDialog,
 } from "./lib";
@@ -286,6 +287,32 @@ const stomachLiverCleaners = new Map([
   [$item`designer sweatpants`, [0, -1]],
 ]);
 
+function legendaryPizzaToMenu(
+  pizzas: { item: Item; pref: string }[],
+  maker: (out: { item: Item; price: number }) => MenuItem<Note> | MenuItem<Note>[]
+) {
+  const canCookLegendaryPizza = (pizza: Item): boolean => {
+    const recipes = [
+      pizza,
+      ...$items`roasted vegetable of Jarlsberg, Pete's rich ricotta, Boris's bread`,
+    ].map((i) => toInt(i));
+    return !recipes.some((id) => get(`unknownRecipe${id}`, true));
+  };
+  return pizzas
+    .filter(({ item, pref }) => !get(pref, true) && canCookLegendaryPizza(item))
+    .map(({ item }) =>
+      maker({
+        item,
+        price:
+          2 *
+          sum(
+            $items`Vegetable of Jarlsberg, St. Sneaky Pete's Whey, Yeast of Boris`,
+            ingredientCost
+          ),
+      })
+    );
+}
+
 export const mallMin: (items: Item[]) => Item = (items: Item[]) => maxBy(items, mallPrice, true);
 
 /**
@@ -327,9 +354,17 @@ function menu(): MenuItem<Note>[] {
   const boxingDayCareItems = $items`glass of raw eggs, punch-drunk punch`.filter((item) =>
     have(item)
   );
-  const pilsners = $items`astral pilsner`.filter((item) => globalOptions.ascend && have(item));
+  const pilsners = $items`astral pilsner`.filter((item) => have(item));
   const limitedItems = [...boxingDayCareItems, ...pilsners].map(
     (item) => new MenuItem<Note>(item, { maximum: availableAmount(item) })
+  );
+
+  const legendaryPizzas = legendaryPizzaToMenu(
+    [
+      { item: $item`Calzone of Legend`, pref: "calzoneOfLegendEaten" },
+      { item: $item`Pizza of Legend`, pref: "pizzaOfLegendEaten" },
+    ],
+    (out) => new MenuItem<Note>(out.item, { maximum: 1, priceOverride: out.price })
   );
 
   return [
@@ -347,6 +382,7 @@ function menu(): MenuItem<Note>[] {
     new MenuItem(mallMin(lasagnas)),
     new MenuItem(mallMin(smallEpics)),
     new MenuItem($item`green hamhock`),
+    ...legendaryPizzas.flat(),
 
     // BOOZE
     new MenuItem($item`elemental caipiroska`),
@@ -396,9 +432,9 @@ function menu(): MenuItem<Note>[] {
     new MenuItem($item`designer sweatpants`, {
       size: -1,
       organ: "booze",
-      maximum: Math.min(3 - get("_sweatOutSomeBoozeUsed", 0), Math.floor(get("sweat", 0) / 25)),
+      maximum: Math.min(3 - get("_sweatOutSomeBoozeUsed"), Math.floor(get("sweat") / 25)),
     }),
-  ];
+  ].filter((item) => item.price() < Infinity) as MenuItem<Note>[];
 }
 
 export function bestConsumable(
@@ -588,31 +624,10 @@ export function potionMenu(
     ? potion($item`Boris's bread`, { price: 2 * ingredientCost($item`Yeast of Boris`) })
     : [];
 
-  // Replace string with BooleanProperty later
-  const ofLegendPotion = (item: Item, prefName: string) => {
-    if (get(prefName, true)) return [];
-
-    const recipes = [
-      item,
-      ...$items`roasted vegetable of Jarlsberg, Pete's rich ricotta, Boris's bread`,
-    ].map((i) => toInt(i));
-
-    if (recipes.some((id) => get(`unknownRecipe${id}`, true))) return [];
-
-    return limitedPotion(item, 1, {
-      price:
-        2 *
-        sum($items`Vegetable of Jarlsberg, St. Sneaky Pete's Whey, Yeast of Boris`, ingredientCost),
-    });
-  };
-
-  const ofLegendMenuItems = globalOptions.ascend
-    ? [
-        ...ofLegendPotion($item`Calzone of Legend`, "calzoneOfLegendEaten"),
-        ...ofLegendPotion($item`Pizza of Legend`, "pizzaOfLegendEaten"),
-        ...ofLegendPotion($item`Deep Dish of Legend`, "deepDishOfLegendEaten"),
-      ]
-    : [];
+  const deepDish = legendaryPizzaToMenu(
+    [{ item: $item`Deep Dish of Legend`, pref: "deepDishOfLegendEaten" }],
+    (out: { item: Item; price: number }) => limitedPotion(out.item, 1, { price: out.price })
+  );
 
   return [
     ...baseMenu,
@@ -630,7 +645,7 @@ export function potionMenu(
     ...campfireHotdog,
     ...foodCone,
     ...borisBread,
-    ...ofLegendMenuItems,
+    ...deepDish.flat(),
 
     // BOOZE POTIONS
     ...potion($item`dirt julep`),
@@ -1032,8 +1047,13 @@ export function runDiet(): void {
     }
 
     MenuItem.defaultPriceFunction = (item: Item) => {
-      const itemRetrievePrice = retrievePrice(item);
-      return itemRetrievePrice > 0 ? itemRetrievePrice : item.tradeable ? mallPrice(item) : 0;
+      const prices = [retrievePrice(item), mallPrice(item), npcPrice(item)].filter(
+        (p) => p > 0 && p < Number.MAX_SAFE_INTEGER
+      );
+      if (prices.length > 0) {
+        return Math.min(...prices);
+      }
+      return !item.tradeable && have(item) ? 0 : Infinity;
     };
 
     const dietBuilder = computeDiet();

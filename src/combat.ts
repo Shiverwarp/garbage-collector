@@ -34,6 +34,7 @@ import {
   setAutoAttack,
   setCcs,
   Skill,
+  toInt,
   visitUrl,
   writeCcs,
 } from "kolmafia";
@@ -53,6 +54,7 @@ import {
   Counter,
   get,
   have,
+  SongBoom,
   SourceTerminal,
   StrictMacro,
 } from "libram";
@@ -183,6 +185,15 @@ export class Macro extends StrictMacro {
     return new Macro().tryHaveItem(item);
   }
 
+  trySingAlong(): Macro {
+    if (!SongBoom.have() || SongBoom.song() !== "Total Eclipse of Your Meat") return this;
+    return this.tryHaveSkill($skill`Sing Along`);
+  }
+
+  static trySingAlong(): Macro {
+    return new Macro().trySingAlong();
+  }
+
   familiarActions(): Macro {
     return this.externalIf(
       myFamiliar() === $familiar`Grey Goose` && timeToMeatify(),
@@ -284,7 +295,7 @@ export class Macro extends StrictMacro {
       shouldRedigitize(),
       Macro.if_($monster`Knob Goblin Embezzler`, Macro.trySkill($skill`Digitize`))
     )
-      .tryHaveSkill($skill`Sing Along`)
+      .trySingAlong()
       .familiarActions()
       .externalIf(
         digitizedMonstersRemaining() <= 5 - get("_meteorShowerUses") &&
@@ -314,7 +325,9 @@ export class Macro extends StrictMacro {
         Macro.if_($monster`garbage tourist`, Macro.trySkill($skill`Long Con`))
       )
       .externalIf(
-        have($skill`Motif`) && !have($effect`Everything Looks Blue`),
+        get("motifMonster") !== $monster`garbage tourist` &&
+          have($skill`Motif`) &&
+          !have($effect`Everything Looks Blue`),
         Macro.if_($monster`garbage tourist`, Macro.trySkill($skill`Motif`))
       )
       .externalIf(
@@ -463,7 +476,7 @@ export class Macro extends StrictMacro {
   }
 
   startCombat(): Macro {
-    return this.tryHaveSkill($skill`Sing Along`)
+    return this.trySingAlong()
       .tryHaveSkill($skill`Curse of Weaksauce`)
       .familiarActions()
       .externalIf(
@@ -511,6 +524,7 @@ export class Macro extends StrictMacro {
   }
 
   kill(): Macro {
+    const riftId = toInt($location`Shadow Rift`);
     return (
       this.externalIf(
         myClass() === $class`Sauceror` && have($skill`Curse of Weaksauce`),
@@ -519,7 +533,10 @@ export class Macro extends StrictMacro {
         .tryHaveSkill($skill`Become a Wolf`)
         .externalIf(
           !(myClass() === $class`Sauceror` && have($skill`Curse of Weaksauce`)),
-          Macro.while_("!pastround 24 && !hppercentbelow 25 && !missed 1", Macro.attack())
+          Macro.while_(
+            `!pastround 24 && !hppercentbelow 25 && !missed 1 && !snarfblat ${riftId}`,
+            Macro.attack()
+          )
         )
         // Using while_ here in case you run out of mp
         .while_("hasskill Saucegeyser", Macro.skill($skill`Saucegeyser`))
@@ -527,7 +544,14 @@ export class Macro extends StrictMacro {
         .while_("hasskill Cannelloni Cannon", Macro.skill($skill`Cannelloni Cannon`))
         .while_("hasskill Wave of Sauce", Macro.skill($skill`Wave of Sauce`))
         .while_("hasskill Saucestorm", Macro.skill($skill`Saucestorm`))
-        .while_("hasskill Lunging Thrust-Smack", Macro.skill($skill`Lunging Thrust-Smack`))
+        .while_(
+          `hasskill Northern Explosion && snarfblat ${riftId}`,
+          Macro.skill($skill`Northern Explosion`)
+        )
+        .while_(
+          `hasskill Lunging Thrust-Smack && !snarfblat ${riftId}`,
+          Macro.skill($skill`Lunging Thrust-Smack`)
+        )
         .attack()
         .repeat()
     );
@@ -614,7 +638,7 @@ export class Macro extends StrictMacro {
       return this.basicCombat();
     }
 
-    return this.tryHaveSkill($skill`Sing Along`)
+    return this.trySingAlong()
       .familiarActions()
       .tryHaveItem($item`Rain-Doh blue balls`)
       .externalIf(get("lovebugsUnlocked"), Macro.trySkill($skill`Summon Love Gnats`))

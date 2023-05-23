@@ -3,6 +3,7 @@ import {
   adv1,
   availableChoiceOptions,
   canadiaAvailable,
+  canAdventure,
   canEquip,
   changeMcd,
   cliExecute,
@@ -11,11 +12,13 @@ import {
   getClanLounge,
   gnomadsAvailable,
   handlingChoice,
+  handlingChoice,
   holiday,
   inebrietyLimit,
   Item,
   itemAmount,
   mallPrice,
+  myAscensions,
   myClass,
   myDaycount,
   myHash,
@@ -46,6 +49,7 @@ import {
   get,
   getModifier,
   have,
+  maxBy,
   Pantogram,
   set,
   SongBoom,
@@ -57,7 +61,7 @@ import { globalOptions } from "../config";
 import { embezzlerCount } from "../embezzler";
 import { meatFamiliar } from "../familiar";
 import { estimatedTentacles } from "../fights";
-import { baseMeat, maxBy } from "../lib";
+import { baseMeat, HIGHLIGHT } from "../lib";
 import { garboValue } from "../session";
 import { digitizedMonstersRemaining, estimatedGarboTurns } from "../turns";
 
@@ -355,16 +359,33 @@ export const DailyTasks: Task[] = [
     },
   },
   {
+    name: "Unlock Cemetery",
+    ready: () => get("lastGuildStoreOpen") >= myAscensions(),
+    completed: () => canAdventure($location`The Unquiet Garves`),
+    do: () => visitUrl("guild.php?place=scg"),
+    limit: { soft: 3 }, // Sometimes need to cycle through some dialogue
+  },
+  {
+    name: "Unlock Woods",
+    ready: () => have($item`bitchin' meatcar`),
+    completed: () => canAdventure($location`The Spooky Forest`),
+    do: (): void => {
+      visitUrl("guild.php?place=paco");
+      if (handlingChoice()) runChoice(1);
+    },
+    limit: { soft: 3 }, // Sometimes need to cycle through some dialogue
+  },
+  {
     name: "Configure I Voted! Sticker",
     ready: () => true,
     completed: () => have($item`"I Voted!" sticker`),
-    do: () => voterSetup(),
+    do: voterSetup,
   },
   {
     name: "Configure Pantogram",
     ready: () => Pantogram.have(),
     completed: () => Pantogram.havePants(),
-    do: () => pantogram(),
+    do: pantogram,
   },
   {
     name: "Configure Fourth of May Cosplay Saber",
@@ -419,15 +440,14 @@ export const DailyTasks: Task[] = [
   },
   {
     name: "Beach Comb Buff",
-    ready: () => have($item`Beach Comb`) || have($item`driftwood beach comb`),
-    completed: () =>
-      get("_beachHeadsUsed").split(",").includes("10") || get("_freeBeachWalksUsed") >= 11,
+    ready: () => BeachComb.available(),
+    completed: () => !BeachComb.headAvailable("FAMILIAR") || BeachComb.freeCombs() < 1,
     do: () => BeachComb.tryHead($effect`Do I Know You From Somewhere?`),
   },
   {
     name: "Beach Comb Free Walks",
-    ready: () => have($item`Beach Comb`) || have($item`driftwood beach comb`),
-    completed: () => get("_freeBeachWalksUsed") >= 11,
+    ready: () => BeachComb.available(),
+    completed: () => BeachComb.freeCombs() < 1,
     do: () => cliExecute(`combo ${11 - get("_freeBeachWalksUsed")}`),
   },
   {
@@ -515,8 +535,12 @@ export const DailyTasks: Task[] = [
       myInebriety() > inebrietyLimit() &&
       have($item`Drunkula's wineglass`) &&
       canEquip($item`Drunkula's wineglass`)
-        ? { offhand: $item`Drunkula's wineglass`, acc1: $item`water wings` }
-        : { acc1: $item`water wings` },
+        ? {
+            offhand: $item`Drunkula's wineglass`,
+            acc1: $item`water wings`,
+            avoid: $items`June cleaver`,
+          }
+        : { acc1: $item`water wings`, avoid: $items`June cleaver` },
   },
   // {
   //   name: "Check Neverending Party Quest",
@@ -530,13 +554,13 @@ export const DailyTasks: Task[] = [
     name: "Check Barf Mountain Quest",
     ready: () => get("stenchAirportAlways") || get("_stenchAirportToday"),
     completed: () => !attemptCompletingBarfQuest,
-    do: () => checkBarfQuest(),
+    do: checkBarfQuest,
   },
   {
     name: "Configure Snojo",
     ready: () => get("snojoAvailable") && get("_snojoFreeFights") < 10,
     completed: () => snojoConfigured,
-    do: () => configureSnojo(),
+    do: configureSnojo,
   },
   // Final tasks
   {
