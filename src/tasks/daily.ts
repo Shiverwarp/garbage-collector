@@ -12,7 +12,6 @@ import {
   getClanLounge,
   gnomadsAvailable,
   handlingChoice,
-  handlingChoice,
   holiday,
   inebrietyLimit,
   Item,
