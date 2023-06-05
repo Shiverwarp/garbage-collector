@@ -35,7 +35,7 @@ export function freeFightOutfit(spec: OutfitSpec = {}, options: MenuOptions = {}
   outfit.bonuses = bonusGear(mode);
 
   if (outfit.familiar !== $familiar`Grey Goose`) outfit.setBonus($item`tiny stillsuit`, 500);
-  if (outfit.familiar === $familiar`Melodramedary`) {
+  if (outfit.familiar === $familiar`Melodramedary` && get("camelSpit") < 100) {
     outfit.setBonus($item`dromedary drinking helmet`, 999);
   }
 
