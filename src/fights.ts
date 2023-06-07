@@ -1725,11 +1725,20 @@ const freeRunFightSources = [
       );
     },
     {
-      spec: {
-        modifier: ["1000 Pickpocket Chance"],
-        familiar: freeFightFamiliar({ allowAttackFamiliars: false }),
-        equip: $items`mayfly bait necklace`,
-        bonuses: new Map([[$item`carnivorous potted plant`, 100]]),
+      spec: () => {
+        const canPickPocket = myPrimestat() === $stat`Moxie`;
+        const bestPickpocketItem = $items`tiny black hole, mime army infiltration glove`.find(
+          (item) => have(item) && canEquip(item)
+        );
+        const spec: OutfitSpec = {
+          equip: $items`mayfly bait necklace`,
+          bonuses: new Map([[$item`carnivorous potted plant`, 100]]),
+          familiar: freeFightFamiliar({ allowAttackFamiliars: false }),
+        };
+        if (!canPickPocket && bestPickpocketItem) spec.equip?.push(bestPickpocketItem);
+        if (canPickPocket || bestPickpocketItem) spec.modifier = ["100 Pickpocket Chance"];
+
+        return spec;
       },
     }
   ),
