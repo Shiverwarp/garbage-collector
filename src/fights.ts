@@ -1719,8 +1719,22 @@ const freeRunFightSources = [
       garboAdventure(
         $location`Cobb's Knob Menagerie, Level 1`,
         Macro.if_($monster`QuickBASIC elemental`, Macro.basicCombat())
-          .step("pickpocket")
-          .if_($monster`BASIC Elemental`, Macro.trySkill($skill`Summon Mayfly Swarm`))
+          .if_(
+            $monster`BASIC Elemental`,
+            Macro.step("pickpocket")
+              .externalIf(
+                have($skill`Transcendent Olfaction`) && get("_olfactionsUsed") < 1,
+                Macro.trySkill($skill`Transcendent Olfaction`)
+              )
+              .externalIf(
+                have($skill`Gallapagosian Mating Call`) &&
+                  get("_gallapagosMonster") !== $monster`BASIC Elemental`,
+                Macro.skill($skill`Gallapagosian Mating Call`)
+              )
+              .trySkill($skill`Summon Mayfly Swarm`)
+          )
+          .if_($monster`Fruit Golem`, Macro.trySkill($skill`Feel Hatred`))
+          .if_($monster`Knob Goblin Mutant`, Macro.trySkill($skill`Snokebomb`))
           .step(runSource.macro)
       );
     },
