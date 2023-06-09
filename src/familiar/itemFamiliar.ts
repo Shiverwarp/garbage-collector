@@ -1,5 +1,13 @@
-import { Familiar, myFamiliar, runChoice, useFamiliar, visitUrl } from "kolmafia";
-import { $familiar, $item, findFairyMultiplier, get, have, maxBy, set } from "libram";
+import {
+  Familiar,
+  familiarWeight,
+  myFamiliar,
+  runChoice,
+  useFamiliar,
+  visitUrl,
+  weightAdjustment,
+} from "kolmafia";
+import { $effect, $familiar, $item, findFairyMultiplier, get, have, maxBy, set } from "libram";
 import { menu } from "./freeFightFamiliar";
 
 let bestNonCheerleaderFairy: Familiar;
@@ -43,7 +51,12 @@ export function bestFairy(): Familiar {
       ...menu({ includeExperienceFamiliars: false }),
       {
         familiar: $familiar`Reagnimated Gnome`,
-        expectedValue: (get("valueOfAdventure") * 70) / 1000,
+        expectedValue:
+          ((1 / 1000) *
+            get("valueOfAdventure") *
+            (familiarWeight($familiar`Reagnimated Gnome`) + weightAdjustment()) +
+            0.01 * get("valueOfAdventure")) *
+          (have($effect`Eldritch Attunement`) ? 2 : 1),
         leprechaunMultiplier: 0,
         limit: "none",
       },

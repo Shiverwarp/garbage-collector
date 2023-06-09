@@ -1,4 +1,4 @@
-import { Familiar, familiarWeight, weightAdjustment } from "kolmafia";
+import { Familiar, familiarWeight, haveEffect, weightAdjustment } from "kolmafia";
 import {
   $effect,
   $familiar,
@@ -99,6 +99,15 @@ const standardFamiliars: ConstantValueFamiliar[] = [
   {
     familiar: $familiar`Melodramedary`,
     value: () => (get("camelSpit") < 100 ? 99999 : 0),
+  },
+  {
+    familiar: $familiar`Reagnimated Gnome`,
+    value: () =>
+      ((1 / 1000) *
+        get("valueOfAdventure") *
+        (familiarWeight($familiar`Reagnimated Gnome`) + weightAdjustment()) +
+        0.01 * get("valueOfAdventure")) *
+      (have($effect`Eldritch Attunement`) ? 2 : 1),
   },
 ];
 

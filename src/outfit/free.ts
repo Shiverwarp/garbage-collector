@@ -38,6 +38,9 @@ export function freeFightOutfit(spec: OutfitSpec = {}, options: MenuOptions = {}
   if (outfit.familiar === $familiar`Melodramedary` && get("camelSpit") < 100) {
     outfit.setBonus($item`dromedary drinking helmet`, 999);
   }
+  if (outfit.familiar === $familiar`Reagnimated Gnome`) {
+    outfit.equip($item`gnomish housemaid's kgnee`);
+  }
 
   const bjornalike = $items`Crown of Thrones, Buddy Bjorn`.find((item) => outfit.canEquip(item));
   if (bjornalike) {

@@ -10,6 +10,7 @@ import {
   Effect,
   equip,
   Familiar,
+  familiarWeight,
   getAutoAttack,
   getCampground,
   handlingChoice,
@@ -63,6 +64,7 @@ import {
   useSkill,
   visitUrl,
   weaponHands,
+  weightAdjustment,
 } from "kolmafia";
 import {
   $class,
@@ -1926,17 +1928,63 @@ const freeKillSources = [
   // Shadow Bricks.
   // Estimated value of killing a sandworm is value of spice melange * 0.066 (our item drop bonus is about 6.5k with champagne, but should only consider when champagne runs out). We'll underestimate a bit.
   new FreeFight(
-    () =>
-      mallPrice($item`shadow brick`) + mallPrice($item`drum machine`) <
-        garboValue($item`spice melange`) * 0.031 && have($item`shadow brick`)
+    () => {
+      const dropChance = (Math.min(9900, numericModifier("Item Drop")) * 0.0001) / 10;
+      return mallPrice($item`shadow brick`) + mallPrice($item`drum machine`) <
+        garboValue($item`spice melange`) * dropChance && have($item`shadow brick`)
         ? clamp(13 - get("_shadowBricksUsed", 13), 0, 13)
-        : 0,
+        : 0;
+    },
     () => {
       ensureBeachAccess();
+      acquire(1, $item`shadow brick`, mallPrice($item`shadow brick`) * 1.1);
       withMacro(
         Macro.trySkill($skill`Sing Along`)
           .tryHaveSkill($skill`Otoscope`)
           .item($item`shadow brick`),
+        () => use($item`drum machine`)
+      );
+    },
+    true,
+    {
+      spec: sandwormSpec,
+      effects: () =>
+        have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
+    }
+  ),
+
+  // Shocking lick.
+  // Estimated value of killing a sandworm is value of spice melange * drop chance.
+  // Give extra value for gnome kills if we have eldritch attunement
+  new FreeFight(
+    () => {
+      const dropChance = (Math.min(9900, numericModifier("Item Drop")) * 0.0001) / 10;
+      const bestShockingLickPrice = Math.min(
+        4 * mallPrice($item`battery (AAA)`),
+        2 * mallPrice($item`battery (AA)`),
+        mallPrice($item`battery (D)`) + mallPrice($item`battery (AAA)`),
+        mallPrice($item`battery (9-Volt)`)
+      );
+      const gnomeBonus = have($effect`Eldritch Attunement`)
+        ? ((1 / 1000) *
+            get("valueOfAdventure") *
+            (familiarWeight($familiar`Reagnimated Gnome`) + weightAdjustment()) +
+            0.01 * get("valueOfAdventure")) *
+          2
+        : 0;
+      return (
+        bestShockingLickPrice + mallPrice($item`drum machine`) <
+        garboValue($item`spice melange`) * dropChance + gnomeBonus
+      );
+    },
+    () => {
+      ensureBeachAccess();
+      acquire(1, $item`battery (9-Volt)`);
+      if (get("shockingLickCharges") === 0) use($item`battery (9-Volt)`);
+      withMacro(
+        Macro.trySkill($skill`Sing Along`)
+          .tryHaveSkill($skill`Otoscope`)
+          .skill($skill`Shocking Lick`),
         () => use($item`drum machine`)
       );
     },
