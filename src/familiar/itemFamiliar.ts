@@ -43,7 +43,7 @@ export function bestFairy(): Familiar {
       set("_garbo_triedForKgnee", true);
     }
 
-    if (have($item`gnomish housemaid's kgnee`) && highestFairyMult === 1) {
+    if (have($item`gnomish housemaid's kgnee`)) {
       goodFairies.push($familiar`Reagnimated Gnome`);
     }
 
