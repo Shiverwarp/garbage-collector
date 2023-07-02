@@ -290,7 +290,7 @@ export function bonusGear(
     ...bagOfManyConfections(),
     ...stickers(mode),
     ...powerGlove(),
-    // ...sneegleeb(),
+    ...sneegleeb(),
     ...(valueCircumstantialBonus
       ? new Map<Item, number>([
           ...pantsgiving(mode),
@@ -442,7 +442,7 @@ function powerGlove(): Map<Item, number> {
   ]);
 }
 
-// function sneegleeb(): Map<Item, number> {
-//   if (!have($item`KoL Con 13 snowglobe`)) return new Map();
-//   return new Map([[$item`KoL Con 13 snowglobe`, 220]]);
-// }
+function sneegleeb(): Map<Item, number> {
+  if (!have($item`KoL Con 13 snowglobe`)) return new Map();
+  return new Map([[$item`KoL Con 13 snowglobe`, 220]]);
+}
