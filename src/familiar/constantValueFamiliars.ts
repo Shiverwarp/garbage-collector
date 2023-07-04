@@ -1,4 +1,4 @@
-import { Familiar, familiarWeight, haveEffect, weightAdjustment } from "kolmafia";
+import { Familiar, familiarWeight, haveEffect, holiday, weightAdjustment } from "kolmafia";
 import {
   $effect,
   $familiar,
@@ -99,6 +99,10 @@ const standardFamiliars: ConstantValueFamiliar[] = [
   {
     familiar: $familiar`Melodramedary`,
     value: () => (get("camelSpit") < 100 ? 99999 : 0),
+  },
+  {
+    familiar: $familiar`Patriotic Eagle`,
+    value: () => (holiday() === "Dependence Day" ? 9998 : 0),
   },
   {
     familiar: $familiar`Reagnimated Gnome`,
