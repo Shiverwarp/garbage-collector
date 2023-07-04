@@ -102,7 +102,7 @@ const standardFamiliars: ConstantValueFamiliar[] = [
   },
   {
     familiar: $familiar`Patriotic Eagle`,
-    value: () => (holiday() === "Dependence Day" ? 9998 : 0),
+    value: () => (holiday().includes("Dependence Day") ? 9998 : 0),
   },
   {
     familiar: $familiar`Reagnimated Gnome`,
