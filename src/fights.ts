@@ -1715,8 +1715,17 @@ const freeRunFightSources = [
       canAdventure($location`Cobb's Knob Menagerie, Level 1`) &&
       get("_mayflySummons") < 30,
     (runSource: ActionSource) => {
-      if (haveEffect($effect`Third Based`) < 1) {
-        use($item`crident`);
+      if (
+        haveEffect($effect`French Bronilla Brogueishness`) < 1 &&
+        mallPrice($item`bucket of fish juice`) < 500
+      ) {
+        use($item`bucket of fish juice`);
+      }
+      if (
+        haveEffect($effect`El Tango de la Maldita Suegra`) < 1 &&
+        mallPrice($item`autumn leaf`) < 1000
+      ) {
+        use($item`autumn leaf`);
       }
       garboAdventure(
         $location`Cobb's Knob Menagerie, Level 1`,
