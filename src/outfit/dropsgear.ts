@@ -322,8 +322,8 @@ function shavingBonus(): Map<Item, number> {
   ) {
     return new Map();
   }
-
-  const bonusValue = (baseMeat * 100 + 72 * 50) / 100;
+  // Gain buffs for Yachtzee
+  const bonusValue = 4000;
   return new Map<Item, number>([[$item`Daylight Shavings Helmet`, bonusValue]]);
 }
 
