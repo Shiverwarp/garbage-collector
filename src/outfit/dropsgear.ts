@@ -295,7 +295,7 @@ export function bonusGear(
       ? new Map<Item, number>([
           ...pantsgiving(mode),
           ...sweatpants(mode),
-          ...shavingBonus(),
+          ...shavingBonus(mode),
           ...snowSuit(mode),
           ...mayflowerBouquet(mode),
           ...(mode === BonusEquipMode.BARF ? magnifyingGlass() : []),
@@ -305,8 +305,12 @@ export function bonusGear(
   ]);
 }
 
-function shavingBonus(): Map<Item, number> {
-  if (!DaylightShavings.have() || DaylightShavings.buffs.some((buff) => have(buff, 2))) {
+function shavingBonus(mode: BonusEquipMode): Map<Item, number> {
+  if (
+    !DaylightShavings.have() ||
+    DaylightShavings.buffs.some((buff) => have(buff, 2)) ||
+    (mode !== BonusEquipMode.EMBEZZLER && mode !== BonusEquipMode.BARF)
+  ) {
     return new Map();
   }
 
