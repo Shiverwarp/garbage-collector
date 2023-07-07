@@ -147,12 +147,12 @@ export const DailyFamiliarTasks: Task[] = [
     completed: () => familiarEquippedEquipment($familiar`Shorter-Order Cook`) === $item`blue plate`,
     do: () => equip($familiar`Shorter-Order Cook`, $item`blue plate`),
   },
-  {
+  /*   {
     name: "Prepare Robortender",
     ready: () => have($familiar`Robortender`),
     completed: () => get("_roboDrinks").toLowerCase().includes("drive-by shooting"),
     do: () => prepRobortender(),
-  },
+  }, */
   /*   {
     name: "Acquire amulet coin",
     ready: () => have($familiar`Cornbeefadon`),
