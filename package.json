@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Script for farming meat (and garbage) in 2004 web RPG Kingdom of Loathing.",
   "repository": "https://github.com/Loathing-Associates-Scripting-Society/garbage-collector.git",
-  "main": "KoLmafia/scripts/garbage-collector/garbo.js",
+  "main": "KoLmafia/scripts/garbage-collector/CrazyRandomGarbo.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn run build:types && yarn run build:js",
