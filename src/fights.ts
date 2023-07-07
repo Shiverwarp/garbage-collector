@@ -37,6 +37,7 @@ import {
   myMaxhp,
   myPath,
   myPrimestat,
+  mySoulsauce,
   myThrall,
   myTurncount,
   numericModifier,
@@ -2138,7 +2139,7 @@ export function freeFights(): void {
 
   freeRunFights();
 
-  killRobortCreaturesForFree();
+  // killRobortCreaturesForFree();
 
   //  Use free fights on melanges if we have Tote/Squint and prices are reasonable.
   const canSquint =
