@@ -2473,7 +2473,7 @@ function findFreeKill() {
   return freeKills.find(canUseSource) ?? null;
 }
 
-function killRobortCreaturesForFree() {
+/* function killRobortCreaturesForFree() {
   if (!have($familiar`Robortender`)) return;
 
   const currentHeads = availableAmount($item`fish head`);
@@ -2529,7 +2529,7 @@ function killRobortCreaturesForFree() {
     freeKill = findFreeKill();
   }
 
-  /*   if (
+  if (
     !Robortender.currentDrinks().includes($item`drive-by shooting`) &&
     availableAmount($item`fish head`) > currentHeads &&
     userConfirmDialog(
@@ -2540,8 +2540,8 @@ function killRobortCreaturesForFree() {
     if (!have($item`drive-by shooting`)) create($item`drive-by shooting`);
     Robortender.feed($item`drive-by shooting`);
     setBestLeprechaunAsMeatFamiliar();
-  } */
-}
+  }
+} */
 
 const isFree = (monster: Monster) => monster.attributes.includes("FREE");
 const valueDrops = (monster: Monster) =>
