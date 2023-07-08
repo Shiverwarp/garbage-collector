@@ -863,6 +863,7 @@ const freeFightSources = [
           .skill($skill`Blow a Robo-Kiss`)
           .repeat(),
         () => {
+          print(`We have ${numericModifier("Monster Level")} Monster level`);
           restoreHp(myMaxhp());
           if (have($skill`Blood Bubble`)) ensureEffect($effect`Blood Bubble`);
           retrieveItem($item`[glitch season reward name]`);
