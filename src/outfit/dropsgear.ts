@@ -315,13 +315,13 @@ function shavingBonus(): Map<Item, number> {
     return new Map();
   }
 
-  if (
+  /* if (
     !globalOptions.ascend &&
     DaylightShavings.nextBuff() === $effect`Friendly Chops` &&
     estimatedGarboTurns() < 11 * 11
   ) {
     return new Map();
-  }
+  } */
   // Gain buffs for Yachtzee
   const bonusValue = 4000;
   return new Map<Item, number>([[$item`Daylight Shavings Helmet`, bonusValue]]);
