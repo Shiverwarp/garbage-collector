@@ -48,7 +48,7 @@ const scriptsConfig = merge(
     },
     output: {
       path: path.resolve(__dirname, "KoLmafia", "scripts", "garbage-collector"),
-      filename: "[name].js",
+      filename: "CrazyRandomGarbo.js",
       libraryTarget: "commonjs",
     },
   },
