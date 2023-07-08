@@ -849,7 +849,7 @@ const freeFightSources = [
       have($item`unwrapped knock-off retro superhero cape`) &&
       !get("_glitchMonsterFights") &&
       get("garbo_fightGlitch", false) &&
-      sum([...stunDurations], ([thing, duration]) => (have(thing) ? undelay(duration) : 0)) >= 5,
+      sum([...stunDurations], ([thing, duration]) => (have(thing) ? undelay(duration) : 0)) >= 4,
     () =>
       withMacro(
         Macro.trySkill($skill`Curse of Marinara`)
