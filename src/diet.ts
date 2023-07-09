@@ -238,7 +238,7 @@ export function nonOrganAdventures(): void {
     useSkill(casts, $skill`Ancestral Recall`);
   }
 
-  if (globalOptions.ascend) useIfUnused($item`borrowed time`, "_borrowedTimeUsed", 5 * MPA);
+  if (globalOptions.ascend) useIfUnused($item`borrowed time`, "_borrowedTimeUsed", 20 * MPA);
 }
 
 function pillCheck(): void {
