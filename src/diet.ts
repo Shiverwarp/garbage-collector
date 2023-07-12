@@ -228,7 +228,7 @@ export function nonOrganAdventures(): void {
 
   if (getProperty("_timesArrowUsed") !== "true" && mallPrice($item`time's arrow`) < 5 * MPA) {
     acquire(1, $item`time's arrow`, 5 * MPA);
-    cliExecute("csend 1 time's arrow to botticelli");
+    cliExecute("csend 1 time's arrow to torturebot");
     setProperty("_timesArrowUsed", "true");
   }
 
