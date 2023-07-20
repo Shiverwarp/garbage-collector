@@ -2006,13 +2006,18 @@ const freeKillSources = [
     () => {
       const dropChance = (Math.min(9900, numericModifier("Item Drop")) * 0.0001) / 10;
       return mallPrice($item`shadow brick`) + mallPrice($item`drum machine`) <
-        garboValue($item`spice melange`) * dropChance && have($item`shadow brick`)
+        garboValue($item`spice melange`) * dropChance
         ? clamp(13 - get("_shadowBricksUsed", 13), 0, 13)
         : 0;
     },
     () => {
+      const dropChance = (Math.min(9900, numericModifier("Item Drop")) * 0.0001) / 10;
       ensureBeachAccess();
-      acquire(1, $item`shadow brick`, mallPrice($item`shadow brick`) * 1.1);
+      acquire(
+        1,
+        $item`shadow brick`,
+        garboValue($item`spice melange`) * dropChance - mallPrice($item`drum machine`)
+      );
       withMacro(
         Macro.trySkill($skill`Sing Along`)
           .tryHaveSkill($skill`Otoscope`)
