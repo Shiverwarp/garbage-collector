@@ -36,7 +36,7 @@ function volcanoItemValue({ quantity, item }: VolcanoItem): number {
     // Check if we can use Clara's bell for Yachtzee
     // If so, we call the opportunity cost of this about 40k
     if (realmAvailable("sleaze") && have($item`fishy pipe`) && !get("_fishyPipeUsed")) {
-      return quantity * 40000;
+      return quantity * 75000;
     } else {
       return quantity * get("valueOfAdventure");
     }
