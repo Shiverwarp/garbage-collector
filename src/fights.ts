@@ -1645,7 +1645,7 @@ const freeRunFightSources = [
       }
     },
     {
-      spec: { bonuses: new Map([[$item`carnivorous potted plant`, 100]]) },
+      spec: { equip: $items`carnivorous potted plant` },
     }
   ),
   new FreeFight(
@@ -1707,7 +1707,7 @@ const freeRunFightSources = [
       }
     },
     {
-      spec: { bonuses: new Map([[$item`carnivorous potted plant`, 100]]) },
+      spec: { equip: $items`carnivorous potted plant` },
     }
   ),
   new FreeFight(
