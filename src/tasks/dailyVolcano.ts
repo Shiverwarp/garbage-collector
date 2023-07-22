@@ -90,20 +90,20 @@ export const DailyVolcanoTasks: Task[] = [
     completed: () => get("_volcanoItemRedeemed"),
     do: () => checkVolcanoQuest(),
   },
-  {
-    name: "Free Volcoino",
-    ready: () => realmAvailable("hot"),
-    completed: () => get("_infernoDiscoVisited"),
-    do: (): void => {
-      visitUrl("place.php?whichplace=airport_hot&action=airport4_zone1");
-      runChoice(7);
-    },
-    acquire: () =>
-      $items`smooth velvet pocket square, smooth velvet socks, smooth velvet hat, smooth velvet shirt, smooth velvet hanky, smooth velvet pants`.map(
-        (x) => <AcquireItem>{ item: x }
-      ),
-    outfit: { modifier: "disco style" },
-  },
+  // {
+  //   name: "Free Volcoino",
+  //   ready: () => realmAvailable("hot"),
+  //   completed: () => get("_infernoDiscoVisited"),
+  //   do: (): void => {
+  //     visitUrl("place.php?whichplace=airport_hot&action=airport4_zone1");
+  //     runChoice(7);
+  //   },
+  //   acquire: () =>
+  //     $items`smooth velvet pocket square, smooth velvet socks, smooth velvet hat, smooth velvet shirt, smooth velvet hanky, smooth velvet pants`.map(
+  //       (x) => <AcquireItem>{ item: x }
+  //     ),
+  //   outfit: { modifier: "disco style" },
+  // },
   {
     name: "Free Volcano Mining",
     ready: () => realmAvailable("hot") && have($skill`Unaccompanied Miner`),
