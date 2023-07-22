@@ -1713,7 +1713,8 @@ const freeRunFightSources = [
     () =>
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 19 &&
-      (availableAmount($item`sprinkles`) > 5 || haveOutfit("gingerbread best")),
+      availableAmount($item`sprinkles`) >= 300 &&
+      haveOutfit("gingerbread best"),
     () => {
       propertyManager.setChoices({
         1215: 1, // Gingerbread Civic Center advance clock
