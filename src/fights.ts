@@ -102,6 +102,7 @@ import {
   getAverageAdventures,
   getFoldGroup,
   have,
+  JuneCleaver,
   maxBy,
   property,
   Requirement,
@@ -1623,7 +1624,15 @@ const freeRunFightSources = [
       propertyManager.setChoices({
         1215: 1, // Gingerbread Civic Center advance clock
       });
-      garboAdventure($location`Gingerbread Civic Center`, runSource.macro);
+      garboAdventure(
+        $location`Gingerbread Sewers`,
+        Macro.if_(
+          `monsterid 1990`,
+          Macro.tryItem($item`gingerbread cigarette`)
+            .trySkill($skill`Gingerbread Mob Hit`)
+            .abortWithMsg(`Was unable to free kill the gingerbread vitilante!`)
+        ).step(runSource.macro)
+      );
       if (
         [
           "Even Tamer Than Usual",
@@ -1646,14 +1655,23 @@ const freeRunFightSources = [
     () => {
       propertyManager.setChoices({
         1204: 1, // Gingerbread Train Station Noon random candy
+        1208: 7, // Retail Noon, Stick em up
       });
-      garboAdventure(
-        $location`Gingerbread Train Station`,
-        Macro.abortWithMsg(`Expected "Noon at the Train Station" but ended up in combat.`)
-      );
+      if (availableAmount($item`sprinkles`) >= 300) {
+        garboAdventure(
+          $location`Gingerbread Train Station`,
+          Macro.abortWithMsg(`Expected "Noon at the Train Station" but ended up in combat.`)
+        );
+      } else {
+        garboAdventure(
+          $location`Gingerbread Upscale Retail District`,
+          Macro.abortWithMsg(`Expected "Upscale Noon" but ended up in combat.`)
+        );
+      }
     },
     false,
     {
+      spec: { equip: $items`gingerbread mask, gingerbread pistol, gingerbread moneybag` },
       noncombat: () => true,
     }
   ),
@@ -1667,7 +1685,15 @@ const freeRunFightSources = [
       propertyManager.setChoices({
         1215: 1, // Gingerbread Civic Center advance clock
       });
-      garboAdventure($location`Gingerbread Civic Center`, runSource.macro);
+      garboAdventure(
+        $location`Gingerbread Sewers`,
+        Macro.if_(
+          `monsterid 1990`,
+          Macro.tryItem($item`gingerbread cigarette`)
+            .trySkill($skill`Gingerbread Mob Hit`)
+            .abortWithMsg(`Was unable to free kill the gingerbread vitilante!`)
+        ).step(runSource.macro)
+      );
       if (
         [
           "Even Tamer Than Usual",
@@ -1690,31 +1716,17 @@ const freeRunFightSources = [
       (availableAmount($item`sprinkles`) > 5 || haveOutfit("gingerbread best")),
     () => {
       propertyManager.setChoices({
-        1203: 4, // Gingerbread Civic Center 5 gingerbread cigarettes
         1215: 1, // Gingerbread Civic Center advance clock
         1209: 2, // enter the gallery at Upscale Midnight
-        1214: 1, // get High-End ginger wine
+        1214: 2, // Purchase fancy chocolate sculpture
       });
-      const best = bestConsumable("booze", true, $items`high-end ginger wine, astral pilsner`);
-      const gingerWineValue =
-        (0.5 * 30 * (baseMeat + 750) +
-          getAverageAdventures($item`high-end ginger wine`) * get("valueOfAdventure")) /
-        2;
-      const valueDif = gingerWineValue - best.value;
-      if (
-        haveOutfit("gingerbread best") &&
-        (availableAmount($item`sprinkles`) < 5 ||
-          (valueDif * 2 > garboValue($item`gingerbread cigarette`) * 5 &&
-            itemAmount($item`high-end ginger wine`) < 11))
-      ) {
-        outfit("gingerbread best");
-        garboAdventure($location`Gingerbread Upscale Retail District`, Macro.abort());
-      } else {
-        garboAdventure($location`Gingerbread Civic Center`, Macro.abort());
-      }
+      garboAdventure($location`Gingerbread Upscale Retail District`, Macro.abort());
     },
     false,
     {
+      spec: {
+        equip: $items`gingerbread tophat, gingerbread waistcoat, gingerbread trousers, candy dress shoes, candy necktie, chocolate pocketwatch`,
+      },
       noncombat: () => true,
     }
   ),
