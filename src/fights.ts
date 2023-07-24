@@ -1887,7 +1887,7 @@ const freeRunFightSources = [
 
 function sandwormSpec(spec: OutfitSpec = {}): OutfitSpec {
   const copy = { ...spec, equip: [...(spec.equip ?? [])] };
-  copy.modifier = ["100 Item Drop"];
+  copy.modifier = ["100 Item Drop 10000 max"];
   if (have($item`January's Garbage Tote`) && get("garbageChampagneCharge") > 0) {
     copy.equip?.push($item`broken champagne bottle`);
   }
