@@ -108,7 +108,7 @@ export const DailyVolcanoTasks: Task[] = [
     name: "Free Volcano Mining",
     ready: () => realmAvailable("hot") && have($skill`Unaccompanied Miner`),
     completed: () => get("_unaccompaniedMinerUsed") >= 5,
-    do: () => cliExecute(`minevolcano.ash ${5 - get("_unaccompaniedMinerUsed")}`),
+    do: () => cliExecute(`volcano_mining.ash`),
     prepare: () => restoreHp(myMaxhp() * 0.9),
     post: (): void => {
       if (have($effect`Beaten Up`)) {
