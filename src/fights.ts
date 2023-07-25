@@ -13,6 +13,7 @@ import {
   familiarWeight,
   getAutoAttack,
   getCampground,
+  getWorkshed,
   handlingChoice,
   haveEffect,
   haveEquipped,
@@ -1887,8 +1888,12 @@ const freeRunFightSources = [
 
 function sandwormSpec(spec: OutfitSpec = {}): OutfitSpec {
   const copy = { ...spec, equip: [...(spec.equip ?? [])] };
-  copy.modifier = ["100 Item Drop 10000 max"];
-  if (have($item`January's Garbage Tote`) && get("garbageChampagneCharge") > 0) {
+  // Effective drop rate of spice melange is 0.1. This bonus is multiplied by 2 because we always have squint. Further multiplied if we have champagne.
+  const haveChampagne = have($item`January's Garbage Tote`) && get("garbageChampagneCharge") > 0;
+  const itemDropBonus =
+    (0.1 / 10000) * mallPrice($item`spice melange`) * 2 * (haveChampagne ? 2 : 1);
+  copy.modifier = [`${itemDropBonus} Item Drop 10000 max`];
+  if (haveChampagne) {
     copy.equip?.push($item`broken champagne bottle`);
   }
   if (have($item`Lil' Doctor™ bag`) && get("_otoscopeUsed")) {
@@ -2056,6 +2061,7 @@ const freeKillSources = [
   // Give extra value for gnome kills if we have eldritch attunement
   new FreeFight(
     () => {
+      const attunementMultiplier = have($effect`Eldritch Attunement`) ? 2 : 1;
       const dropChance = (Math.min(9900, numericModifier("Item Drop")) * 0.0001) / 10;
       const bestShockingLickPrice = Math.min(
         4 * mallPrice($item`battery (AAA)`),
@@ -2063,16 +2069,19 @@ const freeKillSources = [
         mallPrice($item`battery (D)`) + mallPrice($item`battery (AAA)`),
         mallPrice($item`battery (9-Volt)`)
       );
-      const gnomeBonus = have($effect`Eldritch Attunement`)
-        ? ((1 / 1000) *
-            get("valueOfAdventure") *
-            (familiarWeight($familiar`Reagnimated Gnome`) + weightAdjustment()) +
-            0.01 * get("valueOfAdventure")) *
-          2
-        : 0;
+      const gnomeBonus =
+        attunementMultiplier *
+        ((1 / 1000) *
+          get("valueOfAdventure") *
+          (familiarWeight($familiar`Reagnimated Gnome`) + weightAdjustment()) +
+          0.01 * get("valueOfAdventure"));
+      // Estimation of extra bonuses. In order: June Cleaver, Crown of thrones/Bjorn, sneegleeb, Cheengs, LGR, SIT, secret doors
+      const trainBonus = getWorkshed() === $item`model train set` ? 260 : 0;
+      const basicBonuses =
+        attunementMultiplier * (330 + 120 + 220 + 220 + 270 + 160 + 10 + trainBonus);
       return (
         bestShockingLickPrice + mallPrice($item`drum machine`) <
-        garboValue($item`spice melange`) * dropChance + gnomeBonus
+        garboValue($item`spice melange`) * dropChance + gnomeBonus + basicBonuses
       );
     },
     () => {
