@@ -1646,7 +1646,7 @@ const freeRunFightSources = [
       }
     },
     {
-      spec: { equip: $items`carnivorous potted plant` },
+      spec: { modifier: ["sprinkles"], equip: $items`carnivorous potted plant` },
     }
   ),
   new FreeFight(
@@ -1708,7 +1708,7 @@ const freeRunFightSources = [
       }
     },
     {
-      spec: { equip: $items`carnivorous potted plant` },
+      spec: { modifier: ["sprinkles"], equip: $items`carnivorous potted plant` },
     }
   ),
   new FreeFight(
