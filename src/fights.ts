@@ -2059,6 +2059,10 @@ const freeKillSources = [
   // Give extra value for gnome kills if we have eldritch attunement
   new FreeFight(
     () => {
+      // Just do it with our stocked up batteries for fun.
+      if (have($effect`Eldritch Attunement`) && itemAmount($item`battery (AAA)`) > 3) {
+        return true;
+      }
       const attunementMultiplier = have($effect`Eldritch Attunement`) ? 2 : 1;
       const dropChance = (Math.min(9900, numericModifier("Item Drop")) * 0.0001) / 10;
       const bestShockingLickPrice = Math.min(
