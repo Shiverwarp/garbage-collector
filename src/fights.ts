@@ -53,6 +53,7 @@ import {
   runCombat,
   setAutoAttack,
   setLocation,
+  shopAmount,
   Skill,
   stashAmount,
   takeCloset,
@@ -191,16 +192,16 @@ const firstChainMacro = () =>
       "!hasskill Lecture on Relativity",
       Macro.externalIf(
         SourceTerminal.getDigitizeMonster() !== $monster`Knob Goblin Embezzler`,
-        Macro.tryCopier($skill`Digitize`)
+        Macro.tryCopier($skill`Digitize`),
       )
         .tryCopier($item`Spooky Putty sheet`)
         .tryCopier($item`Rain-Doh black box`)
         .tryCopier($item`4-d camera`)
         .tryCopier($item`unfinished ice sculpture`)
-        .externalIf(get("_enamorangs") === 0, Macro.tryCopier($item`LOV Enamorang`))
+        .externalIf(get("_enamorangs") === 0, Macro.tryCopier($item`LOV Enamorang`)),
     )
       .trySkill($skill`lecture on relativity`)
-      .meatKill()
+      .meatKill(),
   ).abort();
 
 const secondChainMacro = () =>
@@ -211,16 +212,16 @@ const secondChainMacro = () =>
         "!hasskill Lecture on Relativity",
         Macro.externalIf(
           get("_sourceTerminalDigitizeMonster") !== $monster`Knob Goblin Embezzler`,
-          Macro.tryCopier($skill`Digitize`)
+          Macro.tryCopier($skill`Digitize`),
         )
           .tryCopier($item`Spooky Putty sheet`)
           .tryCopier($item`Rain-Doh black box`)
           .tryCopier($item`4-d camera`)
           .tryCopier($item`unfinished ice sculpture`)
-          .externalIf(get("_enamorangs") === 0, Macro.tryCopier($item`LOV Enamorang`))
+          .externalIf(get("_enamorangs") === 0, Macro.tryCopier($item`LOV Enamorang`)),
       )
       .trySkill($skill`lecture on relativity`)
-      .meatKill()
+      .meatKill(),
   ).abort();
 
 function embezzlerSetup() {
@@ -340,7 +341,7 @@ function startWandererCounter() {
       }
       garboAdventure(
         $location`The Haunted Kitchen`,
-        Macro.if_($monster`Knob Goblin Embezzler`, embezzlerMacro()).step(run.macro)
+        Macro.if_($monster`Knob Goblin Embezzler`, embezzlerMacro()).step(run.macro),
       );
     } while (
       get("lastCopyableMonster") === $monster`Government agent` ||
@@ -398,7 +399,7 @@ export function dailyFights(): void {
             goalMaximize: (spec: OutfitSpec) =>
               Outfit.from(
                 { ...spec, modifier: ["Familiar Weight"] },
-                new Error(`Unable to build outfit for weight chain!`)
+                new Error(`Unable to build outfit for weight chain!`),
               ).dress(),
           },
         ];
@@ -446,8 +447,8 @@ export function dailyFights(): void {
             embezzlerLog.sources.push(fightSource.name);
             embezzlerLog.sources.push(
               ...new Array<string>(get("_pocketProfessorLectures") - startLectures).fill(
-                "Pocket Professor"
-              )
+                "Pocket Professor",
+              ),
             );
           }
           set(property, true);
@@ -542,7 +543,7 @@ class FreeFight {
     available: () => number | boolean,
     run: () => void,
     tentacle: boolean,
-    options: FreeFightOptions = {}
+    options: FreeFightOptions = {},
   ) {
     this.available = available;
     this.run = run;
@@ -593,7 +594,7 @@ class FreeRunFight extends FreeFight {
     available: () => number | boolean,
     run: (runSource: ActionSource) => void,
     options: FreeFightOptions = {},
-    freeRunPicker: FindActionSourceConstraints = {}
+    freeRunPicker: FindActionSourceConstraints = {},
   ) {
     super(available, () => null, false, { ...options, macroAllowsFamiliarActions: false });
     this.freeRun = run;
@@ -616,7 +617,7 @@ class FreeRunFight extends FreeFight {
       runSource.constraints.preparation?.();
       const mergingOutfit = Outfit.from(
         initialSpec,
-        new Error(`Failed to build outfit from ${toJson(initialSpec)}`)
+        new Error(`Failed to build outfit from ${toJson(initialSpec)}`),
       );
       mergingOutfit.equip(toSpec(runSource));
       freeFightOutfit(mergingOutfit.spec()).dress();
@@ -668,8 +669,8 @@ const pygmySniffed = () =>
 
 const pygmyMacro = Macro.step(
   ...pygmyBanishHandlers.map(({ pygmy, skill, item }) =>
-    Macro.if_(pygmy, skill ? Macro.trySkill(skill).item(item) : Macro.item(item))
-  )
+    Macro.if_(pygmy, skill ? Macro.trySkill(skill).item(item) : Macro.item(item)),
+  ),
 )
   .if_($monster`drunk pygmy`, Macro.trySkill($skill`Extract`).trySingAlong())
   .ifHolidayWanderer(Macro.basicCombat())
@@ -678,7 +679,7 @@ const pygmyMacro = Macro.step(
 function getStenchLocation() {
   return (
     $locations`Uncle Gator's Country Fun-Time Liquid Waste Sluice, The Hippy Camp (Bombed Back to the Stone Age), The Dark and Spooky Swamp`.find(
-      (l) => canAdventure(l)
+      (l) => canAdventure(l),
     ) ?? $location.none
   );
 }
@@ -731,6 +732,18 @@ const stunDurations = new Map<Skill | Item, Delayed<number>>([
   [$item`Rain-Doh blue balls`, 1],
 ]);
 
+function haveEnoughMemoirs() {
+  const memoirAmount = availableAmount($item`My Life of Crime, a Memoir`);
+  return memoirAmount >= 30;
+}
+
+function gingerNCAvailable() {
+  return (
+    get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 9 ||
+    get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 19
+  );
+}
+
 const freeFightSources = [
   new FreeFight(
     () =>
@@ -745,13 +758,13 @@ const freeFightSources = [
     true,
     {
       spec: { back: $item`protonic accelerator pack` },
-    }
+    },
   ),
   new FreeFight(
     () =>
       molemanReady() && (get("_thesisDelivered") || !have($familiar`Pocket Professor`)) ? 1 : 0,
     () => withMacro(Macro.basicCombat(), () => use($item`molehill mountain`)),
-    true
+    true,
   ),
   new FreeFight(
     () => TunnelOfLove.have() && !TunnelOfLove.isUsed(),
@@ -759,13 +772,13 @@ const freeFightSources = [
       TunnelOfLove.fightAll(
         "LOV Epaulettes",
         "Open Heart Surgery",
-        "LOV Extraterrestrial Chocolate"
+        "LOV Extraterrestrial Chocolate",
       );
     },
     false,
     {
       macroAllowsFamiliarActions: true,
-    }
+    },
   ),
 
   new FreeFight(
@@ -779,11 +792,11 @@ const freeFightSources = [
       spec: () =>
         have($familiar`Robortender`) &&
         $phyla`elf, fish, hobo, penguin, constellation`.some(
-          (phylum) => phylum === ChateauMantegna.paintingMonster()?.phylum
+          (phylum) => phylum === ChateauMantegna.paintingMonster()?.phylum,
         )
           ? { familiar: $familiar`Robortender` }
           : {},
-    }
+    },
   ),
 
   new FreeFight(
@@ -794,7 +807,7 @@ const freeFightSources = [
       if (!handlingChoice()) throw "No choice?";
       runChoice(haveEldritchEssence ? 2 : 1);
     },
-    false
+    false,
   ),
 
   new FreeFight(
@@ -820,20 +833,20 @@ const freeFightSources = [
             .while_("hasskill Saucegeyser", Macro.skill($skill`Saucegeyser`))
             .while_(
               "hasskill Weapon of the Pastalord",
-              Macro.skill($skill`Weapon of the Pastalord`)
+              Macro.skill($skill`Weapon of the Pastalord`),
             )
             .while_("hasskill Lunging Thrust-Smack", Macro.skill($skill`Lunging Thrust-Smack`))
             .attack()
-            .repeat()
+            .repeat(),
         ).basicCombat(),
         () => {
           useSkill($skill`Evoke Eldritch Horror`);
           if (have($effect`Beaten Up`)) uneffect($effect`Beaten Up`);
         },
-        false
+        false,
       );
     },
-    false
+    false,
   ),
 
   // new FreeFight(
@@ -871,7 +884,7 @@ const freeFightSources = [
           retrieveItem($item`[glitch season reward name]`);
           visitUrl("inv_eat.php?pwd&whichitem=10207");
           runCombat();
-        }
+        },
       ),
     true,
     {
@@ -880,7 +893,7 @@ const freeFightSources = [
         modes: { retrocape: ["robot", "kiss"] },
       },
       macroAllowsFamiliarActions: false,
-    }
+    },
   ),
 
   new FreeFight(
@@ -896,11 +909,11 @@ const freeFightSources = [
           .externalIf(
             get("glitchItemImplementationCount") * itemAmount($item`[glitch season reward name]`) >=
               2000,
-            Macro.item([$item`gas can`, $item`gas can`])
+            Macro.item([$item`gas can`, $item`gas can`]),
           )
           .externalIf(
             get("lovebugsUnlocked"),
-            Macro.trySkill($skill`Summon Love Gnats`).trySkill($skill`Summon Love Mosquito`)
+            Macro.trySkill($skill`Summon Love Gnats`).trySkill($skill`Summon Love Mosquito`),
           )
           .tryItem($item`train whistle`)
           .trySkill($skill`Micrometeorite`)
@@ -925,7 +938,7 @@ const freeFightSources = [
           }
           visitUrl("inv_eat.php?pwd&whichitem=10207");
           runCombat();
-        }
+        },
       ),
     true,
     {
@@ -934,7 +947,7 @@ const freeFightSources = [
         avoid: $items`mutant crown, mutant arm, mutant legs, shield of the Skeleton Lord`,
       }),
       macroAllowsFamiliarActions: false,
-    }
+    },
   ),
 
   // 6	10	0	0	Infernal Seals	variety of items; must be Seal Clubber for 5, must also have Claw of the Infernal Seal in inventory for 10.
@@ -957,7 +970,7 @@ const freeFightSources = [
       retrieveItem(1, figurine);
       retrieveItem(
         get("lastGuildStoreOpen") === myAscensions() ? 1 : 3,
-        $item`seal-blubber candle`
+        $item`seal-blubber candle`,
       );
       withMacro(
         Macro.startCombat()
@@ -967,7 +980,7 @@ const freeFightSources = [
           .while_("hasskill Lunge Smack", Macro.skill($skill`Lunge Smack`))
           .attack()
           .repeat(),
-        () => use(figurine)
+        () => use(figurine),
       );
     },
     true,
@@ -981,7 +994,7 @@ const freeFightSources = [
         retrieveItem(club);
         return { weapon: club };
       },
-    }
+    },
   ),
 
   new FreeFight(
@@ -992,7 +1005,7 @@ const freeFightSources = [
       cost: () => mallPrice($item`BRICKO eye brick`) + 2 * mallPrice($item`BRICKO brick`),
       // They just die too dang quickly
       macroAllowsFamiliarActions: false,
-    }
+    },
   ),
 
   // new FreeFight(
@@ -1081,12 +1094,12 @@ const freeFightSources = [
       cost: () => {
         const banishers = pygmyBanishHandlers
           .filter(
-            ({ skill, check, limit }) => !skill || !have(skill) || (check && get(check) >= limit)
+            ({ skill, check, limit }) => !skill || !have(skill) || (check && get(check) >= limit),
           )
           .map(({ item }) => item);
         return retrievePrice($item`Bowl of Scorpions`) + sum(banishers, mallPrice) / 11;
       },
-    }
+    },
   ),
 
   // 10th Pygmy fight. If we have an orb, equip it for this fight, to save for later
@@ -1099,7 +1112,7 @@ const freeFightSources = [
       garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro);
     },
     true,
-    pygmyOptions($items`miniature crystal ball`.filter((item) => have(item)))
+    pygmyOptions($items`miniature crystal ball`.filter((item) => have(item))),
   ),
   // 11th pygmy fight if we lack a saber
   new FreeFight(
@@ -1113,7 +1126,7 @@ const freeFightSources = [
       garboAdventureAuto($location`The Hidden Bowling Alley`, pygmyMacro);
     },
     true,
-    pygmyOptions()
+    pygmyOptions(),
   ),
 
   // // 11th+ pygmy fight if we have a saber- saber friends
@@ -1166,11 +1179,11 @@ const freeFightSources = [
       retrieveItem(1, $item`Bowl of Scorpions`);
       garboAdventure(
         $location`The Hidden Bowling Alley`,
-        Macro.if_($monster`drunk pygmy`, pygmyMacro).abort()
+        Macro.if_($monster`drunk pygmy`, pygmyMacro).abort(),
       );
     },
     true,
-    pygmyOptions($items`miniature crystal ball`.filter((item) => have(item)))
+    pygmyOptions($items`miniature crystal ball`.filter((item) => have(item))),
   ),
 
   new FreeFight(
@@ -1189,7 +1202,7 @@ const freeFightSources = [
       visitUrl(`choice.php?whichchoice=1196&monid=${$monster`drunk pygmy`.id}&option=1`);
     },
     true,
-    pygmyOptions()
+    pygmyOptions(),
   ),
 
   new FreeFight(
@@ -1198,7 +1211,7 @@ const freeFightSources = [
     true,
     {
       spec: { offhand: $item`Kramco Sausage-o-Matic™` },
-    }
+    },
   ),
 
   new FreeFight(
@@ -1212,7 +1225,7 @@ const freeFightSources = [
     true,
     {
       macroAllowsFamiliarActions: false,
-    }
+    },
   ),
 
   // Mushroom garden
@@ -1230,15 +1243,15 @@ const freeFightSources = [
         $location`Your Mushroom Garden`,
         Macro.externalIf(
           !doingExtrovermectin(),
-          Macro.if_($skill`Macrometeorite`, Macro.trySkill($skill`Portscan`))
-        ).basicCombat()
+          Macro.if_($skill`Macrometeorite`, Macro.trySkill($skill`Portscan`)),
+        ).basicCombat(),
       );
       if (have($item`packet of tall grass seeds`)) use($item`packet of tall grass seeds`);
     },
     true,
     {
       spec: () => (have($familiar`Robortender`) ? { familiar: $familiar`Robortender` } : {}),
-    }
+    },
   ),
 
   // Portscan and mushroom garden
@@ -1259,12 +1272,12 @@ const freeFightSources = [
         $location`Your Mushroom Garden`,
         Macro.if_($monster`Government agent`, Macro.skill($skill`Macrometeorite`)).if_(
           $monster`piranha plant`,
-          Macro.if_($skill`Macrometeorite`, Macro.trySkill($skill`Portscan`)).basicCombat()
-        )
+          Macro.if_($skill`Macrometeorite`, Macro.trySkill($skill`Portscan`)).basicCombat(),
+        ),
       );
       if (have($item`packet of tall grass seeds`)) use($item`packet of tall grass seeds`);
     },
-    true
+    true,
   ),
 
   new FreeFight(
@@ -1291,7 +1304,7 @@ const freeFightSources = [
           [$item`God Lobster's Crown`, 5000],
         ]),
       }),
-    }
+    },
   ),
 
   new FreeFight(
@@ -1319,30 +1332,30 @@ const freeFightSources = [
         $location`The Deep Machine Tunnels`,
         Macro.externalIf(
           thought,
-          Macro.if_($monster`Perceiver of Sensations`, Macro.tryItem($item`abstraction: thought`))
+          Macro.if_($monster`Perceiver of Sensations`, Macro.tryItem($item`abstraction: thought`)),
         )
           .externalIf(
             action,
-            Macro.if_($monster`Thinker of Thoughts`, Macro.tryItem($item`abstraction: action`))
+            Macro.if_($monster`Thinker of Thoughts`, Macro.tryItem($item`abstraction: action`)),
           )
           .externalIf(
             sensation,
-            Macro.if_($monster`Performer of Actions`, Macro.tryItem($item`abstraction: sensation`))
+            Macro.if_($monster`Performer of Actions`, Macro.tryItem($item`abstraction: sensation`)),
           )
-          .basicCombat()
+          .basicCombat(),
       );
     },
     false, // Marked like this as 2 DMT fights get overriden by tentacles.
     {
       spec: { familiar: $familiar`Machine Elf` },
-    }
+    },
   ),
 
   // 28	5	0	0	Witchess pieces	must have a Witchess Set; can copy for more
   new FreeFight(
     () => (Witchess.have() ? clamp(5 - Witchess.fightsDone(), 0, 5) : 0),
     () => Witchess.fightPiece(bestWitchessPiece()),
-    true
+    true,
   ),
 
   new FreeFight(
@@ -1353,7 +1366,7 @@ const freeFightSources = [
     () => {
       adv1($location`The X-32-F Combat Training Snowman`, -1, "");
     },
-    false
+    false,
   ),
 
   // new FreeFight(
@@ -1393,7 +1406,7 @@ const freeFightSources = [
   new FreeFight(
     () => (get("ownsSpeakeasy") ? 3 - get("_speakeasyFreeFights") : 0),
     () => adv1($location`An Unusually Quiet Barroom Brawl`, -1, ""),
-    true
+    true,
   ),
 
   new FreeFight(
@@ -1406,7 +1419,7 @@ const freeFightSources = [
     true,
     {
       spec: () => (have($familiar`Robortender`) ? { familiar: $familiar`Robortender` } : {}),
-    }
+    },
   ),
 
   // // Get a li'l ninja costume for 150% item drop
@@ -1504,7 +1517,7 @@ const freeRunFightSources = [
     {
       spec: { equip: $items`latte lovers member's mug` },
     },
-    latteActionSourceFinderConstraints
+    latteActionSourceFinderConstraints,
   ),
   new FreeRunFight(
     () =>
@@ -1522,7 +1535,7 @@ const freeRunFightSources = [
     {
       spec: { equip: $items`latte lovers member's mug` },
     },
-    latteActionSourceFinderConstraints
+    latteActionSourceFinderConstraints,
   ),
   new FreeRunFight(
     () =>
@@ -1536,7 +1549,7 @@ const freeRunFightSources = [
     {
       spec: { equip: $items`latte lovers member's mug` },
     },
-    latteActionSourceFinderConstraints
+    latteActionSourceFinderConstraints,
   ),
   new FreeRunFight(
     () =>
@@ -1546,12 +1559,12 @@ const freeRunFightSources = [
     (runSource: ActionSource) => {
       garboAdventure(
         getStenchLocation(),
-        Macro.trySkill($skill`Extract Jelly`).step(runSource.macro)
+        Macro.trySkill($skill`Extract Jelly`).step(runSource.macro),
       );
     },
     {
       spec: { familiar: $familiar`Space Jellyfish` },
-    }
+    },
   ),
   new FreeRunFight(
     () =>
@@ -1565,15 +1578,15 @@ const freeRunFightSources = [
         getStenchLocation(),
         Macro.while_(
           "!pastround 28 && hasskill macrometeorite",
-          Macro.skill($skill`Extract Jelly`).skill($skill`Macrometeorite`)
+          Macro.skill($skill`Extract Jelly`).skill($skill`Macrometeorite`),
         )
           .trySkill($skill`Extract Jelly`)
-          .step(runSource.macro)
+          .step(runSource.macro),
       );
     },
     {
       spec: { familiar: $familiar`Space Jellyfish` },
-    }
+    },
   ),
   new FreeRunFight(
     () =>
@@ -1587,151 +1600,15 @@ const freeRunFightSources = [
         getStenchLocation(),
         Macro.while_(
           "!pastround 28 && hasskill CHEAT CODE: Replace Enemy",
-          Macro.skill($skill`Extract Jelly`).skill($skill`CHEAT CODE: Replace Enemy`)
+          Macro.skill($skill`Extract Jelly`).skill($skill`CHEAT CODE: Replace Enemy`),
         )
           .trySkill($skill`Extract Jelly`)
-          .step(runSource.macro)
+          .step(runSource.macro),
       );
     },
     {
       spec: { familiar: $familiar`Space Jellyfish`, equip: $items`Powerful Glove` },
-    }
-  ),
-  new FreeFight(
-    () =>
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      get("gingerAdvanceClockUnlocked") &&
-      !get("_gingerbreadClockVisited") &&
-      get("_gingerbreadCityTurns") <= 3,
-    () => {
-      propertyManager.setChoices({
-        1215: 1, // Gingerbread Civic Center advance clock
-      });
-      garboAdventure(
-        $location`Gingerbread Civic Center`,
-        Macro.abortWithMsg(`Expected "Setting the Clock" but ended up in combat.`)
-      );
     },
-    false,
-    {
-      noncombat: () => true,
-    }
-  ),
-  new FreeRunFight(
-    () =>
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) < 9,
-    (runSource: ActionSource) => {
-      propertyManager.setChoices({
-        1215: 1, // Gingerbread Civic Center advance clock
-      });
-      garboAdventure(
-        $location`Gingerbread Sewers`,
-        Macro.if_(
-          `monsterid 1990`,
-          Macro.tryItem($item`gingerbread cigarette`)
-            .trySkill($skill`Gingerbread Mob Hit`)
-            .abortWithMsg(`Was unable to free kill the gingerbread vitilante!`)
-        ).step(runSource.macro)
-      );
-      if (
-        [
-          "Even Tamer Than Usual",
-          "Never Break the Chain",
-          "Close, but Yes Cigar",
-          "Armchair Quarterback",
-        ].includes(get("lastEncounter"))
-      ) {
-        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
-      }
-    },
-    {
-      spec: { modifier: ["sprinkles"], equip: $items`carnivorous potted plant` },
-    }
-  ),
-  new FreeFight(
-    () =>
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 9,
-    () => {
-      propertyManager.setChoices({
-        1204: 1, // Gingerbread Train Station Noon random candy
-        1208: 7, // Retail Noon, Stick em up
-      });
-      if (availableAmount($item`sprinkles`) >= 300) {
-        garboAdventure(
-          $location`Gingerbread Train Station`,
-          Macro.abortWithMsg(`Expected "Noon at the Train Station" but ended up in combat.`)
-        );
-      } else {
-        garboAdventure(
-          $location`Gingerbread Upscale Retail District`,
-          Macro.abortWithMsg(`Expected "Upscale Noon" but ended up in combat.`)
-        );
-      }
-    },
-    false,
-    {
-      spec: { equip: $items`gingerbread mask, gingerbread pistol, gingerbread moneybag` },
-      noncombat: () => true,
-    }
-  ),
-  new FreeRunFight(
-    () =>
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) >= 10 &&
-      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) < 19 &&
-      availableAmount($item`sprinkles`) >= 300 &&
-      haveOutfit("gingerbread best"),
-    (runSource: ActionSource) => {
-      propertyManager.setChoices({
-        1215: 1, // Gingerbread Civic Center advance clock
-      });
-      garboAdventure(
-        $location`Gingerbread Sewers`,
-        Macro.if_(
-          `monsterid 1990`,
-          Macro.tryItem($item`gingerbread cigarette`)
-            .trySkill($skill`Gingerbread Mob Hit`)
-            .abortWithMsg(`Was unable to free kill the gingerbread vitilante!`)
-        ).step(runSource.macro)
-      );
-      if (
-        [
-          "Even Tamer Than Usual",
-          "Never Break the Chain",
-          "Close, but Yes Cigar",
-          "Armchair Quarterback",
-        ].includes(get("lastEncounter"))
-      ) {
-        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
-      }
-    },
-    {
-      spec: { modifier: ["sprinkles"], equip: $items`carnivorous potted plant` },
-    }
-  ),
-  new FreeFight(
-    () =>
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 19 &&
-      availableAmount($item`sprinkles`) >= 300 &&
-      haveOutfit("gingerbread best"),
-    () => {
-      propertyManager.setChoices({
-        1215: 1, // Gingerbread Civic Center advance clock
-        1209: 2, // enter the gallery at Upscale Midnight
-        1214: 2, // Purchase fancy chocolate sculpture
-      });
-      garboAdventure($location`Gingerbread Upscale Retail District`, Macro.abort());
-    },
-    false,
-    {
-      spec: {
-        equip: $items`gingerbread tophat, gingerbread waistcoat, gingerbread trousers, candy dress shoes, candy necktie, chocolate pocketwatch`,
-      },
-      noncombat: () => true,
-    }
   ),
   // Fire Extinguisher on best available target.
   new FreeRunFight(
@@ -1760,7 +1637,7 @@ const freeRunFightSources = [
           .externalIf(hasXO && get("_xoHugsUsed") < 11, Macro.skill($skill`Hugs and Kisses!`))
           .externalIf(
             !best.requireMapTheMonsters && hasXO && get("_xoHugsUsed") < 10,
-            Macro.step(itemStealOlfact(best))
+            Macro.step(itemStealOlfact(best)),
           )
           .while_(`hasskill ${toInt(vortex)}`, Macro.skill(vortex))
           .step(runSource.macro)
@@ -1787,7 +1664,7 @@ const freeRunFightSources = [
         spec.modifier = zone?.maximize ?? [];
         return spec;
       },
-    }
+    },
   ),
   // Try for an ultra-rare with mayfly runs ;)
   new FreeRunFight(
@@ -1816,25 +1693,25 @@ const freeRunFightSources = [
             Macro.step("pickpocket")
               .externalIf(
                 have($skill`Transcendent Olfaction`) && get("_olfactionsUsed") < 1,
-                Macro.trySkill($skill`Transcendent Olfaction`)
+                Macro.trySkill($skill`Transcendent Olfaction`),
               )
               .externalIf(
                 have($skill`Gallapagosian Mating Call`) &&
                   get("_gallapagosMonster") !== $monster`BASIC Elemental`,
-                Macro.skill($skill`Gallapagosian Mating Call`)
+                Macro.skill($skill`Gallapagosian Mating Call`),
               )
-              .trySkill($skill`Summon Mayfly Swarm`)
+              .trySkill($skill`Summon Mayfly Swarm`),
           )
           .if_($monster`Fruit Golem`, Macro.trySkill($skill`Feel Hatred`))
           .if_($monster`Knob Goblin Mutant`, Macro.trySkill($skill`Snokebomb`))
-          .step(runSource.macro)
+          .step(runSource.macro),
       );
     },
     {
       spec: () => {
         const canPickPocket = myPrimestat() === $stat`Moxie`;
         const bestPickpocketItem = $items`tiny black hole, mime army infiltration glove`.find(
-          (item) => have(item) && canEquip(item)
+          (item) => have(item) && canEquip(item),
         );
         // Base drop is 30%, so 1% pickpocket gives .003
         const pickPocketValue = 0.003 * garboValue($item`GOTO`);
@@ -1850,7 +1727,233 @@ const freeRunFightSources = [
 
         return spec;
       },
-    }
+    },
+  ),
+  // Use cigarettes and don't use bander
+  new FreeRunFight(
+    () =>
+      haveEnoughMemoirs() &&
+      mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      !gingerNCAvailable() &&
+      canAdventure($location`Gingerbread Civic Center`),
+    (runSource: ActionSource) => {
+      propertyManager.setChoices({
+        1215: 2, // Gingerbread Civic Center advance clock
+      });
+      retrieveItem($item`gingerbread cigarette`);
+      garboAdventure(
+        $location`Gingerbread Civic Center`,
+        Macro.if_(
+          `(monsterid 1979) || (monsterid 1977)`,
+          Macro.startCombat()
+            .tryItem($item`gingerbread cigarette`)
+            .abortWithMsg(`Was unable to free kill the gingerbread vigilante!`),
+        ).step(runSource.macro),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    {
+      spec: {
+        bonuses: new Map([
+          [$item`carnivorous potted plant`, mallPrice($item`gingerbread cigarette`) * 0.04],
+        ]),
+        familiar: freeFightFamiliar(),
+      },
+    },
+  ),
+  // Use cigarettes and allow Bander
+  new FreeRunFight(
+    () =>
+      haveEnoughMemoirs() &&
+      mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      !gingerNCAvailable() &&
+      canAdventure($location`Gingerbread Civic Center`),
+    (runSource: ActionSource) => {
+      propertyManager.setChoices({
+        1215: 2, // Gingerbread Civic Center advance clock
+      });
+      retrieveItem($item`gingerbread cigarette`);
+      garboAdventure(
+        $location`Gingerbread Civic Center`,
+        Macro.if_(
+          `(monsterid 1979) || (monsterid 1977)`,
+          Macro.startCombat()
+            .tryItem($item`gingerbread cigarette`)
+            .abortWithMsg(`Was unable to free kill the gingerbread vigilante!`),
+        ).step(runSource.macro),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    {
+      spec: {
+        bonuses: new Map([
+          [$item`carnivorous potted plant`, mallPrice($item`gingerbread cigarette`) * 0.04],
+        ]),
+      },
+    },
+  ),
+  new FreeFight(
+    () =>
+      haveEnoughMemoirs() &&
+      mallPrice($item`gingerbread cigarette`) > globalOptions.prefs.valueOfFreeFight &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      get("gingerAdvanceClockUnlocked") &&
+      !get("_gingerbreadClockVisited") &&
+      get("_gingerbreadCityTurns") <= 3,
+    () => {
+      propertyManager.setChoices({
+        1215: 1, // Gingerbread Civic Center advance clock
+      });
+      garboAdventure(
+        $location`Gingerbread Civic Center`,
+        Macro.abortWithMsg(`Expected "Setting the Clock" but ended up in combat.`),
+      );
+    },
+    false,
+    {
+      noncombat: () => true,
+    },
+  ),
+  new FreeRunFight(
+    () =>
+      haveEnoughMemoirs() &&
+      mallPrice($item`gingerbread cigarette`) > globalOptions.prefs.valueOfFreeFight &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) < 9,
+    (runSource: ActionSource) => {
+      propertyManager.setChoices({
+        1215: 1, // Gingerbread Civic Center advance clock
+      });
+      garboAdventure(
+        $location`Gingerbread Sewers`,
+        Macro.if_(
+          `monsterid 1990`,
+          Macro.tryItem($item`gingerbread cigarette`)
+            .trySkill($skill`Gingerbread Mob Hit`)
+            .abortWithMsg(`Was unable to free kill the gingerbread vigilante!`),
+        ).step(runSource.macro),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    {
+      spec: { modifier: ["sprinkles"], equip: $items`carnivorous potted plant` },
+    },
+  ),
+  new FreeFight(
+    () =>
+      haveEnoughMemoirs() &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 9,
+    () => {
+      propertyManager.setChoices({
+        1204: 1, // Gingerbread Train Station Noon random candy
+        1208: 7, // Retail Noon, Stick em up
+      });
+      if (availableAmount($item`sprinkles`) >= 300) {
+        garboAdventure(
+          $location`Gingerbread Train Station`,
+          Macro.abortWithMsg(`Expected "Noon at the Train Station" but ended up in combat.`),
+        );
+      } else {
+        garboAdventure(
+          $location`Gingerbread Upscale Retail District`,
+          Macro.abortWithMsg(`Expected "Upscale Noon" but ended up in combat.`),
+        );
+      }
+    },
+    false,
+    {
+      spec: { equip: $items`gingerbread mask, gingerbread pistol, gingerbread moneybag` },
+      noncombat: () => true,
+    },
+  ),
+  new FreeRunFight(
+    () =>
+      haveEnoughMemoirs() &&
+      mallPrice($item`gingerbread cigarette`) > globalOptions.prefs.valueOfFreeFight &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) >= 10 &&
+      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) < 19 &&
+      availableAmount($item`sprinkles`) >= 300 &&
+      haveOutfit("gingerbread best"),
+    (runSource: ActionSource) => {
+      propertyManager.setChoices({
+        1215: 1, // Gingerbread Civic Center advance clock
+      });
+      garboAdventure(
+        $location`Gingerbread Sewers`,
+        Macro.if_(
+          `monsterid 1990`,
+          Macro.tryItem($item`gingerbread cigarette`)
+            .trySkill($skill`Gingerbread Mob Hit`)
+            .abortWithMsg(`Was unable to free kill the gingerbread vigilante!`),
+        ).step(runSource.macro),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    {
+      spec: { modifier: ["sprinkles"], equip: $items`carnivorous potted plant` },
+    },
+  ),
+  new FreeFight(
+    () =>
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 19 &&
+      availableAmount($item`sprinkles`) >= 300 &&
+      haveOutfit("gingerbread best"),
+    () => {
+      propertyManager.setChoices({
+        1215: 1, // Gingerbread Civic Center advance clock
+        1209: 2, // enter the gallery at Upscale Midnight
+        1214: 2, // Purchase fancy chocolate sculpture
+      });
+      garboAdventure($location`Gingerbread Upscale Retail District`, Macro.abort());
+    },
+    false,
+    {
+      spec: {
+        equip: $items`gingerbread tophat, gingerbread waistcoat, gingerbread trousers, candy dress shoes, candy necktie, chocolate pocketwatch`,
+      },
+      noncombat: () => true,
+    },
   ),
   // Try for mini-hipster\goth kid free fights with any remaining non-familiar free runs
   new FreeRunFight(
@@ -1863,8 +1966,8 @@ const freeRunFightSources = [
         targetLocation,
         Macro.if_(
           `(monsterid 969) || (monsterid 970) || (monsterid 971) || (monsterid 972) || (monsterid 973) || (monstername Black Crayon *)`,
-          Macro.basicCombat()
-        ).step(runSource.macro)
+          Macro.basicCombat(),
+        ).step(runSource.macro),
       );
     },
     {
@@ -1882,7 +1985,7 @@ const freeRunFightSources = [
           return { familiar: $familiar`Artistic Goth Kid` };
         }
       },
-    }
+    },
   ),
 ];
 
@@ -1914,7 +2017,7 @@ const freeKillSources = [
         Macro.trySingAlong()
           .tryHaveSkill($skill`Otoscope`)
           .trySkill($skill`Chest X-Ray`),
-        () => use($item`drum machine`)
+        () => use($item`drum machine`),
       );
     },
     true,
@@ -1922,7 +2025,7 @@ const freeKillSources = [
       spec: () => sandwormSpec({ equip: $items`Lil' Doctor™ bag` }),
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
+    },
   ),
 
   new FreeFight(
@@ -1933,7 +2036,7 @@ const freeKillSources = [
         Macro.trySingAlong()
           .tryHaveSkill($skill`Otoscope`)
           .trySkill($skill`Gingerbread Mob Hit`),
-        () => use($item`drum machine`)
+        () => use($item`drum machine`),
       );
     },
     true,
@@ -1941,7 +2044,7 @@ const freeKillSources = [
       spec: sandwormSpec,
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
+    },
   ),
 
   new FreeFight(
@@ -1952,7 +2055,7 @@ const freeKillSources = [
         Macro.trySingAlong()
           .tryHaveSkill($skill`Otoscope`)
           .trySkill($skill`Shattering Punch`),
-        () => use($item`drum machine`)
+        () => use($item`drum machine`),
       );
     },
     true,
@@ -1960,7 +2063,7 @@ const freeKillSources = [
       spec: sandwormSpec,
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
+    },
   ),
 
   new FreeFight(
@@ -1971,7 +2074,7 @@ const freeKillSources = [
         Macro.trySingAlong()
           .tryHaveSkill($skill`Otoscope`)
           .item($item`replica bat-oomerang`),
-        () => use($item`drum machine`)
+        () => use($item`drum machine`),
       );
     },
     true,
@@ -1979,7 +2082,7 @@ const freeKillSources = [
       spec: sandwormSpec,
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
+    },
   ),
 
   new FreeFight(
@@ -1991,7 +2094,7 @@ const freeKillSources = [
         Macro.trySingAlong()
           .tryHaveSkill($skill`Otoscope`)
           .skill($skill`Asdon Martin: Missile Launcher`),
-        () => use($item`drum machine`)
+        () => use($item`drum machine`),
       );
     },
     true,
@@ -1999,7 +2102,7 @@ const freeKillSources = [
       spec: sandwormSpec,
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
+    },
   ),
 
   new FreeFight(
@@ -2010,7 +2113,7 @@ const freeKillSources = [
         Macro.trySingAlong()
           .tryHaveSkill($skill`Otoscope`)
           .skill($skill`Shocking Lick`),
-        () => use($item`drum machine`)
+        () => use($item`drum machine`),
       );
     },
     true,
@@ -2018,7 +2121,7 @@ const freeKillSources = [
       spec: sandwormSpec,
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
+    },
   ),
 
   // Shadow Bricks.
@@ -2037,13 +2140,13 @@ const freeKillSources = [
       acquire(
         1,
         $item`shadow brick`,
-        garboValue($item`spice melange`) * dropChance - mallPrice($item`drum machine`)
+        garboValue($item`spice melange`) * dropChance - mallPrice($item`drum machine`),
       );
       withMacro(
         Macro.trySkill($skill`Sing Along`)
           .tryHaveSkill($skill`Otoscope`)
           .item($item`shadow brick`),
-        () => use($item`drum machine`)
+        () => use($item`drum machine`),
       );
     },
     true,
@@ -2051,7 +2154,7 @@ const freeKillSources = [
       spec: sandwormSpec,
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
+    },
   ),
 
   // Shocking lick.
@@ -2069,7 +2172,7 @@ const freeKillSources = [
         4 * mallPrice($item`battery (AAA)`),
         2 * mallPrice($item`battery (AA)`),
         mallPrice($item`battery (D)`) + mallPrice($item`battery (AAA)`),
-        mallPrice($item`battery (9-Volt)`)
+        mallPrice($item`battery (9-Volt)`),
       );
       const gnomeBonus =
         attunementMultiplier *
@@ -2094,7 +2197,7 @@ const freeKillSources = [
         Macro.trySkill($skill`Sing Along`)
           .tryHaveSkill($skill`Otoscope`)
           .skill($skill`Shocking Lick`),
-        () => use($item`drum machine`)
+        () => use($item`drum machine`),
       );
     },
     true,
@@ -2102,7 +2205,7 @@ const freeKillSources = [
       spec: sandwormSpec,
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
+    },
   ),
 
   new FreeFight(
@@ -2114,7 +2217,7 @@ const freeKillSources = [
         Macro.trySingAlong()
           .tryHaveSkill($skill`Otoscope`)
           .trySkill($skill`Spit jurassic acid`),
-        () => use($item`drum machine`)
+        () => use($item`drum machine`),
       );
     },
     true,
@@ -2122,7 +2225,7 @@ const freeKillSources = [
       spec: () => sandwormSpec({ equip: $items`Jurassic Parka` }),
       effects: () =>
         have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3 ? $effects`Feeling Lost` : [],
-    }
+    },
   ),
 ];
 
@@ -2206,7 +2309,7 @@ export function freeFights(): void {
     buy(
       clamp(5 - get("_glarkCableUses"), 0, 5),
       $item`glark cable`,
-      globalOptions.prefs.valueOfFreeFight
+      globalOptions.prefs.valueOfFreeFight,
     );
   }
 
@@ -2319,7 +2422,7 @@ export function doSausage(): void {
       wanderWhere("wanderer"),
       Macro.if_(goblin, Macro.basicCombat())
         .ifHolidayWanderer(Macro.basicCombat())
-        .abortWithMsg(`Expected ${goblin} but got something else.`)
+        .abortWithMsg(`Expected ${goblin} but got something else.`),
     );
   } while (
     dogOrHolidayWanderer() ||
@@ -2447,7 +2550,7 @@ const itemStealZones = [
       isOpen: () => canAdventure(location),
       openCost: () => 0,
       preReq: null,
-    })
+    }),
   ),
 ] as ItemStealZone[];
 
@@ -2457,8 +2560,8 @@ function getBestItemStealZone(mappingMonster = false): ItemStealZone | null {
       zone.isOpen() &&
       (mappingMonster || !zone.requireMapTheMonsters) &&
       asArray(zone.monster).some(
-        (m) => !isBanished(m) || get("olfactedMonster") === m || get("_gallapagosMonster") === m
-      )
+        (m) => !isBanished(m) || get("olfactedMonster") === m || get("_gallapagosMonster") === m,
+      ),
   );
   const vorticesAvail = have($item`industrial fire extinguisher`)
     ? Math.floor(get("_fireExtinguisherCharge") / 10)
@@ -2491,12 +2594,12 @@ function itemStealOlfact(best: ItemStealZone) {
     have($skill`Transcendent Olfaction`) &&
       get("_olfactionsUsed") < 1 &&
       itemStealZones.every(
-        (zone) => !asArray(zone.monster).includes(get("olfactedMonster") as Monster)
+        (zone) => !asArray(zone.monster).includes(get("olfactedMonster") as Monster),
       ),
-    Macro.skill($skill`Transcendent Olfaction`)
+    Macro.skill($skill`Transcendent Olfaction`),
   ).externalIf(
     have($skill`Gallapagosian Mating Call`) && get("_gallapagosMonster") !== best.monster,
-    Macro.skill($skill`Gallapagosian Mating Call`)
+    Macro.skill($skill`Gallapagosian Mating Call`),
   );
 }
 
@@ -2544,11 +2647,11 @@ export function printEmbezzlerLog(): void {
 
   print(
     `You fought ${embezzlerLog.initialEmbezzlersFought} KGEs at the beginning of the day, and an additional ${embezzlerLog.digitizedEmbezzlersFought} digitized KGEs throughout the day. Good work, probably!`,
-    HIGHLIGHT
+    HIGHLIGHT,
   );
   print(
     `Including this, you have fought ${totalEmbezzlers} across all ascensions today`,
-    HIGHLIGHT
+    HIGHLIGHT,
   );
 }
 type FreeKill = { spec?: OutfitSpec; macro: Skill | Item; used: () => boolean };
@@ -2688,7 +2791,7 @@ function yachtzee(): void {
   ]) {
     if (available) {
       const familiarOptions = Familiar.all().filter(
-        (familiar) => have(familiar) && familiar.underwater && familiar !== $familiar`Robortender`
+        (familiar) => have(familiar) && familiar.underwater && familiar !== $familiar`Robortender`,
       );
       const familiarChoice = familiarOptions.length
         ? maxBy(familiarOptions, findLeprechaunMultiplier)
