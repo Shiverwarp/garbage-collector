@@ -2032,7 +2032,7 @@ const freeRunFightSources = [
                   get("_gallapagosMonster") !== $monster`BASIC Elemental`,
                 Macro.skill($skill`Gallapagosian Mating Call`)
               )
-              .trySkill($skill`Summon Mayfly Swarm`)
+              .step(runSource.macro)
           )
           .if_($monster`Fruit Golem`, Macro.trySkill($skill`Feel Hatred`))
           .if_($monster`Knob Goblin Mutant`, Macro.trySkill($skill`Snokebomb`))
@@ -2048,7 +2048,6 @@ const freeRunFightSources = [
         // Base drop is 30%, so 1% pickpocket gives .003
         const pickPocketValue = 0.003 * garboValue($item`GOTO`);
         const spec: OutfitSpec = {
-          equip: $items`mayfly bait necklace`,
           bonuses: new Map([[$item`carnivorous potted plant`, 400]]),
           familiar: freeFightFamiliar({ allowAttackFamiliars: false }),
         };
