@@ -479,6 +479,8 @@ export class Macro extends StrictMacro {
     return this.trySingAlong()
       .tryHaveSkill($skill`Curse of Weaksauce`)
       .familiarActions()
+      .tryHaveItem($item`HOA citation pad`)
+      .tryHaveItem($item`train whistle`)
       .externalIf(
         get("cosmicBowlingBallReturnCombats") < 1,
         Macro.trySkill($skill`Bowl Straight Up`)
