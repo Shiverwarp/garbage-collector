@@ -2049,7 +2049,6 @@ const freeRunFightSources = [
         const pickPocketValue = 0.003 * garboValue($item`GOTO`);
         const spec: OutfitSpec = {
           bonuses: new Map([[$item`carnivorous potted plant`, 400]]),
-          familiar: freeFightFamiliar({ allowAttackFamiliars: false }),
         };
         if (!canPickPocket && bestPickpocketItem) spec.equip?.push(bestPickpocketItem);
         if (canPickPocket || bestPickpocketItem) {
