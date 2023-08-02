@@ -1372,6 +1372,42 @@ const freeFightSources = [
   new FreeFight(
     () =>
       get("neverendingPartyAlways") &&
+      questStep("_questPartyFair") < 999 &&
+      !(get("encountersUntilNEPChoice") === 0)
+        ? clamp(
+            10 -
+              get("_neverendingPartyFreeTurns") -
+              (!molemanReady() && !get("_thesisDelivered") && have($familiar`Pocket Professor`)
+                ? 1
+                : 0),
+            0,
+            10
+          )
+        : 0,
+    () => {
+      const constructedMacro = Macro.step("pickpocket")
+        .tryHaveSkill($skill`Feel Pride`)
+        .basicCombat();
+      setNepQuestChoicesAndPrepItems();
+      garboAdventure($location`The Neverending Party`, constructedMacro);
+    },
+    true,
+    {
+      spec: () => ({
+        modifier:
+          get("_questPartyFairQuest") === "trash"
+            ? ["100 Item Drop"]
+            : get("_questPartyFairQuest") === "dj"
+            ? ["100 Meat Drop"]
+            : [],
+        equip: have($item`January's Garbage Tote`) ? $items`makeshift garbage shirt` : [],
+      }),
+    }
+  ),
+
+  new FreeFight(
+    () =>
+      get("neverendingPartyAlways") &&
       get("encountersUntilNEPChoice") === 0 &&
       get("_questPartyFair") === "started",
     () => {
@@ -1385,7 +1421,9 @@ const freeFightSources = [
 
   new FreeFight(
     () =>
-      get("neverendingPartyAlways") && questStep("_questPartyFair") < 999
+      get("neverendingPartyAlways") &&
+      questStep("_questPartyFair") < 999 &&
+      !(get("encountersUntilNEPChoice") === 0)
         ? clamp(
             10 -
               get("_neverendingPartyFreeTurns") -
