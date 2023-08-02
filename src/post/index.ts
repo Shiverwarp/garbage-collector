@@ -1,8 +1,13 @@
 import {
   cliExecute,
   equip,
+  fullnessLimit,
+  getWorkshed,
+  inebrietyLimit,
   itemAmount,
   myAdventures,
+  myFullness,
+  myInebriety,
   myLocation,
   putCloset,
   reverseNumberology,
@@ -61,11 +66,21 @@ function numberology(): void {
   }
 }
 
+function pepDiet(): void {
+  if (
+    myFullness() < fullnessLimit() &&
+    get("ghostPepperTurnsLeft") < 1 &&
+    getWorkshed() === $item`portable Mayo Clinic`
+  ) {
+    cliExecute("2crsDietPeppers.ash");
+  }
+}
+
 function updateMallPrices(): void {
   sessionSinceStart().value(garboValue);
 }
 
-let juneCleaverSkipChoices: typeof JuneCleaver.choices[number][] | null;
+let juneCleaverSkipChoices: (typeof JuneCleaver.choices)[number][] | null;
 function skipJuneCleaverChoices(): void {
   if (!juneCleaverSkipChoices) {
     juneCleaverSkipChoices = [...JuneCleaver.choices]
@@ -116,6 +131,7 @@ export default function postCombatActions(skipDiet = false): void {
   numberology();
   floristFriars();
   handleWorkshed();
+  pepDiet();
   safeInterrupt();
   safeRestore();
   updateMallPrices();
