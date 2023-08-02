@@ -849,14 +849,14 @@ const freeFightSources = [
     false
   ),
 
-  // new FreeFight(
-  //   () => clamp(3 - get("_lynyrdSnareUses"), 0, 3),
-  //   () => use($item`lynyrd snare`),
-  //   true,
-  //   {
-  //     cost: () => mallPrice($item`lynyrd snare`),
-  //   }
-  // ),
+  new FreeFight(
+    () => (get("breathitinCharges") <= 0 ? clamp(3 - get("_lynyrdSnareUses"), 0, 3) : 0),
+    () => use($item`lynyrd snare`),
+    true,
+    {
+      cost: () => mallPrice($item`lynyrd snare`),
+    }
+  ),
 
   new FreeFight(
     () =>
@@ -1750,20 +1750,19 @@ const freeRunFightSources = [
       mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       !gingerNCAvailable() &&
-      canAdventure($location`Gingerbread Civic Center`),
+      get(`breathitinCharges`) <= 0 &&
+      canAdventure($location`Gingerbread Upscale Retail District`),
     (runSource: ActionSource) => {
       propertyManager.setChoices({
         1215: 2, // Gingerbread Civic Center advance clock
       });
       retrieveItem($item`gingerbread cigarette`);
       garboAdventure(
-        $location`Gingerbread Civic Center`,
-        Macro.if_(
-          `(monsterid 1979) || (monsterid 1977)`,
-          Macro.startCombat()
-            .tryItem($item`gingerbread cigarette`)
-            .abortWithMsg(`Was unable to free kill the gingerbread vigilante!`)
-        ).step(runSource.macro)
+        $location`Gingerbread Upscale Retail District`,
+        Macro.startCombat()
+          .tryItem($item`gingerbread cigarette`)
+          .abortWithMsg(`Was unable to free kill with our gingerbread cigarette!`)
+          .step(runSource.macro)
       );
       if (
         [
@@ -1804,7 +1803,7 @@ const freeRunFightSources = [
           `(monsterid 1979) || (monsterid 1977)`,
           Macro.startCombat()
             .tryItem($item`gingerbread cigarette`)
-            .abortWithMsg(`Was unable to free kill the gingerbread vigilante!`)
+            .abortWithMsg(`Was unable to free kill our gingerbread target!`)
         ).step(runSource.macro)
       );
       if (
