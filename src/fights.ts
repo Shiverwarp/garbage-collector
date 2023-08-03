@@ -1521,35 +1521,58 @@ const freeFightSources = [
   //     macroAllowsFamiliarActions: false,
   //   }
   // ),
-  // new FreeFight(
-  //  () => {
-  //    if (!have($item`closed-circuit pay phone`)) return false;
-  //    if (have($effect`Shadow Affinity`)) return true;
-  //    if (get("_shadowAffinityToday")) return false;
-  //
-  //    if (!ClosedCircuitPayphone.rufusTarget()) return true;
-  //    if (get("rufusQuestType") === "items") {
-  //      return false; // We deemed it unprofitable to complete the quest in potionSetup
-  //    }
-  //    if (get("encountersUntilSRChoice", 0) === 0) {
-  //      // Target is either an artifact or a boss
-  //      return true; // Get the artifact or kill the boss immediately for free
-  //    }
-  //    return false; // We have to spend turns to get the artifact or kill the boss
-  //  },
-  //  () => {
-  //    propertyManager.set({ shadowLabyrinthGoal: "effects" });
-  //    if (!get("_shadowAffinityToday") && !ClosedCircuitPayphone.rufusTarget()) {
-  //      ClosedCircuitPayphone.chooseQuest(() => 2); // Choose an artifact (not supporting boss for now)
-  //    }
-  //    adv1(bestShadowRift(), -1, "");
-  //    if (get("encountersUntilSRChoice") === 0) adv1(bestShadowRift(), -1, ""); // grab the NC
-  //    if (!have($effect`Shadow Affinity`) && get("encountersUntilSRChoice") !== 0) {
-  //      setLocation($location.none); // Reset location to not affect mafia's item drop calculations
-  //    }
-  //  },
-  //  true
-  // ),
+  new FreeFight(
+    () => {
+      if (!have($item`closed-circuit pay phone`)) return false;
+      // Check if we have or can get Shadow Affinity
+      if (have($effect`Shadow Affinity`)) return true;
+      if (!get("_shadowAffinityToday") && !ClosedCircuitPayphone.rufusTarget()) return true;
+
+      if (get("rufusQuestType") === "items" || get("rufusQuestType") === "entity") {
+        // TODO: Skip bosses for now, until we can fight them
+        return false; // We deemed it unprofitable to complete the quest in potionSetup
+      }
+      if (get("encountersUntilSRChoice") === 0) {
+        // Target is either an artifact or a boss
+        return true; // Get the artifact or kill the boss immediately for free
+      }
+
+      // Consider forcing noncombats below:
+      return false; // NCs are better when yachtzeeing, probably
+    },
+    () => {
+      if (have($item`Rufus's shadow lodestone`)) {
+        setChoice(1500, 2); // Turn in lodestone if you have it
+        adv1(bestShadowRift(), -1, "");
+      }
+      if (!get("_shadowAffinityToday") && !ClosedCircuitPayphone.rufusTarget()) {
+        ClosedCircuitPayphone.chooseQuest(() => 2); // Choose an artifact (not supporting boss for now)
+      }
+
+      runShadowRiftTurn();
+
+      if (get("encountersUntilSRChoice", 0) === 0) {
+        if (ClosedCircuitPayphone.have() && !ClosedCircuitPayphone.rufusTarget()) {
+          ClosedCircuitPayphone.chooseQuest(() => 2);
+        }
+        adv1(bestShadowRift(), -1, ""); // grab the NC
+      }
+
+      if (questStep("questRufus") === 1) {
+        withChoice(1498, 1, () => use($item`closed-circuit pay phone`));
+      }
+
+      if (have($item`Rufus's shadow lodestone`)) {
+        setChoice(1500, 2); // Check for lodestone at the end again
+        adv1(bestShadowRift(), -1, "");
+      }
+
+      if (!have($effect`Shadow Affinity`) && get("encountersUntilSRChoice", 0) !== 0) {
+        setLocation($location.none); // Reset location to not affect mafia's item drop calculations
+      }
+    },
+    true
+  ),
 ];
 
 const freeRunFightSources = [
@@ -2938,4 +2961,19 @@ function yachtzee(): void {
       return;
     }
   }
+}
+
+function runShadowRiftTurn(): void {
+  // we can probably have a better name
+  if (get("encountersUntilSRChoice") === 0) return;
+  if (
+    globalOptions.prefs.yachtzeechain ||
+    get("rufusQuestType") === "items" ||
+    get("rufusQuestType") === "entity" // We can't handle bosses... yet
+  ) {
+    adv1(bestShadowRift(), -1, ""); // We shouldn't be using NC forcers
+    return;
+  }
+
+  adv1(bestShadowRift(), -1, ""); // We wanted to use NC forcers, but none are suitable now
 }
