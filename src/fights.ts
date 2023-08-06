@@ -1373,7 +1373,7 @@ const freeFightSources = [
     () =>
       get("neverendingPartyAlways") &&
       questStep("_questPartyFair") < 999 &&
-      !(get("encountersUntilNEPChoice") === 0)
+      !(get("encountersUntilNEPChoice") === 0 && get("_questPartyFair") === "started")
         ? clamp(
             10 -
               get("_neverendingPartyFreeTurns") -
@@ -1423,7 +1423,7 @@ const freeFightSources = [
     () =>
       get("neverendingPartyAlways") &&
       questStep("_questPartyFair") < 999 &&
-      !(get("encountersUntilNEPChoice") === 0)
+      !(get("encountersUntilNEPChoice") === 0 && get("_questPartyFair") === "started")
         ? clamp(
             10 -
               get("_neverendingPartyFreeTurns") -
