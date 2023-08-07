@@ -734,7 +734,7 @@ const stunDurations = new Map<Skill | Item, Delayed<number>>([
 
 function haveEnoughMemoirs() {
   const memoirAmount = availableAmount($item`My Life of Crime, a Memoir`);
-  return memoirAmount >= 30;
+  return memoirAmount >= 10;
 }
 
 function gingerNCAvailable() {
@@ -1216,10 +1216,12 @@ const freeFightSources = [
 
   new FreeFight(
     () =>
-      get("questL11Ron") === "finished"
-        ? clamp(5 - get("_glarkCableUses"), 0, itemAmount($item`glark cable`))
+      get("questL11Ron") === "finished" &&
+      mallPrice($item`glark cable`) < globalOptions.prefs.valueOfFreeFight
+        ? 5 - get("_glarkCableUses")
         : 0,
     () => {
+      retrieveItem($item`glark cable`);
       garboAdventure($location`The Red Zeppelin`, Macro.item($item`glark cable`));
     },
     true,
