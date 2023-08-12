@@ -734,7 +734,7 @@ const stunDurations = new Map<Skill | Item, Delayed<number>>([
 
 function haveEnoughMemoirs() {
   const memoirAmount = availableAmount($item`My Life of Crime, a Memoir`);
-  return memoirAmount >= 10;
+  return memoirAmount >= 3;
 }
 
 function gingerNCAvailable() {
