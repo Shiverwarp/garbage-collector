@@ -1807,7 +1807,7 @@ const freeRunFightSources = [
     }
   ),
   // Use cigarettes and don't use bander
-  new FreeRunFight(
+  new FreeFight(
     () =>
       haveEnoughMemoirs() &&
       mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
@@ -1815,7 +1815,7 @@ const freeRunFightSources = [
       !gingerNCAvailable() &&
       get(`breathitinCharges`) <= 0 &&
       canAdventure($location`Gingerbread Upscale Retail District`),
-    (runSource: ActionSource) => {
+    () => {
       propertyManager.setChoices({
         1215: 2, // Gingerbread Civic Center advance clock
       });
@@ -1825,7 +1825,6 @@ const freeRunFightSources = [
         Macro.startCombat()
           .tryItem($item`gingerbread cigarette`)
           .abortWithMsg(`Was unable to free kill with our gingerbread cigarette!`)
-          .step(runSource.macro)
       );
       if (
         [
@@ -1838,12 +1837,12 @@ const freeRunFightSources = [
         set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
       }
     },
+    true,
     {
       spec: {
         bonuses: new Map([
           [$item`carnivorous potted plant`, mallPrice($item`gingerbread cigarette`) * 0.04],
         ]),
-        familiar: freeFightFamiliar(),
       },
     }
   ),
@@ -2010,7 +2009,7 @@ const freeRunFightSources = [
     }
   ),
   // Use cigarettes and don't use bander
-  new FreeRunFight(
+  new FreeFight(
     () =>
       haveEnoughMemoirs() &&
       mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
@@ -2018,7 +2017,7 @@ const freeRunFightSources = [
       !gingerNCAvailable() &&
       get(`breathitinCharges`) <= 0 &&
       canAdventure($location`Gingerbread Upscale Retail District`),
-    (runSource: ActionSource) => {
+    () => {
       propertyManager.setChoices({
         1215: 2, // Gingerbread Civic Center advance clock
       });
@@ -2028,7 +2027,6 @@ const freeRunFightSources = [
         Macro.startCombat()
           .tryItem($item`gingerbread cigarette`)
           .abortWithMsg(`Was unable to free kill with our gingerbread cigarette!`)
-          .step(runSource.macro)
       );
       if (
         [
@@ -2041,12 +2039,12 @@ const freeRunFightSources = [
         set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
       }
     },
+    true,
     {
       spec: {
         bonuses: new Map([
           [$item`carnivorous potted plant`, mallPrice($item`gingerbread cigarette`) * 0.04],
         ]),
-        familiar: freeFightFamiliar(),
       },
     }
   ),
@@ -2073,7 +2071,7 @@ const freeRunFightSources = [
     }
   ),
   // Use cigarettes and don't use bander
-  new FreeRunFight(
+  new FreeFight(
     () =>
       haveEnoughMemoirs() &&
       mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
@@ -2081,7 +2079,7 @@ const freeRunFightSources = [
       !gingerNCAvailable() &&
       get(`breathitinCharges`) <= 0 &&
       canAdventure($location`Gingerbread Upscale Retail District`),
-    (runSource: ActionSource) => {
+    () => {
       propertyManager.setChoices({
         1215: 2, // Gingerbread Civic Center advance clock
       });
@@ -2091,7 +2089,6 @@ const freeRunFightSources = [
         Macro.startCombat()
           .tryItem($item`gingerbread cigarette`)
           .abortWithMsg(`Was unable to free kill with our gingerbread cigarette!`)
-          .step(runSource.macro)
       );
       if (
         [
@@ -2104,12 +2101,12 @@ const freeRunFightSources = [
         set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
       }
     },
+    true,
     {
       spec: {
         bonuses: new Map([
           [$item`carnivorous potted plant`, mallPrice($item`gingerbread cigarette`) * 0.04],
         ]),
-        familiar: freeFightFamiliar(),
       },
     }
   ),
