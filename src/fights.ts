@@ -732,9 +732,8 @@ const stunDurations = new Map<Skill | Item, Delayed<number>>([
   [$item`Rain-Doh blue balls`, 1],
 ]);
 
-function haveEnoughMemoirs() {
-  const memoirAmount = availableAmount($item`My Life of Crime, a Memoir`);
-  return memoirAmount >= 3;
+function needMemoirs() {
+  return get("_shivNeedMemoirs", false);
 }
 
 function gingerNCAvailable() {
@@ -1809,7 +1808,7 @@ const freeRunFightSources = [
   // Use cigarettes and don't use bander
   new FreeFight(
     () =>
-      haveEnoughMemoirs() &&
+      !needMemoirs() &&
       mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       !gingerNCAvailable() &&
@@ -1849,7 +1848,7 @@ const freeRunFightSources = [
   // Use cigarettes and allow Bander
   new FreeRunFight(
     () =>
-      haveEnoughMemoirs() &&
+      !needMemoirs() &&
       mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       !gingerNCAvailable() &&
@@ -1889,7 +1888,7 @@ const freeRunFightSources = [
   ),
   new FreeFight(
     () =>
-      haveEnoughMemoirs() &&
+      !needMemoirs() &&
       mallPrice($item`gingerbread cigarette`) > globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       get("gingerAdvanceClockUnlocked") &&
@@ -1911,7 +1910,7 @@ const freeRunFightSources = [
   ),
   new FreeRunFight(
     () =>
-      haveEnoughMemoirs() &&
+      !needMemoirs() &&
       mallPrice($item`gingerbread cigarette`) > globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) < 9,
@@ -1945,7 +1944,7 @@ const freeRunFightSources = [
   ),
   new FreeFight(
     () =>
-      haveEnoughMemoirs() &&
+      !needMemoirs() &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 9,
     () => {
@@ -1973,7 +1972,7 @@ const freeRunFightSources = [
   ),
   new FreeRunFight(
     () =>
-      haveEnoughMemoirs() &&
+      !needMemoirs() &&
       mallPrice($item`gingerbread cigarette`) > globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) >= 10 &&
@@ -2011,7 +2010,7 @@ const freeRunFightSources = [
   // Use cigarettes and don't use bander
   new FreeFight(
     () =>
-      haveEnoughMemoirs() &&
+      !needMemoirs() &&
       mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       !gingerNCAvailable() &&
@@ -2073,7 +2072,7 @@ const freeRunFightSources = [
   // Use cigarettes and don't use bander
   new FreeFight(
     () =>
-      haveEnoughMemoirs() &&
+      !needMemoirs() &&
       mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       !gingerNCAvailable() &&
