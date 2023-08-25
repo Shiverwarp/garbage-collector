@@ -12,6 +12,7 @@ import {
   gitAtHead,
   gitInfo,
   handlingChoice,
+  haveEffect,
   haveSkill,
   inebrietyLimit,
   isDarkMode,
@@ -541,6 +542,28 @@ export const asArray = <T>(singleOrArray: T | T[]): T[] =>
 
 let _bestShadowRift: Location | null = null;
 export function bestShadowRift(): Location {
+  // If it's our last adventure, adventure in the rift that's best for our Autumnaton
+  if (haveEffect($effect`Shadow Affinity`) === 1) {
+    _bestShadowRift = withLocation($location`Shadow Rift`, () =>
+      ClosedCircuitPayphone.chooseRift({
+        canAdventure: true,
+        sortBy: (l: Location) => {
+          // We probably aren't capping item drops with the penalty
+          // so we don't really need to compute the actual outfit (or the dropModifier for that matter actually)
+          return sum(getMonsters(l), (m) => {
+            return sum(
+              itemDropsArray(m),
+              ({ drop, rate }) => garboValue(drop) * clamp(rate / 100, 0, 1)
+            );
+          });
+        },
+      })
+    );
+    if (!_bestShadowRift) {
+      throw new Error("Failed to find a suitable Shadow Rift to adventure in");
+    }
+    return _bestShadowRift;
+  }
   if (!_bestShadowRift) {
     _bestShadowRift = withLocation($location`Shadow Rift`, () =>
       ClosedCircuitPayphone.chooseRift({
