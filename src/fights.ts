@@ -1572,7 +1572,15 @@ const freeFightSources = [
         setLocation($location.none); // Reset location to not affect mafia's item drop calculations
       }
     },
-    true
+    true,
+    {
+      spec: () => ({
+        equip:
+          bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+            ? $items`continuum transfunctioner`
+            : [],
+      }),
+    }
   ),
 ];
 
