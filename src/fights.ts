@@ -3054,14 +3054,17 @@ function yachtzee(): void {
 function runShadowRiftTurn(): void {
   // we can probably have a better name
   if (get("encountersUntilSRChoice") === 0) return;
+  const constructedMacro = Macro.tryHaveSkill(
+    $skill`Recall Facts: %phylum Circadian Rhythms`
+  ).basicCombat();
   if (
     globalOptions.prefs.yachtzeechain ||
     get("rufusQuestType") === "items" ||
     get("rufusQuestType") === "entity" // We can't handle bosses... yet
   ) {
-    adv1(bestShadowRift(), -1, ""); // We shouldn't be using NC forcers
+    adv1(bestShadowRift(), -1, constructedMacro); // We shouldn't be using NC forcers
     return;
   }
 
-  adv1(bestShadowRift(), -1, ""); // We wanted to use NC forcers, but none are suitable now
+  adv1(bestShadowRift(), -1, constructedMacro); // We wanted to use NC forcers, but none are suitable now
 }
