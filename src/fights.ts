@@ -3062,9 +3062,9 @@ function runShadowRiftTurn(): void {
     get("rufusQuestType") === "items" ||
     get("rufusQuestType") === "entity" // We can't handle bosses... yet
   ) {
-    adv1(bestShadowRift(), -1, constructedMacro); // We shouldn't be using NC forcers
+    garboAdventure(bestShadowRift(), constructedMacro); // We shouldn't be using NC forcers
     return;
   }
 
-  adv1(bestShadowRift(), -1, constructedMacro); // We wanted to use NC forcers, but none are suitable now
+  garboAdventure(bestShadowRift(), constructedMacro); // We wanted to use NC forcers, but none are suitable now
 }
