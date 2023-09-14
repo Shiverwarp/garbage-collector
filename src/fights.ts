@@ -2407,7 +2407,7 @@ const freeKillSources = [
     },
     () => {
       ensureBeachAccess();
-      acquire(1, $item`battery (9-Volt)`);
+      retrieveItem(1, $item`battery (9-Volt)`);
       if (get("shockingLickCharges") === 0) use($item`battery (9-Volt)`);
       withMacro(
         Macro.trySkill($skill`Sing Along`)
