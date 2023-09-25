@@ -1829,9 +1829,9 @@ const freeRunFightSources = [
       retrieveItem($item`gingerbread cigarette`);
       garboAdventure(
         $location`Gingerbread Upscale Retail District`,
-        Macro.startCombat()
-          .tryItem($item`gingerbread cigarette`)
-          .abortWithMsg(`Was unable to free kill with our gingerbread cigarette!`),
+        Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
+          `Was unable to free kill with our gingerbread cigarette!`,
+        ),
       );
       if (
         [
@@ -2031,9 +2031,9 @@ const freeRunFightSources = [
       retrieveItem($item`gingerbread cigarette`);
       garboAdventure(
         $location`Gingerbread Upscale Retail District`,
-        Macro.startCombat()
-          .tryItem($item`gingerbread cigarette`)
-          .abortWithMsg(`Was unable to free kill with our gingerbread cigarette!`),
+        Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
+          `Was unable to free kill with our gingerbread cigarette!`,
+        ),
       );
       if (
         [
@@ -2093,9 +2093,9 @@ const freeRunFightSources = [
       retrieveItem($item`gingerbread cigarette`);
       garboAdventure(
         $location`Gingerbread Upscale Retail District`,
-        Macro.startCombat()
-          .tryItem($item`gingerbread cigarette`)
-          .abortWithMsg(`Was unable to free kill with our gingerbread cigarette!`),
+        Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
+          `Was unable to free kill with our gingerbread cigarette!`,
+        ),
       );
       if (
         [
