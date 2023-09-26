@@ -152,6 +152,7 @@ import {
   expectedEmbezzlerProfit,
   freeRest,
   freeRunConstraints,
+  getUsingFreeBunnyBanish,
   HIGHLIGHT,
   kramcoGuaranteed,
   logMessage,
@@ -636,7 +637,7 @@ const pygmyBanishHandlers = [
     pygmy: $monster`pygmy bowler`,
     skill: $skill`Snokebomb`,
     check: "_snokebombUsed",
-    limit: get("_garboUsingFreeBunnyBanish", false) ? 1 : 3,
+    limit: getUsingFreeBunnyBanish() ? 1 : 3,
     item: $item`Louder Than Bomb`,
   },
   {
@@ -1025,7 +1026,7 @@ const freeFightSources = [
           retrieveItem(1, $item`Louder Than Bomb`);
           retrieveItem(1, $item`divine champagne popper`);
         }
-        const snokeLimit = get("_garboUsingFreeBunnyBanish", false) ? 1 : 3;
+        const snokeLimit = getUsingFreeBunnyBanish() ? 1 : 3;
         garboAdventure(
           $location`Domed City of Grimacia`,
           Macro.if_(
