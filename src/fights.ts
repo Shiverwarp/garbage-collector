@@ -705,6 +705,13 @@ function bowlOfScorpionsAvailable() {
   }
 }
 
+function gingerNCAvailable() {
+  return (
+    get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 9 ||
+    get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 19
+  );
+}
+
 function molemanReady() {
   return have($item`molehill mountain`) && !get("_molehillMountainUsed");
 }
@@ -1667,8 +1674,88 @@ const freeRunFightSources = [
       spec: { familiar: $familiar`Space Jellyfish`, equip: $items`Powerful Glove` },
     },
   ),
+  // Use cigarettes and don't use bander
   new FreeFight(
     () =>
+      mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      !gingerNCAvailable() &&
+      get(`breathitinCharges`) <= 0 &&
+      canAdventure($location`Gingerbread Upscale Retail District`),
+    () => {
+      propertyManager.setChoices({
+        1215: 2, // Gingerbread Civic Center advance clock
+      });
+      retrieveItem($item`gingerbread cigarette`);
+      garboAdventure(
+        $location`Gingerbread Upscale Retail District`,
+        Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
+          `Was unable to free kill with our gingerbread cigarette!`,
+        ),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    true,
+    {
+      spec: {
+        bonuses: new Map([
+          [$item`carnivorous potted plant`, mallPrice($item`gingerbread cigarette`) * 0.04],
+        ]),
+      },
+    },
+  ),
+  // Use cigarettes and allow Bander
+  new FreeRunFight(
+    () =>
+      mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      !gingerNCAvailable() &&
+      canAdventure($location`Gingerbread Civic Center`),
+    (runSource: ActionSource) => {
+      propertyManager.setChoices({
+        1215: 2, // Gingerbread Civic Center advance clock
+      });
+      retrieveItem($item`gingerbread cigarette`);
+      garboAdventure(
+        $location`Gingerbread Civic Center`,
+        Macro.if_(
+          `(monsterid 1979) || (monsterid 1977)`,
+          Macro.startCombat()
+            .tryItem($item`gingerbread cigarette`)
+            .abortWithMsg(`Was unable to free kill our gingerbread target!`),
+        ).step(runSource.macro),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    {
+      spec: {
+        bonuses: new Map([
+          [$item`carnivorous potted plant`, mallPrice($item`gingerbread cigarette`) * 0.04],
+        ]),
+      },
+    },
+  ),
+  new FreeFight(
+    () =>
+      mallPrice($item`gingerbread cigarette`) > globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       get("gingerAdvanceClockUnlocked") &&
       !get("_gingerbreadClockVisited") &&
@@ -1689,13 +1776,22 @@ const freeRunFightSources = [
   ),
   new FreeRunFight(
     () =>
+      mallPrice($item`gingerbread cigarette`) > globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) < 9,
     (runSource: ActionSource) => {
       propertyManager.setChoices({
         1215: 1, // Gingerbread Civic Center advance clock
       });
-      garboAdventure($location`Gingerbread Civic Center`, runSource.macro);
+      garboAdventure(
+        $location`Gingerbread Sewers`,
+        Macro.if_(
+          `monsterid 1990`,
+          Macro.tryItem($item`gingerbread cigarette`)
+            .trySkill($skill`Gingerbread Mob Hit`)
+            .abortWithMsg(`Was unable to free kill the gingerbread vigilante!`),
+        ).step(runSource.macro),
+      );
       if (
         [
           "Even Tamer Than Usual",
@@ -1708,7 +1804,7 @@ const freeRunFightSources = [
       }
     },
     {
-      spec: { bonuses: new Map([[$item`carnivorous potted plant`, 100]]) },
+      spec: { modifier: ["sprinkles"], equip: $items`carnivorous potted plant` },
     },
   ),
   new FreeFight(
@@ -1718,28 +1814,47 @@ const freeRunFightSources = [
     () => {
       propertyManager.setChoices({
         1204: 1, // Gingerbread Train Station Noon random candy
+        1208: 7, // Retail Noon, Stick em up
       });
-      garboAdventure(
-        $location`Gingerbread Train Station`,
-        Macro.abortWithMsg(`Expected "Noon at the Train Station" but ended up in combat.`),
-      );
+      if (availableAmount($item`sprinkles`) >= 300) {
+        garboAdventure(
+          $location`Gingerbread Train Station`,
+          Macro.abortWithMsg(`Expected "Noon at the Train Station" but ended up in combat.`),
+        );
+      } else {
+        garboAdventure(
+          $location`Gingerbread Upscale Retail District`,
+          Macro.abortWithMsg(`Expected "Upscale Noon" but ended up in combat.`),
+        );
+      }
     },
     false,
     {
+      spec: { equip: $items`gingerbread mask, gingerbread pistol, gingerbread moneybag` },
       noncombat: () => true,
     },
   ),
   new FreeRunFight(
     () =>
+      mallPrice($item`gingerbread cigarette`) > globalOptions.prefs.valueOfFreeFight &&
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) >= 10 &&
       get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) < 19 &&
-      (availableAmount($item`sprinkles`) > 5 || haveOutfit("gingerbread best")),
+      availableAmount($item`sprinkles`) >= 300 &&
+      haveOutfit("gingerbread best"),
     (runSource: ActionSource) => {
       propertyManager.setChoices({
         1215: 1, // Gingerbread Civic Center advance clock
       });
-      garboAdventure($location`Gingerbread Civic Center`, runSource.macro);
+      garboAdventure(
+        $location`Gingerbread Sewers`,
+        Macro.if_(
+          `monsterid 1990`,
+          Macro.tryItem($item`gingerbread cigarette`)
+            .trySkill($skill`Gingerbread Mob Hit`)
+            .abortWithMsg(`Was unable to free kill the gingerbread vigilante!`),
+        ).step(runSource.macro),
+      );
       if (
         [
           "Even Tamer Than Usual",
@@ -1752,42 +1867,107 @@ const freeRunFightSources = [
       }
     },
     {
-      spec: { bonuses: new Map([[$item`carnivorous potted plant`, 100]]) },
+      spec: { modifier: ["sprinkles"], equip: $items`carnivorous potted plant` },
+    },
+  ),
+  // Use cigarettes and don't use bander
+  new FreeFight(
+    () =>
+      mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      !gingerNCAvailable() &&
+      get(`breathitinCharges`) <= 0 &&
+      canAdventure($location`Gingerbread Upscale Retail District`),
+    () => {
+      propertyManager.setChoices({
+        1215: 2, // Gingerbread Civic Center advance clock
+      });
+      retrieveItem($item`gingerbread cigarette`);
+      garboAdventure(
+        $location`Gingerbread Upscale Retail District`,
+        Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
+          `Was unable to free kill with our gingerbread cigarette!`,
+        ),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    true,
+    {
+      spec: {
+        bonuses: new Map([
+          [$item`carnivorous potted plant`, mallPrice($item`gingerbread cigarette`) * 0.04],
+        ]),
+      },
     },
   ),
   new FreeFight(
     () =>
       (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
       get("_gingerbreadCityTurns") + (get("_gingerbreadClockAdvanced") ? 5 : 0) === 19 &&
-      (availableAmount($item`sprinkles`) > 5 || haveOutfit("gingerbread best")),
+      availableAmount($item`sprinkles`) >= 300 &&
+      haveOutfit("gingerbread best"),
     () => {
       propertyManager.setChoices({
-        1203: 4, // Gingerbread Civic Center 5 gingerbread cigarettes
         1215: 1, // Gingerbread Civic Center advance clock
         1209: 2, // enter the gallery at Upscale Midnight
-        1214: 1, // get High-End ginger wine
+        1214: 2, // Purchase fancy chocolate sculpture
       });
-      const best = bestConsumable("booze", true, $items`high-end ginger wine, astral pilsner`);
-      const gingerWineValue =
-        (0.5 * 30 * (baseMeat + 750) +
-          getAverageAdventures($item`high-end ginger wine`) * get("valueOfAdventure")) /
-        2;
-      const valueDif = gingerWineValue - best.value;
-      if (
-        haveOutfit("gingerbread best") &&
-        (availableAmount($item`sprinkles`) < 5 ||
-          (valueDif * 2 > garboValue($item`gingerbread cigarette`) * 5 &&
-            itemAmount($item`high-end ginger wine`) < 11))
-      ) {
-        outfit("gingerbread best");
-        garboAdventure($location`Gingerbread Upscale Retail District`, Macro.abort());
-      } else {
-        garboAdventure($location`Gingerbread Civic Center`, Macro.abort());
-      }
+      garboAdventure($location`Gingerbread Upscale Retail District`, Macro.abort());
     },
     false,
     {
+      spec: {
+        equip: $items`gingerbread tophat, gingerbread waistcoat, gingerbread trousers, candy dress shoes, candy necktie, chocolate pocketwatch`,
+      },
       noncombat: () => true,
+    },
+  ),
+  // Use cigarettes and don't use bander
+  new FreeFight(
+    () =>
+      mallPrice($item`gingerbread cigarette`) < globalOptions.prefs.valueOfFreeFight &&
+      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      !gingerNCAvailable() &&
+      get(`breathitinCharges`) <= 0 &&
+      canAdventure($location`Gingerbread Upscale Retail District`),
+    () => {
+      propertyManager.setChoices({
+        1215: 2, // Gingerbread Civic Center advance clock
+      });
+      retrieveItem($item`gingerbread cigarette`);
+      garboAdventure(
+        $location`Gingerbread Upscale Retail District`,
+        Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
+          `Was unable to free kill with our gingerbread cigarette!`,
+        ),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    true,
+    {
+      spec: {
+        bonuses: new Map([
+          [$item`carnivorous potted plant`, mallPrice($item`gingerbread cigarette`) * 0.04],
+        ]),
+      },
     },
   ),
   // Fire Extinguisher on best available target.
