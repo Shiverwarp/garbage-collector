@@ -137,8 +137,8 @@ export const baseMeat =
   SongBoom.have() &&
   (SongBoom.songChangesLeft() > 0 ||
     (SongBoom.song() === "Total Eclipse of Your Meat" && myInebriety() <= inebrietyLimit()))
-    ? 275
-    : 250;
+    ? 325
+    : 300;
 
 export function averageEmbezzlerNet(): number {
   return ((baseMeat + 750) * meatDropModifier()) / 100;
