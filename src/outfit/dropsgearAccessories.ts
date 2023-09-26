@@ -124,7 +124,7 @@ export function usingThumbRing(): boolean {
     const gear = bonusAccessories(BonusEquipMode.BARF);
     const accessoryBonuses = [...gear.entries()].filter(([item]) => have(item));
 
-    setLocation($location`Barf Mountain`);
+    setLocation($location`The Coral Corral`);
     const meatAccessories = Item.all()
       .filter(
         (item) => have(item) && toSlot(item) === $slot`acc1` && getModifier("Meat Drop", item) > 0,

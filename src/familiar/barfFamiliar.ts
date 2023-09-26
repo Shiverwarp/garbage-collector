@@ -145,7 +145,7 @@ export function barfFamiliar(): Familiar {
 
   const fullMenu = menu({
     canChooseMacro: true,
-    location: $location`Barf Mountain`,
+    location: $location`The Coral Corral`,
     includeExperienceFamiliars: false,
   }).map(calculateOutfitValue);
 

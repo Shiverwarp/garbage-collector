@@ -59,7 +59,11 @@ function closetStuff(): void {
 }
 
 function floristFriars(): void {
-  if (!FloristFriar.have() || myLocation() !== $location`Barf Mountain` || FloristFriar.isFull()) {
+  if (
+    !FloristFriar.have() ||
+    myLocation() !== $location`The Coral Corral` ||
+    FloristFriar.isFull()
+  ) {
     return;
   }
   [FloristFriar.StealingMagnolia, FloristFriar.AloeGuvnor, FloristFriar.PitcherPlant].forEach(

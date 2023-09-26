@@ -450,13 +450,13 @@ const turns: AdventureAction[] = [
     sobriety: Sobriety.DRUNK,
   },
   {
-    name: "Barf",
+    name: "Ranch",
     available: () => true,
     execute: () => {
       const lubing = get("dinseyRollercoasterNext") && have($item`lube-shoes`);
       barfOutfit(lubing ? { equip: $items`lube-shoes` } : {}).dress();
       garboAdventureAuto(
-        $location`Barf Mountain`,
+        $location`The Coral Corral`,
         Macro.meatKill(),
         Macro.if_(
           `(monsterid ${$monster`Knob Goblin Embezzler`.id}) && !gotjump && !(pastround 2)`,
