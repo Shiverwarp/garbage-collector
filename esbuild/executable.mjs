@@ -2,7 +2,7 @@ import babel from "esbuild-plugin-babel";
 
 export default {
   entryPoints: {
-    garbo: "src/index.ts",
+    rancho: "src/index.ts",
   },
   bundle: true,
   platform: "node",
