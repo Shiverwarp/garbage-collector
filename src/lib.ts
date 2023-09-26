@@ -553,24 +553,6 @@ export function freeRunConstraints(latteActionSource: boolean): {
 
 export const today = Date.now() - gametimeToInt() - 1000 * 60 * 3.5;
 
-// Barf setup info
-const olfactionCopies = have($skill`Transcendent Olfaction`) ? 3 : 0;
-const gallapagosCopies = have($skill`Gallapagosian Mating Call`) ? 1 : 0;
-const garbageTourists = 1 + olfactionCopies + gallapagosCopies,
-  touristFamilies = 1,
-  angryTourists = 1;
-const barfTourists = garbageTourists + touristFamilies + angryTourists;
-export const garbageTouristRatio = garbageTourists / barfTourists;
-const touristFamilyRatio = touristFamilies / barfTourists;
-// 30 tourists till NC, with families counting as 3
-// Estimate number of turns till the counter hits 27
-// then estimate the expected number of turns required to hit a counter of >= 30
-export const turnsToNC =
-  (27 * barfTourists) / (garbageTourists + angryTourists + 3 * touristFamilies) +
-  1 * touristFamilyRatio +
-  2 * (1 - touristFamilyRatio) * touristFamilyRatio +
-  3 * (1 - touristFamilyRatio) * (1 - touristFamilyRatio);
-
 export function dogOrHolidayWanderer(extraEncounters: string[] = []): boolean {
   return [
     ...extraEncounters,
