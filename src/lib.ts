@@ -514,6 +514,7 @@ export function getUsingFreeBunnyBanish(): boolean {
   if (usingFreeBunnyBanish === undefined) {
     usingFreeBunnyBanish = determineFreeBunnyBanish();
   }
+  print(`FreeBunnyBanish has been called. Result: ${usingFreeBunnyBanish}`);
   return usingFreeBunnyBanish;
 }
 
