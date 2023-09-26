@@ -92,7 +92,7 @@ function voterSetup(): void {
     [
       "Meat Drop: +30",
       0.3 *
-        ((baseMeat + 750) * embezzlerCount() +
+        ((baseMeat + 700) * embezzlerCount() +
           baseMeat * (estimatedGarboTurns() - embezzlerCount())),
     ],
     [

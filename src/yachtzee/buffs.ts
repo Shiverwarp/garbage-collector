@@ -236,7 +236,7 @@ export function yachtzeePotionSetup(yachtzeeTurns: number, simOnly?: boolean): n
       (Math.min(100, expectedEmbezzlers + yachtzeeTurns) + 1);
     const greenspanValue =
       (2000 * yachtzeeFactor +
-        (baseMeat + 750) * (embezzlerFactor - yachtzeeFactor) +
+        (baseMeat + 700) * (embezzlerFactor - yachtzeeFactor) +
         baseMeat * (10100 - embezzlerFactor)) /
       100;
     const price = garboValue($item`Uncle Greenspan's Bathroom Finance Guide`);

@@ -86,7 +86,7 @@ export function useUPCsIfNeeded({ familiar }: Outfit): void {
     ? Math.min(20, embezzlerCount() || digitizedMonstersRemaining())
     : 20;
 
-  const addedValueOfFullSword = (embezzlers * ((75 - currentWeapon) * (750 + baseMeat))) / 100;
+  const addedValueOfFullSword = (embezzlers * ((75 - currentWeapon) * (700 + baseMeat))) / 100;
   if (addedValueOfFullSword > 3 * mallPrice(UPC)) {
     const needed = 3 - stickerSlots.filter((sticker) => equippedItem(sticker) === UPC).length;
     if (needed) acquire(needed, UPC, addedValueOfFullSword / 3, false);

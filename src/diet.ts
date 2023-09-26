@@ -471,7 +471,7 @@ export function bestConsumable(
     const turnsPerUse = getModifier("Effect Duration", edible);
     const meatDrop = getModifier("Meat Drop", buff);
     const famWeight = getModifier("Familiar Weight", buff);
-    const buffValue = ((meatDrop + (famWeight * 25) / 10) * turnsPerUse * (baseMeat + 750)) / 100;
+    const buffValue = ((meatDrop + (famWeight * 25) / 10) * turnsPerUse * (baseMeat + 700)) / 100;
     const advValue = getAverageAdventures(edible) * get("valueOfAdventure");
     const organSpace = consumable.size;
     return {

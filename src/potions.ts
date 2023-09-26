@@ -266,7 +266,7 @@ export class Potion {
       0,
     );
 
-    return (bonusMeat / 100) * (baseMeat * duration + 750 * embezzlersApplied);
+    return (bonusMeat / 100) * (baseMeat * duration + 700 * embezzlersApplied);
   }
 
   static gross(item: Item, embezzlers: number): number {
@@ -696,7 +696,7 @@ export function bathroomFinance(embezzlers: number): void {
   if (have($effect`Buy!  Sell!  Buy!  Sell!`)) return;
 
   // Average meat % for embezzlers is sum of arithmetic series, 2 * sum(1 -> embezzlers)
-  const averageEmbezzlerGross = ((baseMeat + 750) * 2 * (embezzlers + 1)) / 2 / 100;
+  const averageEmbezzlerGross = ((baseMeat + 700) * 2 * (embezzlers + 1)) / 2 / 100;
   const embezzlerGross = averageEmbezzlerGross * embezzlers;
   const tourists = 100 - embezzlers;
 
@@ -810,7 +810,7 @@ class VariableMeatPotion {
 
   valueNPotions(n: number, yachtzees: number, embezzlers: number, barfTurns: number): number {
     const yachtzeeValue = 2000;
-    const embezzlerValue = baseMeat + 750;
+    const embezzlerValue = baseMeat + 700;
     const barfValue = (baseMeat * turnsToNC) / 30;
 
     const totalCosts = retrievePrice(this.potion, n);

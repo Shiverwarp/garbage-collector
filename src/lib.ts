@@ -119,7 +119,7 @@ export function modeUseLimitedDrops(mode: BonusEquipMode): boolean {
 }
 
 export function modeValueOfMeat(mode: BonusEquipMode): number {
-  return modeIsFree(mode) ? 0 : (baseMeat + (mode === BonusEquipMode.EMBEZZLER ? 750 : 0)) / 100;
+  return modeIsFree(mode) ? 0 : (baseMeat + (mode === BonusEquipMode.EMBEZZLER ? 700 : 0)) / 100;
 }
 
 export function modeValueOfItem(mode: BonusEquipMode): number {
@@ -141,7 +141,7 @@ export const baseMeat =
     : 300;
 
 export function averageEmbezzlerNet(): number {
-  return ((baseMeat + 750) * meatDropModifier()) / 100;
+  return ((baseMeat + 700) * meatDropModifier()) / 100;
 }
 
 export function averageTouristNet(): number {

@@ -82,7 +82,7 @@ function drivebyValue(): number {
     Math.sqrt(220 * 2 * marginalRoboWeight) -
     Math.sqrt(220 * 2 * marginalRoboWeight) +
     2 * marginalRoboWeight;
-  return (meatPercentDelta / 100) * ((750 + baseMeat) * embezzlers + baseMeat * tourists);
+  return (meatPercentDelta / 100) * ((700 + baseMeat) * embezzlers + baseMeat * tourists);
 }
 
 function entendreValue(): number {
@@ -109,7 +109,7 @@ export function prepRobortender(): void {
     "Feliz Navidad": { priceCap: felizValue() * 0.25 * estimatedGarboTurns(), mandatory: false },
     "Bloody Nora": {
       priceCap: get("_envyfishEggUsed")
-        ? (750 + baseMeat) * (0.5 + ((4 + Math.sqrt(110 / 100)) * 30) / 100)
+        ? (700 + baseMeat) * (0.5 + ((4 + Math.sqrt(110 / 100)) * 30) / 100)
         : 0,
       mandatory: false,
     },
