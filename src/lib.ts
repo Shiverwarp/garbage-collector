@@ -532,6 +532,8 @@ export function freeRunConstraints(latteActionSource: boolean): {
     allowedAction: (action: ActionSource): boolean => {
       const disallowUsage = reservedBanishes.get(action.source);
 
+      print(`action source is: ${action.source} and disallow usage is: ${disallowUsage?.()}`);
+
       if (!have($item`latte lovers member's mug`) || !latteActionSource) {
         return !(disallowUsage?.() && getUsingFreeBunnyBanish());
       }
