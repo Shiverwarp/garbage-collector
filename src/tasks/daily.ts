@@ -283,9 +283,7 @@ function checkBarfQuest(): void {
     return;
   }
 
-  const targets = globalOptions.nobarf
-    ? ["Electrical Maintenance"]
-    : ["Track Maintenance", "Electrical Maintenance"]; // In decreasing order of priority
+  const targets = ["Electrical Maintenance"];
 
   // Page includes Track/Electrical Maintenance and we aren't on an assignment -> choose assignment
   const quests = [
