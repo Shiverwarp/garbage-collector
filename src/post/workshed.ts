@@ -111,13 +111,13 @@ const worksheds = [
     workshed: $item`Asdon Martin keyfob`,
     done: () => {
       return (
-        haveEffect($effect`Driving Observantly`) >=
+        haveEffect($effect`Driving Waterproofly`) >=
         estimatedGarboTurns() + (globalOptions.ascend ? 0 : estimatedTurnsTomorrow)
       );
     },
     action: () => {
       AsdonMartin.drive(
-        $effect`Driving Observantly`,
+        $effect`Driving Waterproofly`,
         estimatedGarboTurns() + (globalOptions.ascend ? 0 : estimatedTurnsTomorrow),
       );
     },

@@ -229,6 +229,7 @@ export default function postCombatActions(skipDiet = false): void {
   floristFriars();
   handleWorkshed();
   safeInterrupt();
+  abortIfNoUnderwaterBuffs();
   refillCinch();
   safeRestore();
   updateMallPrices();
