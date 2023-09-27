@@ -212,6 +212,12 @@ function eightBitFatLoot() {
   }
 }
 
+function abortIfNoUnderwaterBuffs() {
+  if (!have($effect`Fishy`) || !have($effect`Driving Waterproofly`)) {
+    throw new Error("We've ran out of Fishy or Waterproofness! Check what happened");
+  }
+}
+
 export default function postCombatActions(skipDiet = false): void {
   closetStuff();
   juneCleave();
