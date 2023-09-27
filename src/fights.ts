@@ -1774,9 +1774,9 @@ const freeRunFightSources = [
         $location`Gingerbread Civic Center`,
         Macro.if_(
           `(monsterid 1979) || (monsterid 1977)`,
-          Macro.startCombat()
-            .tryItem($item`gingerbread cigarette`)
-            .abortWithMsg(`Was unable to free kill our gingerbread target!`),
+          Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
+            `Was unable to free kill our gingerbread target!`,
+          ),
         ).step(runSource.macro),
       );
       if (
