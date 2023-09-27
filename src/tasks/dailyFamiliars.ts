@@ -28,7 +28,7 @@ import {
 } from "libram";
 import { withStash } from "../clan";
 import { globalOptions } from "../config";
-import { embezzlerCount } from "../embezzler";
+import { embezzlerCount, gregLikeFightCount } from "../embezzler";
 import { meatFamiliar, setBestLeprechaunAsMeatFamiliar } from "../familiar";
 import {
   baseMeat,
@@ -85,6 +85,23 @@ function drivebyValue(): number {
   return (meatPercentDelta / 100) * ((700 + baseMeat) * embezzlers + baseMeat * tourists);
 }
 
+function bloodyNoraValue(): number {
+  const embezzlers = embezzlerCount();
+  const robortMultiplier = 2;
+  const bloodyNoraWeight = 10;
+  const cows = estimatedGarboTurns() - embezzlers;
+  // Assume base weight of 100 pounds. This is off but close enough.
+  const assumedBaseWeight = 100;
+  // Marginal value of 1 familiar weight in % meat drop.
+  const marginalValue =
+    2 * robortMultiplier + Math.sqrt(220 * robortMultiplier) / (2 * Math.sqrt(assumedBaseWeight));
+  // We fight embezzlers underwater while doing gregs
+  return (
+    bloodyNoraWeight * (marginalValue / 100) * baseMeat * cows +
+    bloodyNoraWeight * (marginalValue / 100) * (baseMeat + 700) * gregLikeFightCount()
+  );
+}
+
 function entendreValue(): number {
   const embezzlers = embezzlerCount();
   const tourists = ((estimatedGarboTurns() - embezzlers) * turnsToNC) / (turnsToNC + 1);
@@ -108,9 +125,7 @@ export function prepRobortender(): void {
     },
     "Feliz Navidad": { priceCap: felizValue() * 0.25 * estimatedGarboTurns(), mandatory: false },
     "Bloody Nora": {
-      priceCap: get("_envyfishEggUsed")
-        ? (700 + baseMeat) * (0.5 + ((4 + Math.sqrt(110 / 100)) * 30) / 100)
-        : 0,
+      priceCap: bloodyNoraValue(),
       mandatory: false,
     },
     "Single entendre": { priceCap: entendreValue(), mandatory: false },
