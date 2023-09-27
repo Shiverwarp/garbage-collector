@@ -295,6 +295,26 @@ export class Macro extends StrictMacro {
       shouldRedigitize(),
       Macro.if_($monster`Knob Goblin Embezzler`, Macro.trySkill($skill`Digitize`)),
     )
+      .if_(
+        $monsters`sea cowboy, Mer-kin rustler`,
+        Macro.abortWithMsg("We shouldn't be encountering sea cowboys or Mer-kin rustlers!"),
+      )
+      .if_(
+        $monster`wild seahorse`,
+        Macro.item($item`sea cowbell`)
+          .item($item`sea cowbell`)
+          .item($item`sea cowbell`)
+          .item($item`sea lasso`)
+          .abortWithMsg("Wild seahorse should have been tamed, what happened?"),
+      )
+      .if_(
+        $monster`sea cow`,
+        Macro.skill($skill`Curse of Weaksauce`)
+          .skill($skill`Micrometeorite`)
+          .trySkill($skill`Pocket Crumbs`)
+          .item([$item`train whistle`, $item`HOA citation pad`])
+          .skill($skill`Entangling Noodles`),
+      )
       .trySingAlong()
       .familiarActions()
       .externalIf(
