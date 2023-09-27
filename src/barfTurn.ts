@@ -5,6 +5,7 @@ import {
   cliExecute,
   currentRound,
   eat,
+  itemAmount,
   Location,
   mallPrice,
   maximize,
@@ -12,6 +13,7 @@ import {
   myInebriety,
   myLevel,
   print,
+  putCloset,
   retrieveItem,
   runChoice,
   runCombat,
@@ -242,19 +244,23 @@ const turns: AdventureAction[] = [
         ? $location`The Briny Deeps`
         : wanderer.getTarget({ wanderer: "wanderer", allowEquipment: false });
 
-      if (underwater) retrieveItem($item`pulled green taffy`);
-      else propertyManager.setChoices(wanderer.getChoices("wanderer"));
+      if (underwater) {
+        retrieveItem($item`pulled green taffy`);
+      } else {
+        putCloset(itemAmount($item`pulled green taffy`), $item`bowling ball`);
+        propertyManager.setChoices(wanderer.getChoices("wanderer"));
+      }
 
       isEmbezzler ? embezzlerOutfit({}, targetLocation).dress() : freeFightOutfit().dress();
       garboAdventureAuto(
         targetLocation,
-        Macro.externalIf(underwater, Macro.item($item`pulled green taffy`)).meatKill(),
+        Macro.externalIf(underwater, Macro.tryItem($item`pulled green taffy`)).meatKill(),
 
         // Hacky fix for when we fail init to embezzler, who are special monsters
         // Macro autoattacks fail when you lose the jump to special monsters
         Macro.if_(
           `(monsterid ${embezzler.id}) && !gotjump && !(pastround 2)`,
-          Macro.externalIf(underwater, Macro.item($item`pulled green taffy`)).meatKill(),
+          Macro.externalIf(underwater, Macro.tryItem($item`pulled green taffy`)).meatKill(),
         ).abortWithMsg(
           `Expected a digitized ${SourceTerminal.getDigitizeMonster()}, but encountered something else.`,
         ),
