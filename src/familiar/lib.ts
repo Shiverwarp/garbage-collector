@@ -10,7 +10,7 @@ import {
 } from "kolmafia";
 import { $effect, $familiar, $item, $skill, clamp, get, have } from "libram";
 import { globalOptions } from "../config";
-import { baseMeat, ESTIMATED_OVERDRUNK_TURNS, turnsToNC } from "../lib";
+import { baseMeat, ESTIMATED_OVERDRUNK_TURNS } from "../lib";
 import { digitizedMonstersRemaining, estimatedGarboTurns } from "../turns";
 
 export type GeneralFamiliar = {
@@ -99,6 +99,5 @@ export function turnsAvailable(): number {
     : 0;
 
   const barfTurns = baseTurns - digitizes - mapTurns;
-  const barfCombatRate = 1 - 1 / turnsToNC;
-  return barfTurns * barfCombatRate;
+  return barfTurns;
 }

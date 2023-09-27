@@ -30,15 +30,7 @@ import { withStash } from "../clan";
 import { globalOptions } from "../config";
 import { embezzlerCount, gregLikeFightCount } from "../embezzler";
 import { meatFamiliar, setBestLeprechaunAsMeatFamiliar } from "../familiar";
-import {
-  baseMeat,
-  garbageTouristRatio,
-  GarboItemLists,
-  today,
-  tryFeast,
-  turnsToNC,
-  userConfirmDialog,
-} from "../lib";
+import { baseMeat, GarboItemLists, today, tryFeast, userConfirmDialog } from "../lib";
 import { garboValue } from "../value";
 import { estimatedGarboTurns } from "../turns";
 import { GarboTask } from "./engine";
@@ -76,13 +68,13 @@ function felizValue(): number {
 
 function drivebyValue(): number {
   const embezzlers = embezzlerCount();
-  const tourists = ((estimatedGarboTurns() - embezzlers) * turnsToNC) / (turnsToNC + 1);
+  const cows = estimatedGarboTurns() - embezzlers;
   const marginalRoboWeight = 50;
   const meatPercentDelta =
     Math.sqrt(220 * 2 * marginalRoboWeight) -
     Math.sqrt(220 * 2 * marginalRoboWeight) +
     2 * marginalRoboWeight;
-  return (meatPercentDelta / 100) * ((700 + baseMeat) * embezzlers + baseMeat * tourists);
+  return (meatPercentDelta / 100) * ((700 + baseMeat) * embezzlers + baseMeat * cows);
 }
 
 function bloodyNoraValue(): number {
@@ -104,14 +96,17 @@ function bloodyNoraValue(): number {
 
 function entendreValue(): number {
   const embezzlers = embezzlerCount();
-  const tourists = ((estimatedGarboTurns() - embezzlers) * turnsToNC) / (turnsToNC + 1);
+  const cows = estimatedGarboTurns() - embezzlers;
   const marginalRoboWeight = 50;
   const itemPercent = Math.sqrt(55 * marginalRoboWeight) + marginalRoboWeight - 3;
-  const garbageBagsDropRate = 0.15 * 3; // 3 bags each with a 15% drop chance
+  const leatherDropRate = 0.2;
+  const cowbellDropRate = 0.1;
   const meatStackDropRate = 0.3 * 4; // 4 stacks each with a 30% drop chance
   return (
     (itemPercent / 100) *
-    (meatStackDropRate * embezzlers + garbageBagsDropRate * tourists * garbageTouristRatio)
+    (meatStackDropRate * embezzlers * 100 +
+      leatherDropRate * cows * garboValue($item`sea leather`) +
+      cowbellDropRate * cows * garboValue($item`sea cowbell`))
   );
 }
 

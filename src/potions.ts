@@ -58,7 +58,6 @@ import {
   bestShadowRift,
   HIGHLIGHT,
   pillkeeperOpportunityCost,
-  turnsToNC,
   withLocation,
 } from "./lib";
 import { embezzlerCount } from "./embezzler";
@@ -811,7 +810,7 @@ class VariableMeatPotion {
   valueNPotions(n: number, yachtzees: number, embezzlers: number, barfTurns: number): number {
     const yachtzeeValue = 2000;
     const embezzlerValue = baseMeat + 700;
-    const barfValue = (baseMeat * turnsToNC) / 30;
+    const barfValue = baseMeat;
 
     const totalCosts = retrievePrice(this.potion, n);
     const totalDuration = n * this.duration;

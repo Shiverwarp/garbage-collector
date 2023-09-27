@@ -27,7 +27,7 @@ import {
 } from "libram";
 import { acquire } from "../acquire";
 import { withStash } from "../clan";
-import { baseMeat, burnLibrams, turnsToNC } from "../lib";
+import { baseMeat, burnLibrams } from "../lib";
 import {
   failedWishes,
   farmingPotions,
@@ -65,7 +65,7 @@ export function yachtzeePotionProfits(potion: Potion, yachtzeeTurns: number): nu
   const embezzlerValue = embezzlerTurns > 0 ? potion.gross(embezzlerTurns) : 0;
   const yachtzeeValue =
     (effectiveYachtzeeTurns * 2000 * (potion.meatDrop() + 2.5 * potion.familiarWeight())) / 100; // Every 1lbs of lep ~ 2.5% meat drop
-  const barfValue = (barfTurns * baseMeat * turnsToNC) / (turnsToNC + 1);
+  const barfValue = barfTurns * baseMeat;
 
   return yachtzeeValue + embezzlerValue + barfValue - potion.price(true);
 }
