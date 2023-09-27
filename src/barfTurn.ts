@@ -68,6 +68,7 @@ import { trackBarfSessionStatistics } from "./session";
 import { completeBarfQuest } from "./tasks/daily";
 import { digitizedMonstersRemaining, estimatedGarboTurns } from "./turns";
 import wanderer, { WanderOptions } from "./wanderer";
+import { acquire } from "./acquire";
 
 const embezzler = $monster`Knob Goblin Embezzler`;
 
@@ -505,6 +506,10 @@ function runTurn() {
 export default function barfTurn(): void {
   trackBarfSessionStatistics();
   if (SourceTerminal.have()) SourceTerminal.educate([$skill`Extract`, $skill`Digitize`]);
+  if (!get("seahorseName")) {
+    acquire(3, $item`sea cowbell`, 9000, true);
+    acquire(1, $item`sea lasso`, 9000, true);
+  }
 
   tryFillLatte();
   meatMood().execute(estimatedGarboTurns());
