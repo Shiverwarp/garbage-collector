@@ -39,7 +39,7 @@ export function bestYachtzeeFamiliar(): Familiar {
         findLeprechaunMultiplier(fam) > 0 &&
         fam !== $familiar`Ghost of Crimbo Commerce` &&
         fam !== $familiar`Robortender` &&
-        (fam.underwater || haveUnderwaterFamEquipment),
+        (fam.underwater || haveUnderwaterFamEquipment || have($effect`Driving Waterproofly`)),
     )
     .sort(
       (left, right) =>

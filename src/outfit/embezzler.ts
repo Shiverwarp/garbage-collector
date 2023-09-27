@@ -1,6 +1,6 @@
 import { Outfit, OutfitSpec } from "grimoire-kolmafia";
 import { toJson } from "kolmafia";
-import { $item, $items, $location, Guzzlr } from "libram";
+import { $effect, $item, $items, $location, Guzzlr, have } from "libram";
 import { meatFamiliar } from "../familiar";
 import { chooseBjorn } from "./bjorn";
 import { bonusGear } from "./dropsgear";
@@ -30,7 +30,7 @@ export function embezzlerOutfit(spec: OutfitSpec = {}, target = $location.none):
 
   const underwater = target.environment === "underwater";
   if (underwater) {
-    if (!outfit.familiar.underwater) {
+    if (!outfit.familiar.underwater && !have($effect`Driving Waterproofly`)) {
       outfit.equipFirst(familiarWaterBreathingEquipment);
     }
 

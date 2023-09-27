@@ -168,14 +168,7 @@ import {
   userConfirmDialog,
 } from "./lib";
 import { freeFightMood, meatMood, useBuffExtenders } from "./mood";
-import {
-  embezzlerOutfit,
-  freeFightOutfit,
-  magnifyingGlass,
-  toSpec,
-  tryFillLatte,
-  waterBreathingEquipment,
-} from "./outfit";
+import { embezzlerOutfit, freeFightOutfit, magnifyingGlass, toSpec, tryFillLatte } from "./outfit";
 import postCombatActions from "./post";
 import { bathroomFinance, potionSetup } from "./potions";
 import { garboValue } from "./value";
@@ -2907,20 +2900,14 @@ function yachtzee(): void {
   ]) {
     if (available) {
       const familiarOptions = Familiar.all().filter(
-        (familiar) => have(familiar) && familiar.underwater && familiar !== $familiar`Robortender`,
+        (familiar) => have(familiar) && familiar !== $familiar`Robortender`,
       );
       const familiarChoice = familiarOptions.length
         ? maxBy(familiarOptions, findLeprechaunMultiplier)
         : $familiar.none;
       useFamiliar(familiarChoice);
 
-      const underwaterBreathingGear = waterBreathingEquipment.find(
-        (item) => have(item) && canEquip(item),
-      );
-      if (!underwaterBreathingGear) return;
-      const equippedOutfit = new Requirement(["meat", "-tie"], {
-        forceEquip: [underwaterBreathingGear],
-      }).maximize();
+      const equippedOutfit = new Requirement(["meat", "-tie"], {}).maximize();
       if (haveEquipped($item`The Crown of Ed the Undying`)) cliExecute("edpiece fish");
 
       if (!equippedOutfit || !success()) return;

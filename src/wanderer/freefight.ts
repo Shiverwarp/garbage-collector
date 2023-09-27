@@ -6,7 +6,6 @@ import {
   canAdventureOrUnlock,
   canWander,
   DraggableFight,
-  underwater,
   UnlockableZones,
   WandererTarget,
 } from "./lib";
@@ -43,7 +42,7 @@ function averageYrValue(location: Location, forceItemDrops: boolean) {
 
 function monsterValues(forceItemDrops: boolean): Map<Location, number> {
   const values = new Map<Location, number>();
-  for (const location of Location.all().filter((l) => canAdventureOrUnlock(l) && !underwater(l))) {
+  for (const location of Location.all().filter((l) => canAdventureOrUnlock(l))) {
     values.set(
       location,
       averageYrValue(location, forceItemDrops) + freeFightFamiliarData({ location }).expectedValue,

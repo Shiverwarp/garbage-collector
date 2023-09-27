@@ -72,7 +72,7 @@ export function prepareOutfitAndFamiliar(): void {
     withStash($items`moveable feast`, () => use($item`moveable feast`));
   }
   maximizeMeat();
-  if (!myFamiliar().underwater) {
+  if (!myFamiliar().underwater && !have($effect`Driving Waterproofly`)) {
     equip(
       $slot`familiar`,
       maxBy(

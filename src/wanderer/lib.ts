@@ -76,7 +76,7 @@ export function canAdventureOrUnlock(loc: Location): boolean {
     skiplist.push($location`The Icy Peak`);
   }
   const canUnlock = UnlockableZones.some((z) => loc.zone === z.zone && (z.available() || !z.noInv));
-  return !underwater(loc) && !skiplist.includes(loc) && (canAdventure(loc) || canUnlock);
+  return !skiplist.includes(loc) && (canAdventure(loc) || canUnlock);
 }
 
 export function unlock(loc: Location, value: number): boolean {
@@ -116,7 +116,6 @@ function canWanderTypeWander(location: Location): boolean {
 }
 
 export function canWander(location: Location, type: DraggableFight): boolean {
-  if (underwater(location)) return false;
   switch (type) {
     case "backup":
       return canWanderTypeBackup(location);

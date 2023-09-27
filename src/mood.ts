@@ -76,7 +76,7 @@ export function meatMood(urKels = false, meat = baseMeat): Mood {
     mood.skill($skill`Bind Lasagmbie`);
   }
 
-  if (getWorkshed() === $item`Asdon Martin keyfob`) mood.drive(AsdonMartin.Driving.Observantly);
+  if (getWorkshed() === $item`Asdon Martin keyfob`) mood.drive(AsdonMartin.Driving.Waterproofly);
 
   if (have($item`Kremlin's Greatest Briefcase`)) {
     mood.effect($effect`A View to Some Meat`, () => {
@@ -161,7 +161,7 @@ export function freeFightMood(...additionalEffects: Effect[]): Mood {
 
   shrugBadEffects(...additionalEffects);
 
-  if (getWorkshed() === $item`Asdon Martin keyfob`) mood.drive(AsdonMartin.Driving.Observantly);
+  if (getWorkshed() === $item`Asdon Martin keyfob`) mood.drive(AsdonMartin.Driving.Waterproofly);
 
   return mood;
 }

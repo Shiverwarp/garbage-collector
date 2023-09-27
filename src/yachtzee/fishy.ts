@@ -54,7 +54,7 @@ export function optimizeForFishy(yachtzeeTurns: number, setup?: boolean): number
 
   if (
     setup &&
-    !have($effect`Really Deep Breath`) &&
+    (!have($effect`Really Deep Breath`) || !have($effect`Driving Waterproofly`)) &&
     bestWaterBreathingEquipment.item !== $item.none
   ) {
     equip(bestWaterBreathingEquipment.item);
