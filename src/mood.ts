@@ -31,14 +31,14 @@ import { usingPurse } from "./outfit";
 Mood.setDefaultOptions({
   songSlots: [
     $effects`Polka of Plenty`,
-    $effects`Fat Leon's Phat Loot Lyric, Ur-Kel's Aria of Annoyance`,
+    $effects`Donho's Bubbly Ballad`,
     $effects`Chorale of Companionship`,
     $effects`The Ballad of Richie Thingfinder`,
   ],
   useNativeRestores: true,
 });
 
-export function meatMood(urKels = false, meat = baseMeat): Mood {
+export function meatMood(yachtzeeEstimate = false, meat = baseMeat): Mood {
   // Reserve the amount of MP we try to restore before each fight.
   const mood = new Mood({ reserveMp: safeRestoreMpTarget() });
 
@@ -53,9 +53,21 @@ export function meatMood(urKels = false, meat = baseMeat): Mood {
   mood.skill($skill`Leash of Linguini`);
   mood.skill($skill`Empathy of the Newt`);
 
+  mood.skill($skill`Ruthless Efficiency`);
+
+  if (!yachtzeeEstimate) {
+    mood.skill($skill`Donho's Bubbly Ballad`);
+  }
+
+  if (
+    !have($effect`Chorale of Companionship`) ||
+    !have($effect`The Ballad of Richie Thingfinder`)
+  ) {
+    mood.skill($skill`Fat Leon's Phat Loot Lyric`);
+  }
+
   mood.skill($skill`The Polka of Plenty`);
   mood.skill($skill`Disco Leer`);
-  mood.skill(urKels ? $skill`Ur-Kel's Aria of Annoyance` : $skill`Fat Leon's Phat Loot Lyric`);
   mood.skill($skill`Singer's Faithful Ocelot`);
   mood.skill($skill`The Spirit of Taking`);
   mood.skill($skill`Drescher's Annoying Noise`);
