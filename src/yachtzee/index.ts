@@ -50,7 +50,7 @@ function _yachtzeeChain(): void {
   if (!realmAvailable("sleaze")) return;
 
   maximize("MP", false);
-  meatMood(true, 700 + baseMeat).execute(embezzlerCount());
+  meatMood(true, true, 700 + baseMeat).execute(embezzlerCount());
   potionSetup(globalOptions.nobarf); // This is the default set up for embezzlers (which helps us estimate if chaining is better than extros)
   maximizeMeat();
   prepareOutfitAndFamiliar();
@@ -85,7 +85,7 @@ function _yachtzeeChain(): void {
   if (haveEffect($effect`Beaten Up`)) {
     uneffect($effect`Beaten Up`);
   }
-  meatMood(true, 2000).execute(Math.min(jellyTurns, fishyTurns));
+  meatMood(true, true, 2000).execute(Math.min(jellyTurns, fishyTurns));
   safeRestore();
 
   propertyManager.setChoice(918, 2);

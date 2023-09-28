@@ -15,6 +15,7 @@ import {
   $class,
   $effect,
   $effects,
+  $familiar,
   $item,
   $items,
   $skill,
@@ -38,7 +39,7 @@ Mood.setDefaultOptions({
   useNativeRestores: true,
 });
 
-export function meatMood(yachtzeeEstimate = false, meat = baseMeat): Mood {
+export function meatMood(yachtzeeEstimate = false, embezzlers = false, meat = baseMeat): Mood {
   // Reserve the amount of MP we try to restore before each fight.
   const mood = new Mood({ reserveMp: safeRestoreMpTarget() });
 
@@ -55,8 +56,35 @@ export function meatMood(yachtzeeEstimate = false, meat = baseMeat): Mood {
 
   mood.skill($skill`Ruthless Efficiency`);
 
+  // Underwater only effects do not work during yachtzee
   if (!yachtzeeEstimate) {
     mood.skill($skill`Donho's Bubbly Ballad`);
+
+    const familiarMultiplier = have($familiar`Robortender`)
+      ? 2
+      : have($familiar`Hobo Monkey`)
+      ? 1.25
+      : 1;
+    // Assume base weight of 100 pounds. This is off but close enough.
+    const assumedBaseWeight = 100;
+    // Marginal value of familiar weight in % meat drop.
+    const marginalValue =
+      2 * familiarMultiplier +
+      Math.sqrt(220 * familiarMultiplier) / (2 * Math.sqrt(assumedBaseWeight));
+
+    // Underwater only potions
+    mood.potion($item`temporary teardrop tattoo`, ((10 * marginalValue) / 100) * meat);
+    mood.potion($item`sea grease`, ((5 * marginalValue) / 100) * meat);
+
+    // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
+    if (!embezzlers) {
+      // Pressure reduction potions
+      // Adding all of them even though it's technically possible to go over 100% reduction and waste buffs. Doubtful to happen because Shark cartilage will always be too expensive
+      mood.potion($item`Mer-kin fastjuice`, 0.1 * baseMeat);
+      mood.potion($item`sea salt crystal`, 0.1 * baseMeat);
+      mood.potion($item`shavin' razor`, 0.2 * baseMeat);
+      mood.potion($item`shark cartilage`, 0.4 * baseMeat);
+    }
   }
 
   if (
