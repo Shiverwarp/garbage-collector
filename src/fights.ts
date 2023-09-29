@@ -220,7 +220,7 @@ function embezzlerSetup() {
   setLocation($location`Friar Ceremony Location`);
   potionSetup(false);
   maximize("MP", false);
-  meatMood(false, true, 700 + baseMeat).execute(embezzlerCount());
+  meatMood("Replacer", 700 + baseMeat).execute(embezzlerCount());
   safeRestore();
   freeFightMood().execute(50);
   useBuffExtenders();
@@ -472,6 +472,11 @@ export function dailyFights(): void {
           const notEnoughCratesSabered = get("_saberForceMonsterCount") < 2;
           const weWantToSaberCrates = !crateIsSabered || notEnoughCratesSabered;
           if (weWantToSaberCrates) saberCrateIfSafe();
+        }
+
+        if (["Habitats Monster", "Be Gregarious"].includes(nextFight.name)) {
+          print("Buffing for underwater greglikes!", "fuchsia");
+          meatMood("Greg", 700 + baseMeat).execute(embezzlerCount());
         }
 
         const location = nextFight.location();

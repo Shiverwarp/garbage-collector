@@ -503,7 +503,7 @@ export function main(argString = ""): void {
           // 3. burn turns at barf
           potionSetup(false);
           maximize("MP", false);
-          meatMood().execute(estimatedGarboTurns());
+          meatMood("Barf").execute(estimatedGarboTurns());
           useBuffExtenders();
           try {
             while (canContinue()) {

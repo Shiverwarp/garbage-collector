@@ -512,7 +512,7 @@ export default function barfTurn(): void {
   }
 
   tryFillLatte();
-  meatMood().execute(estimatedGarboTurns());
+  meatMood("Barf").execute(estimatedGarboTurns());
   safeRestore();
 
   let failures = 0;
