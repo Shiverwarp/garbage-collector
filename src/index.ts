@@ -3,6 +3,7 @@ import {
   abort,
   availableAmount,
   buy,
+  canAdventure,
   canEquip,
   cliExecute,
   currentRound,
@@ -36,8 +37,10 @@ import {
   $class,
   $classes,
   $coinmaster,
+  $effect,
   $item,
   $items,
+  $location,
   $skill,
   $slots,
   Clan,
@@ -224,6 +227,18 @@ export function main(argString = ""): void {
         );
       }
     }
+  }
+
+  if (!have($effect`Fishy`)) {
+    throw `We should have gotten fishy before running! Did something go wrong?`;
+  }
+
+  if (!have($effect`Driving Waterproofly`)) {
+    throw `We should have gotten Driving Waterproofly before running! Did something go wrong?`;
+  }
+
+  if (!canAdventure($location`The Coral Corral`)) {
+    throw `We need to be able to adventure at Coral Corral! Did we fail to unlock it?`;
   }
 
   if (globalOptions.prefs.valueOfAdventure && globalOptions.prefs.valueOfAdventure <= 3500) {
