@@ -124,6 +124,12 @@ export function modeValueOfMeat(mode: BonusEquipMode): number {
 }
 
 export function modeValueOfItem(mode: BonusEquipMode): number {
+  // Every 100% item, 20% chance of sea leather, so 1% item gives 0.2% chance
+  // Right now this would way overvalue cowbells. Wait until we've farmed a while to see where things settle
+
+  // const valuePerItemPercentForLeather = 0.002 * garboValue($item`sea leather`);
+  // const valuePerItemPercentForCowbell = 0.001 * garboValue($item`sea cowbell`);
+
   return mode === BonusEquipMode.BARF ? 0.72 : 0;
 }
 
