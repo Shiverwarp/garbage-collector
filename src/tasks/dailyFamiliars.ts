@@ -95,17 +95,14 @@ function bloodyNoraValue(): number {
 }
 
 function entendreValue(): number {
-  const embezzlers = embezzlerCount();
   const cows = estimatedGarboTurns() - embezzlers;
   const marginalRoboWeight = 50;
   const itemPercent = Math.sqrt(55 * marginalRoboWeight) + marginalRoboWeight - 3;
   const leatherDropRate = 0.2;
   const cowbellDropRate = 0.1;
-  const meatStackDropRate = 0.3 * 4; // 4 stacks each with a 30% drop chance
   return (
     (itemPercent / 100) *
-    (meatStackDropRate * embezzlers * 100 +
-      leatherDropRate * cows * garboValue($item`sea leather`) +
+    (leatherDropRate * cows * garboValue($item`sea leather`) +
       cowbellDropRate * cows * garboValue($item`sea cowbell`))
   );
 }
