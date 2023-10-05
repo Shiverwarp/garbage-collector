@@ -6,8 +6,10 @@ import {
   hippyStoneBroken,
   itemAmount,
   myPrimestat,
+  mySpleenUse,
   retrieveItem,
   retrievePrice,
+  spleenLimit,
   toItem,
   use,
   useFamiliar,
@@ -17,6 +19,7 @@ import {
   $familiars,
   $item,
   $items,
+  clamp,
   CrimboShrub,
   get,
   have,
@@ -25,20 +28,13 @@ import {
 } from "libram";
 import { withStash } from "../clan";
 import { globalOptions } from "../config";
-import { embezzlerCount, gregLikeFightCount } from "../embezzler";
+import { embezzlerCount } from "../embezzler";
 import { meatFamiliar, setBestLeprechaunAsMeatFamiliar } from "../familiar";
-import {
-  baseMeat,
-  felizValue,
-  garbageTouristRatio,
-  newarkValue,
-  tryFeast,
-  turnsToNC,
-  userConfirmDialog,
-} from "../lib";
+import { baseMeat, felizValue, newarkValue, tryFeast, userConfirmDialog } from "../lib";
 import { estimatedGarboTurns } from "../turns";
 import { GarboTask } from "./engine";
 import { Quest } from "grimoire-kolmafia";
+import { garboValue } from "../garboValue";
 
 function drivebyValue(): number {
   const embezzlers = embezzlerCount();
@@ -53,6 +49,12 @@ function drivebyValue(): number {
 
 function bloodyNoraValue(): number {
   const embezzlers = embezzlerCount();
+  const extraOrbFights = have($item`miniature crystal ball`) ? 1 : 0;
+  const possibleGregsFromSpleen =
+    Math.floor((spleenLimit() - mySpleenUse()) / 2) * (3 + extraOrbFights);
+  const currentAvailableGregs = Math.max(0, get("beGregariousCharges")) * (3 + extraOrbFights);
+  const habitatFights = (3 - clamp(get("_monsterHabitatsRecalled"), 0, 3)) * (5 + extraOrbFights);
+  const gregLikeFightCount = possibleGregsFromSpleen + currentAvailableGregs + habitatFights;
   const robortMultiplier = 2;
   const bloodyNoraWeight = 10;
   const cows = estimatedGarboTurns() - embezzlers;
@@ -64,12 +66,12 @@ function bloodyNoraValue(): number {
   // We fight embezzlers underwater while doing gregs
   return (
     bloodyNoraWeight * (marginalValue / 100) * baseMeat * cows +
-    bloodyNoraWeight * (marginalValue / 100) * (baseMeat + 700) * gregLikeFightCount()
+    bloodyNoraWeight * (marginalValue / 100) * (baseMeat + 700) * gregLikeFightCount
   );
 }
 
 function entendreValue(): number {
-  const cows = estimatedGarboTurns() - embezzlers;
+  const cows = estimatedGarboTurns() - embezzlerCount();
   const marginalRoboWeight = 50;
   const itemPercent = Math.sqrt(55 * marginalRoboWeight) + marginalRoboWeight - 3;
   const leatherDropRate = 0.2;
