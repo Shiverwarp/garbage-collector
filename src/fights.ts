@@ -100,11 +100,13 @@ import {
   FindActionSourceConstraints,
   findLeprechaunMultiplier,
   FloristFriar,
+  gameDay,
   get,
   getFoldGroup,
   have,
   maxBy,
   property,
+  realmAvailable,
   Requirement,
   Robortender,
   set,
@@ -120,14 +122,7 @@ import {
 import { MonsterProperty } from "libram/dist/propertyTypes";
 import { acquire } from "./acquire";
 import { withStash } from "./clan";
-import {
-  garboAdventure,
-  garboAdventureAuto,
-  Macro,
-  maxPassiveDamage,
-  monsterManuelAvailable,
-  withMacro,
-} from "./combat";
+import { garboAdventure, garboAdventureAuto, Macro, withMacro } from "./combat";
 import { globalOptions } from "./config";
 import { postFreeFightDailySetup } from "./dailiespost";
 import { embezzlerCount, embezzlerSources, getNextEmbezzlerFight } from "./embezzler";
@@ -161,21 +156,24 @@ import {
   logMessage,
   ltbRun,
   mapMonster,
+  maxPassiveDamage,
+  monsterManuelAvailable,
   propertyManager,
   questStep,
-  realmAvailable,
   romanticMonsterImpossible,
   safeRestore,
   setChoice,
-  today,
   userConfirmDialog,
 } from "./lib";
 import { freeFightMood, meatMood, useBuffExtenders } from "./mood";
 import { embezzlerOutfit, freeFightOutfit, magnifyingGlass, toSpec, tryFillLatte } from "./outfit";
 import postCombatActions from "./post";
 import { bathroomFinance, potionSetup } from "./potions";
-import { garboValue } from "./value";
-import wanderer, { DraggableFight, WanderOptions } from "./wanderer";
+import { garboValue } from "./garboValue";
+import { DraggableFight, WanderOptions } from "./libgarbo";
+import { wanderer } from "./garboWanderer";
+import { runEmbezzlerFight } from "./embezzler/execution";
+import { EmbezzlerFightRunOptions } from "./embezzler/staging";
 
 const firstChainMacro = () =>
   Macro.if_(
@@ -430,7 +428,7 @@ export function dailyFights(): void {
 
           if (get("_pocketProfessorLectures") < pocketProfessorLectures()) {
             const startLectures = get("_pocketProfessorLectures");
-            fightSource.run({
+            runEmbezzlerFight(fightSource, {
               macro: macro(),
               useAuto: false,
             });
@@ -479,18 +477,19 @@ export function dailyFights(): void {
           meatMood("Greg", 700 + baseMeat).execute(embezzlerCount());
         }
 
-        const location = nextFight.location();
+        const location = new EmbezzlerFightRunOptions(nextFight).location;
         const underwater = location.environment === "underwater";
+        const shouldCopy = get("_badlyRomanticArrows") === 0 && !underwater;
 
-        const familiar =
-          get("_badlyRomanticArrows") === 0 && !underwater
-            ? $familiars`Obtuse Angel, Reanimated Reanimator`.find(have) ?? meatFamiliar()
-            : meatFamiliar();
+        const bestCopier = $familiars`Obtuse Angel, Reanimated Reanimator`.find(have);
+        const familiar = shouldCopy && bestCopier ? bestCopier : meatFamiliar();
+        const famSpec: OutfitSpec = { familiar };
+        if (familiar === $familiar`Obtuse Angel`) famSpec.famequip = $item`quake of arrows`;
 
         setLocation(location);
-        embezzlerOutfit({ ...nextFight.spec, familiar }, location).dress();
+        embezzlerOutfit({ ...nextFight.spec, ...famSpec }, location).dress();
 
-        nextFight.run();
+        runEmbezzlerFight(nextFight);
         postCombatActions();
 
         print(`Finished ${nextFight.name}`);
@@ -1230,8 +1229,8 @@ const freeFightSources = [
   new FreeFight(
     () => get("_sausageFights") === 0 && have($item`Kramco Sausage-o-Matic™`),
     () => {
-      propertyManager.setChoices(wanderer.getChoices("wanderer"));
-      adv1(wanderer.getTarget("wanderer"), -1, "");
+      propertyManager.setChoices(wanderer().getChoices("wanderer"));
+      adv1(wanderer().getTarget("wanderer"), -1, "");
     },
     true,
     {
@@ -1585,7 +1584,7 @@ const freeFightSources = [
 
       runShadowRiftTurn();
 
-      if (get("encountersUntilSRChoice", 0) === 0) {
+      if (get("encountersUntilSRChoice") === 0 || get("noncombatForcerActive")) {
         if (ClosedCircuitPayphone.have() && !ClosedCircuitPayphone.rufusTarget()) {
           ClosedCircuitPayphone.chooseQuest(() => 2);
         }
@@ -1601,7 +1600,7 @@ const freeFightSources = [
         adv1(bestShadowRift(), -1, "");
       }
 
-      if (!have($effect`Shadow Affinity`) && get("encountersUntilSRChoice", 0) !== 0) {
+      if (!have($effect`Shadow Affinity`) && get("encountersUntilSRChoice") !== 0) {
         setLocation($location.none); // Reset location to not affect mafia's item drop calculations
       }
     },
@@ -2158,8 +2157,8 @@ const freeRunFightSources = [
       get("_hipsterAdv") < 7 &&
       (have($familiar`Mini-Hipster`) || have($familiar`Artistic Goth Kid`)),
     (runSource: ActionSource) => {
-      propertyManager.setChoices(wanderer.getChoices("backup"));
-      const targetLocation = wanderer.getTarget("backup");
+      propertyManager.setChoices(wanderer().getChoices("backup"));
+      const targetLocation = wanderer().getTarget("backup");
       garboAdventure(
         targetLocation,
         Macro.if_(
@@ -2374,14 +2373,18 @@ const freeKillSources = [
   ),
 ];
 
+function embezzlersInProgress(): boolean {
+  return (
+    get("beGregariousFightsLeft") > 0 ||
+    get("_monsterHabitatsFightsLeft") > 0 ||
+    !romanticMonsterImpossible() ||
+    Counter.get("Digitize Monster") <= 0
+  );
+}
+
 export function freeRunFights(): void {
   if (myInebriety() > inebrietyLimit()) return;
-  if (
-    get("beGregariousFightsLeft") > 0 &&
-    get("beGregariousMonster") === $monster`Knob Goblin Embezzler`
-  ) {
-    return;
-  }
+  if (embezzlersInProgress()) return;
 
   propertyManager.setChoices({
     1387: 2, // "You will go find two friends and meet me here."
@@ -2411,12 +2414,7 @@ export function freeRunFights(): void {
 
 export function freeFights(): void {
   if (myInebriety() > inebrietyLimit()) return;
-  if (
-    get("beGregariousFightsLeft") > 0 &&
-    get("beGregariousMonster") === $monster`Knob Goblin Embezzler`
-  ) {
-    return;
-  }
+  if (embezzlersInProgress()) return;
 
   propertyManager.setChoices({
     1387: 2, // "You will go find two friends and meet me here."
@@ -2568,7 +2566,7 @@ export function doSausage(): void {
   freeFightOutfit({ equip: $items`Kramco Sausage-o-Matic™` }).dress();
   const currentSausages = get("_sausageFights");
   do {
-    propertyManager.setChoices(wanderer.getChoices("wanderer"));
+    propertyManager.setChoices(wanderer().getChoices("wanderer"));
     const goblin = $monster`sausage goblin`;
     freeFightOutfit(
       {
@@ -2577,7 +2575,7 @@ export function doSausage(): void {
       { wanderOptions: "wanderer" },
     ).dress();
     garboAdventureAuto(
-      wanderer.getTarget("wanderer"),
+      wanderer().getTarget("wanderer"),
       Macro.if_(goblin, Macro.basicCombat())
         .ifHolidayWanderer(Macro.basicCombat())
         .abortWithMsg(`Expected ${goblin} but got something else.`),
@@ -2782,8 +2780,8 @@ function voidMonster(): void {
     },
     { wanderOptions: "wanderer" },
   ).dress();
-  propertyManager.setChoices(wanderer.getChoices("wanderer"));
-  garboAdventure(wanderer.getTarget("wanderer"), Macro.basicCombat());
+  propertyManager.setChoices(wanderer().getChoices("wanderer"));
+  garboAdventure(wanderer().getTarget("wanderer"), Macro.basicCombat());
   postCombatActions();
 }
 
@@ -2943,7 +2941,7 @@ function yachtzee(): void {
         !get("_sleazeAirportToday") && // We cannot get the UMD with a one-day pass
         garboValue($item`Ultimate Mind Destroyer`) >=
           2000 * (1 + numericModifier("meat drop") / 100) &&
-        (!lastUMDDate || today - Date.parse(lastUMDDate) >= 1000 * 60 * 60 * 24 * 7);
+        (!lastUMDDate || gameDay().getTime() - Date.parse(lastUMDDate) >= 1000 * 60 * 60 * 24 * 7);
 
       setChoice(918, getUMD ? 1 : 2);
 
@@ -2974,8 +2972,6 @@ function runShadowRiftTurn(): void {
   if (have($item`Clara's bell`) && !globalOptions.clarasBellClaimed) {
     globalOptions.clarasBellClaimed = true;
     use($item`Clara's bell`);
-    // Not the most elegant solution, but we need a way to communicate that an NC is forced
-    set("encountersUntilSRChoice", 0);
   } else if (CinchoDeMayo.have() && CinchoDeMayo.totalAvailableCinch() >= 60) {
     const lastAcc = equippedItem($slot`acc3`);
     equip($slot`acc3`, $item`Cincho de Mayo`);
@@ -2983,7 +2979,6 @@ function runShadowRiftTurn(): void {
       if (!freeRest()) throw new Error("We are out of free rests!");
     }
     useSkill($skill`Cincho: Fiesta Exit`);
-    set("encountersUntilSRChoice", 0);
     equip($slot`acc3`, lastAcc); // Re-equip last item
   } else if (
     have($item`Jurassic Parka`) &&
@@ -2995,7 +2990,6 @@ function runShadowRiftTurn(): void {
     cliExecute("parka spikolodon");
     const macro = Macro.skill($skill`Launch spikolodon spikes`).basicCombat();
     garboAdventureAuto(bestShadowRift(), macro);
-    set("encountersUntilSRChoice", 0);
   } else {
     adv1(bestShadowRift(), -1, ""); // We wanted to use NC forcers, but none are suitable now
   }

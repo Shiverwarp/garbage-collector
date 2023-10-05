@@ -5,14 +5,15 @@ import {
   cliExecute,
   eat,
   Familiar,
+  familiarWeight,
   fileToBuffer,
   fullnessLimit,
-  gametimeToInt,
   getLocketMonsters,
   getMonsters,
   gitAtHead,
   gitInfo,
   handlingChoice,
+  haveEquipped,
   haveSkill,
   inebrietyLimit,
   isDarkMode,
@@ -23,6 +24,8 @@ import {
   meatDropModifier,
   Monster,
   mpCost,
+  myBjornedFamiliar,
+  myEnthronedFamiliar,
   myFamiliar,
   myFullness,
   myHp,
@@ -33,6 +36,7 @@ import {
   myMp,
   mySoulsauce,
   mySpleenUse,
+  myThrall,
   myTurncount,
   numericModifier,
   print,
@@ -46,6 +50,7 @@ import {
   soulsauceCost,
   spleenLimit,
   todayToString,
+  toItem,
   toSlot,
   totalFreeRests,
   toUrl,
@@ -64,6 +69,7 @@ import {
   $monster,
   $skill,
   $slot,
+  $thralls,
   ActionSource,
   bestLibramToCast,
   ChateauMantegna,
@@ -72,6 +78,7 @@ import {
   CombatLoversLocket,
   Counter,
   ensureFreeRun,
+  gameDay,
   get,
   getBanishedMonsters,
   getKramcoWandererChance,
@@ -82,6 +89,7 @@ import {
   maxBy,
   PropertiesManager,
   property,
+  realmAvailable,
   set,
   SongBoom,
   SourceTerminal,
@@ -90,7 +98,7 @@ import {
 } from "libram";
 import { acquire } from "./acquire";
 import { globalOptions } from "./config";
-import { garboValue } from "./value";
+import { garboValue } from "./garboValue";
 
 export const eventLog: {
   initialEmbezzlersFought: number;
@@ -452,16 +460,6 @@ export function checkGithubVersion(): void {
   }
 }
 
-export type RealmType = "spooky" | "stench" | "hot" | "cold" | "sleaze" | "fantasy" | "pirate";
-export function realmAvailable(identifier: RealmType): boolean {
-  if (identifier === "fantasy") {
-    return get(`_frToday`) || get(`frAlways`);
-  } else if (identifier === "pirate") {
-    return get(`_prToday`) || get(`prAlways`);
-  }
-  return get(`_${identifier}AirportToday`) || get(`${identifier}AirportAlways`);
-}
-
 export function formatNumber(num: number): string {
   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
@@ -499,8 +497,8 @@ function determineFreeBunnyBanish(): boolean {
   const extraOrbFights = have($item`miniature crystal ball`) ? 1 : 0;
   const possibleGregsFromSpleen =
     Math.floor((spleenLimit() - mySpleenUse()) / 2) * (3 + extraOrbFights);
-  const currentAvailableGregs = get("beGregariousCharges") * (3 + extraOrbFights);
-  const habitatFights = (3 - get("_monsterHabitatsRecalled")) * (5 + extraOrbFights);
+  const currentAvailableGregs = Math.max(0, get("beGregariousCharges")) * (3 + extraOrbFights);
+  const habitatFights = (3 - clamp(get("_monsterHabitatsRecalled"), 0, 3)) * (5 + extraOrbFights);
   const expectedPocketProfFights = !have($familiar`Pocket Professor`)
     ? 0
     : (!get("_garbo_meatChain", false) ? Math.max(10 - get("_pocketProfessorLectures"), 0) : 0) +
@@ -510,7 +508,7 @@ function determineFreeBunnyBanish(): boolean {
   const expectedReplacerFights =
     (have($skill`Meteor Lore`) ? 10 - get("_macrometeoriteUses") : 0) +
     (have($item`Powerful Glove`)
-      ? Math.floor(100 - get("_powerfulGloveBatteryPowerUsed") / 10)
+      ? Math.floor((100 - get("_powerfulGloveBatteryPowerUsed")) / 10)
       : 0);
   const useFreeBanishes =
     getBanishedMonsters().get($item`ice house`) !== $monster`fluffy bunny` &&
@@ -538,7 +536,6 @@ export function getUsingFreeBunnyBanish(): boolean {
   if (usingFreeBunnyBanish === undefined) {
     usingFreeBunnyBanish = determineFreeBunnyBanish();
   }
-  print(`FreeBunnyBanish has been called. Result: ${usingFreeBunnyBanish}`);
   return usingFreeBunnyBanish;
 }
 
@@ -557,8 +554,6 @@ export function freeRunConstraints(latteActionSource: boolean): {
     allowedAction: (action: ActionSource): boolean => {
       const disallowUsage = reservedBanishes.get(action.source);
 
-      print(`action source is: ${action.source} and disallow usage is: ${disallowUsage?.()}`);
-
       if (!have($item`latte lovers member's mug`) || !latteActionSource) {
         return !(disallowUsage?.() && getUsingFreeBunnyBanish());
       }
@@ -574,8 +569,6 @@ export function freeRunConstraints(latteActionSource: boolean): {
     },
   };
 }
-
-export const today = Date.now() - gametimeToInt() - 1000 * 60 * 3.5;
 
 export function dogOrHolidayWanderer(extraEncounters: string[] = []): boolean {
   return [
@@ -624,13 +617,6 @@ export const romanticMonsterImpossible = (): boolean =>
 
 export function sober(): boolean {
   return myInebriety() <= inebrietyLimit() + (myFamiliar() === $familiar`Stooper` ? -1 : 0);
-}
-
-export function freeCrafts(): number {
-  return (
-    (have($skill`Rapid Prototyping`) ? 5 - get("_rapidPrototypingUsed") : 0) +
-    (have($skill`Expert Corner-Cutter`) ? 5 - get("_expertCornerCutterUsed") : 0)
-  );
 }
 
 export type GarboItemLists = { Newark: string[]; "Feliz Navidad": string[]; trainset: string[] };
@@ -743,4 +729,146 @@ export function printEventLog(): void {
   }
 }
 
-export const TREASURE_HOUSE_FAT_LOOT_TOKEN_COST = 20000;
+function untangleDigitizes(turnCount: number, chunks: number): number {
+  const turnsPerChunk = turnCount / chunks;
+  const monstersPerChunk = Math.sqrt((turnsPerChunk + 3) / 5 + 1 / 4) - 1 / 2;
+  return Math.round(chunks * monstersPerChunk);
+}
+
+export function digitizedMonstersRemainingForTurns(estimatedTurns: number): number {
+  if (!SourceTerminal.have()) return 0;
+
+  const digitizesLeft = SourceTerminal.getDigitizeUsesRemaining();
+  if (digitizesLeft === SourceTerminal.getMaximumDigitizeUses()) {
+    return untangleDigitizes(estimatedTurns, SourceTerminal.getMaximumDigitizeUses());
+  }
+
+  const monsterCount = SourceTerminal.getDigitizeMonsterCount() + 1;
+
+  const turnsLeftAtNextMonster = estimatedTurns - Counter.get("Digitize Monster");
+  if (turnsLeftAtNextMonster <= 0) return 0;
+  const turnsAtLastDigitize = turnsLeftAtNextMonster + ((monsterCount + 1) * monsterCount * 5 - 3);
+  return (
+    untangleDigitizes(turnsAtLastDigitize, digitizesLeft + 1) -
+    SourceTerminal.getDigitizeMonsterCount()
+  );
+}
+
+function maxCarriedFamiliarDamage(familiar: Familiar): number {
+  // Only considering familiars we reasonably may carry
+  switch (familiar) {
+    // +5 to Familiar Weight
+    case $familiar`Animated Macaroni Duck`:
+      return 50;
+    case $familiar`Barrrnacle`:
+    case $familiar`Gelatinous Cubeling`:
+    case $familiar`Penguin Goodfella`:
+      return 30;
+    case $familiar`Misshapen Animal Skeleton`:
+      return 40 + numericModifier("Spooky Damage");
+
+    // +25% Meat from Monsters
+    case $familiar`Hobo Monkey`:
+      return 25;
+
+    // +20% Meat from Monsters
+    case $familiar`Grouper Groupie`:
+      // Double sleaze damage at Barf Mountain
+      return (
+        25 + numericModifier("Sleaze Damage") * (myLocation() === $location`Barf Mountain` ? 2 : 1)
+      );
+    case $familiar`Jitterbug`:
+      return 20;
+    case $familiar`Mutant Cactus Bud`:
+      // 25 poison damage (25+12+6+3+1)
+      return 47;
+    case $familiar`Robortender`:
+      return 20;
+  }
+
+  return 0;
+}
+
+function maxFamiliarDamage(familiar: Familiar): number {
+  switch (familiar) {
+    case $familiar`Cocoabo`:
+      return familiarWeight(familiar) + 3;
+    case $familiar`Feather Boa Constrictor`:
+      // Double sleaze damage at Barf Mountain
+      return (
+        familiarWeight(familiar) +
+        3 +
+        numericModifier("Sleaze Damage") * (myLocation() === $location`Barf Mountain` ? 2 : 1)
+      );
+    case $familiar`Ninja Pirate Zombie Robot`:
+      return Math.floor((familiarWeight(familiar) + 3) * 1.5);
+  }
+  return 0;
+}
+
+export function maxPassiveDamage(): number {
+  // Only considering passive damage sources we reasonably may have
+  const vykeaMaxDamage =
+    get("_VYKEACompanionLevel") > 0 ? 10 * get("_VYKEACompanionLevel") + 10 : 0;
+
+  // Lasagmbie does max 2*level damage while Vermincelli does max level + (1/2 * level) + (1/2 * 1/2 * level) + ...
+  const thrallMaxDamage =
+    myThrall().level >= 5 && $thralls`Lasagmbie,Vermincelli`.includes(myThrall())
+      ? myThrall().level * 2
+      : 0;
+
+  const crownMaxDamage = haveEquipped($item`Crown of Thrones`)
+    ? maxCarriedFamiliarDamage(myEnthronedFamiliar())
+    : 0;
+
+  const bjornMaxDamage = haveEquipped($item`Buddy Bjorn`)
+    ? maxCarriedFamiliarDamage(myBjornedFamiliar())
+    : 0;
+
+  const familiarMaxDamage = maxFamiliarDamage(myFamiliar());
+
+  return vykeaMaxDamage + thrallMaxDamage + crownMaxDamage + bjornMaxDamage + familiarMaxDamage;
+}
+
+let monsterManuelCached: boolean | undefined = undefined;
+export function monsterManuelAvailable(): boolean {
+  if (monsterManuelCached !== undefined) return Boolean(monsterManuelCached);
+  monsterManuelCached = visitUrl("questlog.php?which=3").includes("Monster Manuel");
+  return Boolean(monsterManuelCached);
+}
+
+export function felizValue(): number {
+  const lastCalculated = new Date(get("garbo_felizValueDate", 0));
+  if (
+    !get("garbo_felizValue", 0) ||
+    gameDay().getTime() - lastCalculated.getTime() > 7 * 24 * 60 * 60 * 1000
+  ) {
+    const felizDrops = (JSON.parse(fileToBuffer("garbo_item_lists.json")) as GarboItemLists)[
+      "Feliz Navidad"
+    ];
+    set(
+      "garbo_felizValue",
+      (sum(felizDrops, (name) => garboValue(toItem(name))) / felizDrops.length).toFixed(0),
+    );
+    set("garbo_felizValueDate", gameDay().getTime());
+  }
+  return get("garbo_felizValue", 0);
+}
+
+export function newarkValue(): number {
+  const lastCalculated = new Date(get("garbo_newarkValueDate", 0));
+  if (
+    !get("garbo_newarkValue", 0) ||
+    gameDay().getTime() - lastCalculated.getTime() > 7 * 24 * 60 * 60 * 1000
+  ) {
+    const newarkDrops = (JSON.parse(fileToBuffer("garbo_item_lists.json")) as GarboItemLists)[
+      "Newark"
+    ];
+    set(
+      "garbo_newarkValue",
+      (sum(newarkDrops, (name) => garboValue(toItem(name))) / newarkDrops.length).toFixed(0),
+    );
+    set("garbo_newarkValueDate", gameDay().getTime());
+  }
+  return get("garbo_newarkValue", 0);
+}

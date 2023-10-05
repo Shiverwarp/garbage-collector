@@ -20,6 +20,7 @@ import {
   get,
   getActiveSongs,
   have,
+  realmAvailable,
   set,
   uneffect,
 } from "libram";
@@ -29,7 +30,7 @@ import { postFreeFightDailySetup } from "../dailiespost";
 import { runDiet } from "../diet";
 import { embezzlerCount } from "../embezzler";
 import { doSausage, freeRunFights } from "../fights";
-import { baseMeat, eventLog, propertyManager, realmAvailable, safeRestore } from "../lib";
+import { baseMeat, eventLog, propertyManager, safeRestore } from "../lib";
 import { meatMood } from "../mood";
 import postCombatActions from "../post";
 import { potionSetup } from "../potions";
@@ -71,7 +72,9 @@ function _yachtzeeChain(): void {
     cliExecute(`closet put ${meatToCloset} meat`);
   }
   if (!yachtzeeChainDiet()) {
-    cliExecute(`closet take ${get("_yachtzeeChainClosetedMeat")} meat`);
+    if (get("_yachtzeeChainClosetedMeat", 0)) {
+      cliExecute(`closet take ${get("_yachtzeeChainClosetedMeat")} meat`);
+    }
     set("_yachtzeeChainClosetedMeat", 0);
     return;
   }
@@ -80,7 +83,9 @@ function _yachtzeeChain(): void {
   let turncount = myTurncount();
   yachtzeePotionSetup(Math.min(jellyTurns, fishyTurns));
   stickerSetup(Math.min(jellyTurns, fishyTurns));
-  cliExecute(`closet take ${get("_yachtzeeChainClosetedMeat")} meat`);
+  if (get("_yachtzeeChainClosetedMeat", 0)) {
+    cliExecute(`closet take ${get("_yachtzeeChainClosetedMeat")} meat`);
+  }
   set("_yachtzeeChainClosetedMeat", 0);
   if (haveEffect($effect`Beaten Up`)) {
     uneffect($effect`Beaten Up`);
@@ -136,7 +141,7 @@ function _yachtzeeChain(): void {
   }
 }
 
-export function yachtzeeChain(): void {
+export function oldyachtzeeChain(): void {
   if (!globalOptions.prefs.yachtzeechain) return;
   if (get("_garboYachtzeeChainCompleted", false)) return;
   print("Running Yachtzee Chain", "purple");
@@ -150,4 +155,9 @@ export function yachtzeeChain(): void {
   }
   freeRunFights();
   postFreeFightDailySetup();
+}
+
+export function yachtzeeChain(): void {
+  if (!globalOptions.prefs.yachtzeechain) return;
+  print("As of 2023-10-03, Yachtzee has been nerfed.", "red");
 }

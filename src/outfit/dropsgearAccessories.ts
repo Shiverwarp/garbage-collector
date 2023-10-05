@@ -9,11 +9,18 @@ import {
   get,
   getModifier,
   have,
+  lgrCurrencies,
   sumNumbers,
 } from "libram";
-import { baseMeat, BonusEquipMode, modeIsFree, realmAvailable } from "../lib";
-import { garboValue } from "../value";
-import { maxPassiveDamage, monsterManuelAvailable } from "../combat";
+import {
+  baseMeat,
+  BonusEquipMode,
+  felizValue,
+  maxPassiveDamage,
+  modeIsFree,
+  monsterManuelAvailable,
+} from "../lib";
+import { garboValue } from "../garboValue";
 import { globalOptions } from "../config";
 
 function mafiaThumbRing(mode: BonusEquipMode) {
@@ -40,12 +47,7 @@ function luckyGoldRing(mode: BonusEquipMode) {
       itemAmount($item`hobo nickel`) > 0 ? 100 : 0, // This should be closeted
       itemAmount($item`sand dollar`) > 0 ? garboValue($item`sand dollar`) : 0, // This should be closeted
       itemAmount($item`Freddy Kruegerand`) > 0 ? garboValue($item`Freddy Kruegerand`) : 0,
-      realmAvailable("sleaze") ? garboValue($item`Beach Buck`) : 0,
-      realmAvailable("spooky") ? garboValue($item`Coinspiracy`) : 0,
-      realmAvailable("stench") ? garboValue($item`FunFunds™`) : 0,
-      realmAvailable("hot") && !get("_luckyGoldRingVolcoino") ? garboValue($item`Volcoino`) : 0,
-      realmAvailable("cold") ? garboValue($item`Wal-Mart gift certificate`) : 0,
-      realmAvailable("fantasy") ? garboValue($item`Rubee™`) : 0,
+      ...lgrCurrencies().map((i) => garboValue(i)),
     ].filter((value) => value > 0),
   ];
 
@@ -91,7 +93,7 @@ function cinchoDeMayo(mode: BonusEquipMode) {
   }
 
   // Account for a single use of Projectile Pinata, which gives 3x Robortender candies
-  return new Map<Item, number>([[$item`Cincho de Mayo`, 3 * get("garbo_felizValue", 0)]]);
+  return new Map<Item, number>([[$item`Cincho de Mayo`, 3 * felizValue()]]);
 }
 
 /*

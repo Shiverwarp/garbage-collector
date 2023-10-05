@@ -9,6 +9,7 @@ import {
   myFury,
   Phylum,
   retrieveItem,
+  retrievePrice,
   Skill,
   toPhylum,
   toSkill,
@@ -33,10 +34,17 @@ import {
   maxBy,
   property,
   Requirement,
+  set,
   tryFindFreeRun,
 } from "libram";
 import { freeFightFamiliar } from "./familiar";
-import { freeRunConstraints, getUsingFreeBunnyBanish, ltbRun, setChoice } from "./lib";
+import {
+  freeRunConstraints,
+  getUsingFreeBunnyBanish,
+  ltbRun,
+  setChoice,
+  userConfirmDialog,
+} from "./lib";
 import { garboAdventure, Macro } from "./combat";
 import { acquire } from "./acquire";
 import { globalOptions } from "./config";
@@ -328,10 +336,46 @@ const longBanishes: Banish[] = [
   },
 ];
 
+const freeBunnyBanish: Banish = {
+  name: "Mafia Middle Finger Ring",
+  available: () => !get("_mafiaMiddleFingerRingUsed"),
+  macro: () => Macro.skill($skill`Show them your ring`),
+  prepare: () => {
+    new Requirement([], {
+      preventEquip: $items`carnivorous potted plant`,
+      forceEquip: [$item`mafia middle finger ring`],
+    }).maximize();
+  },
+};
+
+const iceHouseBanish: Banish = {
+  name: "Ice House",
+  available: () => true,
+  macro: () => Macro.item($item`ice house`),
+  prepare: () => acquire(1, $item`ice house`, 1000000),
+};
+
 const shortBanishes = [
   combatItem($item`Louder Than Bomb`, 10000),
   combatItem($item`tennis ball`, 10000),
 ];
+
+function iceHouseAllowed(): boolean {
+  if (get("garboDisallowIceHouseNotify", false) || globalOptions.prefs.autoUserConfirm) {
+    return false;
+  }
+
+  if (
+    userConfirmDialog(
+      "Would you like to allow garbo to ice house a fluffy bunny? This saves significant costs on banishers in the long run.",
+      false,
+    )
+  ) {
+    return true;
+  }
+  set("garboDisallowIceHouseNotify", true);
+  return false;
+}
 
 function banishBunny(): void {
   const banishes = [
@@ -339,7 +383,16 @@ function banishBunny(): void {
     ...(!have($item`miniature crystal ball`) ? shortBanishes : []),
   ].filter((b) => b.available());
 
-  const banish = maxBy(banishes, (banish: Banish) => banish.price?.() ?? 0, true);
+  const usingIceHouseBanish =
+    getBanishedMonsters().get($item`ice house`) !== $monster`fluffy bunny` &&
+    retrievePrice($item`ice house`) < 1000000 &&
+    iceHouseAllowed();
+
+  const banish = usingIceHouseBanish
+    ? iceHouseBanish
+    : getUsingFreeBunnyBanish()
+    ? freeBunnyBanish
+    : maxBy(banishes, (banish: Banish) => banish.price?.() ?? 0, true);
   do {
     banish.prepare?.();
     garboAdventure(
