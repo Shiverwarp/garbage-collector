@@ -521,12 +521,12 @@ function determineFreeBunnyBanish(): boolean {
       expectedPocketProfFights +
       expectedDigitizesDuringGregs +
       expectedReplacerFights <
-      120 &&
+      110 &&
     habitatFights + currentAvailableGregs + possibleGregsFromSpleen > 0 &&
     have($item`mafia middle finger ring`) &&
     !get("_mafiaMiddleFingerRingUsed") &&
-    have($skill`Snokebomb`) &&
-    get(`_snokebombUsed`) <= 1;
+    have($skill`Feel Hatred`) &&
+    get(`_feelHatredUsed`) <= 2;
 
   return useFreeBanishes;
 }
@@ -543,7 +543,7 @@ const reservedBanishes = new Map<
   ActionSource["source"],
   () => boolean // function that returns true if we should disallow usage of the source while we're reserving embezzler banishers
 >([
-  [$skill`Snokebomb`, () => get(`_snokebombUsed`) > 0], // We intend to save at least 2 uses for embezzlers, so if we've already used one, disallow usage.
+  [$skill`Feel Hatred`, () => get(`_feelHatredUsed`) > 1], // We intend to save at least 1 use for embezzlers, so if we've already used 2, disallow usage.
   [$item`mafia middle finger ring`, () => true],
 ]);
 

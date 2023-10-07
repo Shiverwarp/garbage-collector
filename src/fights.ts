@@ -637,14 +637,14 @@ const pygmyBanishHandlers = [
     pygmy: $monster`pygmy bowler`,
     skill: $skill`Snokebomb`,
     check: "_snokebombUsed",
-    limit: getUsingFreeBunnyBanish() ? 1 : 3,
+    limit: 3,
     item: $item`Louder Than Bomb`,
   },
   {
     pygmy: $monster`pygmy orderlies`,
     skill: $skill`Feel Hatred`,
     check: "_feelHatredUsed",
-    limit: 3,
+    limit: getUsingFreeBunnyBanish() ? 2 : 3,
     item: $item`divine champagne popper`,
   },
   {
@@ -1045,7 +1045,7 @@ const freeFightSources = [
           retrieveItem(1, $item`Louder Than Bomb`);
           retrieveItem(1, $item`divine champagne popper`);
         }
-        const snokeLimit = getUsingFreeBunnyBanish() ? 1 : 3;
+        const hatredLimit = getUsingFreeBunnyBanish() ? 2 : 3;
         garboAdventure(
           $location`Domed City of Grimacia`,
           Macro.if_(
@@ -1054,15 +1054,12 @@ const freeFightSources = [
               $item`Louder Than Bomb`,
             ),
           )
-            .if_(
-              $monster`cat-alien`,
-              get("_snokebombUsed") < snokeLimit
-                ? Macro.trySkill($skill`Snokebomb`).item($item`tennis ball`)
-                : Macro.item($item`tennis ball`),
-            )
+            .if_($monster`cat-alien`, Macro.trySkill($skill`Snokebomb`).item($item`tennis ball`))
             .if_(
               $monster`dog-alien`,
-              Macro.trySkill($skill`Feel Hatred`).tryItem($item`divine champagne popper`),
+              get("_feelHatredUsed") < hatredLimit
+                ? Macro.trySkill($skill`Feel Hatred`).tryItem($item`divine champagne popper`)
+                : Macro.tryItem($item`divine champagne popper`),
             )
             .step("pickpocket")
             .skill($skill`Use the Force`),

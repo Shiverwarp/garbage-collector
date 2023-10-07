@@ -472,7 +472,7 @@ const gregFights = (
 ) => {
   function runGregFight(options: RunOptions) {
     const run = ltbRun();
-    const runMacro = getUsingFreeBunnyBanish() ? Macro.skill($skill`Snokebomb`) : ltbRun().macro;
+    const runMacro = getUsingFreeBunnyBanish() ? Macro.skill($skill`Feel Hatred`) : ltbRun().macro;
     run.constraints.preparation?.();
     const bunnyIsBanished = isBanished($monster`fluffy bunny`);
     const adventureFunction = options.useAuto ? garboAdventureAuto : garboAdventure;
