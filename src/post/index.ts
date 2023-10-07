@@ -65,8 +65,8 @@ function floristFriars(): void {
   ) {
     return;
   }
-  [FloristFriar.StealingMagnolia, FloristFriar.AloeGuvnor, FloristFriar.PitcherPlant].forEach(
-    (flower) => flower.plant(),
+  [FloristFriar.Crookweed, FloristFriar.Snori, FloristFriar.ElectricEelgrass].forEach((flower) =>
+    flower.plant(),
   );
 }
 
