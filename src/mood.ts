@@ -83,6 +83,22 @@ export function meatMood(
 
     // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
     if (moodType === "Barf") {
+      mood.skill($skill`Donho's Bubbly Ballad`);
+      const familiarMultiplier = have($familiar`Robortender`)
+        ? 2
+        : have($familiar`Hobo Monkey`)
+        ? 1.25
+        : 1;
+      // Assume base weight of 100 pounds. This is off but close enough.
+      const assumedBaseWeight = 100;
+      // Marginal value of familiar weight in % meat drop.
+      const marginalValue =
+        2 * familiarMultiplier +
+        Math.sqrt(220 * familiarMultiplier) / (2 * Math.sqrt(assumedBaseWeight));
+
+      // Underwater only potions
+      mood.potion($item`temporary teardrop tattoo`, ((10 * marginalValue) / 100) * baseMeat);
+      mood.potion($item`sea grease`, ((5 * marginalValue) / 100) * baseMeat);
       // Pressure reduction potions
       // Adding all of them even though it's technically possible to go over 100% reduction and waste buffs. Doubtful to happen because Shark cartilage will always be too expensive
       mood.potion($item`Mer-kin fastjuice`, 0.1 * baseMeat);
