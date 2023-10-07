@@ -11,6 +11,7 @@ import {
   getClanName,
   guildStoreAvailable,
   handlingChoice,
+  haveEffect,
   inebrietyLimit,
   Item,
   logprint,
@@ -59,7 +60,7 @@ import barfTurn from "./barfTurn";
 import { stashItems, withStash, withVIPClan } from "./clan";
 import { globalOptions } from "./config";
 import { dailySetup } from "./dailies";
-import { nonOrganAdventures, runDiet } from "./diet";
+import { computeDiet, countCopies, nonOrganAdventures, runDiet } from "./diet";
 import { dailyFights, freeFights } from "./fights";
 import {
   bestJuneCleaverOption,
@@ -79,6 +80,8 @@ import { endSession, startSession } from "./session";
 import { estimatedGarboTurns } from "./turns";
 import { yachtzeeChain } from "./yachtzee";
 import { garboAverageValue } from "./garboValue";
+import fishyPrep from "./fishyPrep";
+import { embezzlerCount } from "./embezzler";
 
 // Max price for tickets. You should rethink whether Barf is the best place if they're this expensive.
 const TICKET_MAX_PRICE = 500000;
@@ -480,6 +483,13 @@ export function main(argString = ""): void {
     // FIXME: Dynamically figure out pointer ring approach.
     withStash(stashItems, () => {
       withVIPClan(() => {
+        // Fishy prep
+        const estimatedDietEmbezzlers = countCopies(computeDiet().diet());
+        while (haveEffect($effect`Fishy`) < embezzlerCount() + estimatedDietEmbezzlers) {
+          fishyPrep();
+          postCombatActions();
+        }
+
         // 0. diet stuff.
         if (globalOptions.nodiet || get("_garboYachtzeeChainCompleted", false)) {
           print("We should not be yachtzee chaining", "red");

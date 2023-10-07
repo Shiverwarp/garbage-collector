@@ -523,7 +523,7 @@ function copiers(): MenuItem<Note>[] {
   return [...extros];
 }
 
-function countCopies(diet: Diet<Note>): number {
+export function countCopies(diet: Diet<Note>): number {
   // this only counts the copies not yet realized
   // any copies already realized will be properly counted by embezzlerCount
 
