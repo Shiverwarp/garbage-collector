@@ -17,6 +17,7 @@ import {
   retrieveItem,
   runChoice,
   runCombat,
+  setLocation,
   totalTurnsPlayed,
   toUrl,
   use,
@@ -53,6 +54,7 @@ import {
   safeRestore,
   setChoice,
   sober,
+  withLocation,
 } from "./lib";
 import { meatMood } from "./mood";
 import {
@@ -159,7 +161,9 @@ const turns: AdventureAction[] = [
         const fightingSteve = steveRoom === $location`The Haunted Laboratory`;
         // Technically drops 500 meat, but that's close enough for me.
         const drunkSpec = sober() ? {} : { offhand: $item`Drunkula's wineglass` };
-        if (fightingSteve) embezzlerOutfit(drunkSpec).dress();
+        if (fightingSteve) {
+          withLocation($location`The Haunted Laboratory`, () => embezzlerOutfit(drunkSpec).dress());
+        }
         const plan = steveAdventures.get(steveRoom);
         if (plan) {
           withMacro(
@@ -191,6 +195,7 @@ const turns: AdventureAction[] = [
       const ghostLocation = get("ghostLocation");
       if (!ghostLocation) return false;
       const modifier = ghostLocation === $location`The Icy Peak` ? ["Cold Resistance 5 min"] : [];
+      setLocation(ghostLocation);
       freeFightOutfit({ modifier, back: $item`protonic accelerator pack` }).dress();
 
       garboAdventure(ghostLocation, Macro.ghostBustin());
@@ -212,7 +217,7 @@ const turns: AdventureAction[] = [
       const isGhost = get("_voteMonster") === $monster`angry ghost`;
       const isMutant = get("_voteMonster") === $monster`terrible mutant`;
       const wanderOptions: WanderOptions = { wanderer: "wanderer", drunkSafe: !isGhost };
-
+      setLocation(wanderer().getTarget(wanderOptions));
       freeFightOutfit(
         {
           equip: [
@@ -253,7 +258,9 @@ const turns: AdventureAction[] = [
         propertyManager.setChoices(wanderer().getChoices("wanderer"));
       }
 
-      isEmbezzler ? embezzlerOutfit({}, targetLocation).dress() : freeFightOutfit().dress();
+      isEmbezzler
+        ? withLocation(targetLocation, () => embezzlerOutfit({}, targetLocation).dress())
+        : withLocation(targetLocation, () => freeFightOutfit().dress());
       garboAdventureAuto(
         targetLocation,
         Macro.externalIf(underwater, Macro.tryItem($item`pulled green taffy`)).meatKill(),
@@ -276,6 +283,7 @@ const turns: AdventureAction[] = [
     name: "Guaranteed Kramco",
     available: () => kramcoGuaranteed() && romanticMonsterImpossible(),
     execute: () => {
+      setLocation(wanderer().getTarget("wanderer"));
       freeFightOutfit(
         {
           offhand: $item`Kramco Sausage-o-Matic™`,
@@ -296,6 +304,7 @@ const turns: AdventureAction[] = [
       get("cursedMagnifyingGlassCount") === 13 &&
       get("_voidFreeFights") < 5,
     execute: () => {
+      setLocation(wanderer().getTarget("wanderer"));
       freeFightOutfit(
         {
           offhand: $item`cursed magnifying glass`,
@@ -314,7 +323,7 @@ const turns: AdventureAction[] = [
     available: () =>
       have($item`envyfish egg`) && get("envyfishMonster") === embezzler && !get("_envyfishEggUsed"),
     execute: () => {
-      embezzlerOutfit().dress();
+      withLocation($location.none, () => embezzlerOutfit().dress());
       withMacro(Macro.meatKill(), () => use($item`envyfish egg`), true);
       return get("_envyfishEggUsed");
     },
@@ -332,6 +341,7 @@ const turns: AdventureAction[] = [
 
       propertyManager.setChoices(wanderer().getChoices("yellow ray"));
       const location = wanderer().getTarget("yellow ray");
+      setLocation(location);
       freeFightOutfit(
         {},
         { location, allowAttackFamiliars: !usingDuplicate, wanderOptions: "yellow ray" },
@@ -363,6 +373,7 @@ const turns: AdventureAction[] = [
 
       propertyManager.setChoices(wanderer().getChoices("yellow ray"));
       const location = wanderer().getTarget("yellow ray");
+      setLocation(location);
       freeFightOutfit(
         { shirt: $items`Jurassic Parka` },
         { location, allowAttackFamiliars: !usingDuplicate, wanderOptions: "yellow ray" },
@@ -393,6 +404,7 @@ const turns: AdventureAction[] = [
     execute: () => {
       propertyManager.setChoices(wanderer().getChoices("freefight"));
       const location = wanderer().getTarget("freefight");
+      setLocation(location);
       freeFightOutfit({}, { location, wanderOptions: "freefight" }).dress();
       const macro = Macro.if_(embezzler, Macro.meatKill())
         .familiarActions()
@@ -418,7 +430,7 @@ const turns: AdventureAction[] = [
       if (usingDuplicate) {
         SourceTerminal.educate([$skill`Extract`, $skill`Duplicate`]);
       }
-
+      setLocation(location);
       freeFightOutfit(
         {},
         { location, allowAttackFamiliars: !usingDuplicate, wanderOptions: "yellow ray" },
@@ -462,7 +474,9 @@ const turns: AdventureAction[] = [
     available: () => true,
     execute: () => {
       const lubing = get("dinseyRollercoasterNext") && have($item`lube-shoes`);
-      barfOutfit(lubing ? { equip: $items`lube-shoes` } : {}).dress();
+      withLocation($location`The Coral Corral`, () =>
+        barfOutfit(lubing ? { equip: $items`lube-shoes` } : {}).dress(),
+      );
       garboAdventureAuto(
         $location`The Coral Corral`,
         Macro.meatKill(),

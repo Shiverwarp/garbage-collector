@@ -164,6 +164,7 @@ import {
   safeRestore,
   setChoice,
   userConfirmDialog,
+  withLocation,
 } from "./lib";
 import { freeFightMood, meatMood, useBuffExtenders } from "./mood";
 import { embezzlerOutfit, freeFightOutfit, magnifyingGlass, toSpec, tryFillLatte } from "./outfit";
@@ -236,6 +237,7 @@ function embezzlerSetup() {
       const run = tryFindFreeRun(freeRunConstraints(false)) ?? ltbRun();
       if (!run) break;
       run.constraints.preparation?.();
+      setLocation($location`The Hidden Temple`);
       freeFightOutfit(toSpec(run)).dress();
       garboAdventure($location`The Hidden Temple`, run.macro);
     }
@@ -322,11 +324,12 @@ function startWandererCounter() {
         print("You still have gregs active, so we're going to wear your meat outfit.");
         run = ltbRun();
         run.constraints.preparation?.();
-        embezzlerOutfit().dress();
+        withLocation($location`The Haunted Kitchen`, () => embezzlerOutfit().dress());
       } else {
         print("You do not have gregs active, so this is a regular free run.");
         run = tryFindFreeRun(freeRunConstraints(false)) ?? ltbRun();
         run.constraints.preparation?.();
+        setLocation($location`The Haunted Kitchen`);
         freeFightOutfit(toSpec(run)).dress();
       }
       garboAdventure(
@@ -381,16 +384,21 @@ export function dailyFights(): void {
           {
             property: "_garbo_meatChain",
             macro: firstChainMacro,
-            goalMaximize: (spec: OutfitSpec) => embezzlerOutfit(spec).dress(),
+            goalMaximize: withLocation(
+              $location.none,
+              () => (spec: OutfitSpec) => embezzlerOutfit(spec).dress(),
+            ),
           },
           {
             property: "_garbo_weightChain",
             macro: secondChainMacro,
             goalMaximize: (spec: OutfitSpec) =>
-              Outfit.from(
-                { ...spec, modifier: ["Familiar Weight"] },
-                new Error(`Unable to build outfit for weight chain!`),
-              ).dress(),
+              withLocation($location.none, () =>
+                Outfit.from(
+                  { ...spec, modifier: ["Familiar Weight"] },
+                  new Error(`Unable to build outfit for weight chain!`),
+                ).dress(),
+              ),
           },
         ];
 
@@ -2565,6 +2573,7 @@ export function doSausage(): void {
   do {
     propertyManager.setChoices(wanderer().getChoices("wanderer"));
     const goblin = $monster`sausage goblin`;
+    setLocation(wanderer().getTarget("wanderer"));
     freeFightOutfit(
       {
         equip: $items`Kramco Sausage-o-Matic™`,
@@ -2586,6 +2595,7 @@ function doGhost() {
   if (!have($item`protonic accelerator pack`) || get("questPAGhost") === "unstarted") return;
   const ghostLocation = get("ghostLocation");
   if (!ghostLocation) return;
+  setLocation(ghostLocation);
   freeFightOutfit({ equip: $items`protonic accelerator pack` }).dress();
   let currentTurncount;
   do {
@@ -2771,6 +2781,7 @@ function voidMonster(): void {
     return;
   }
 
+  setLocation(wanderer().getTarget("wanderer"));
   freeFightOutfit(
     {
       equip: $items`cursed magnifying glass`,
@@ -2819,6 +2830,7 @@ function killRobortCreaturesForFree() {
       setChoice(855, 4);
       garboAdventure($location`The Copperhead Club`, Macro.abort());
     }
+    setLocation($location`The Copperhead Club`);
     freeFightOutfit({ ...freeKill.spec, familiar: $familiar`Robortender` }).dress();
     withMacro(
       freeKill.macro instanceof Item ? Macro.item(freeKill.macro) : Macro.skill(freeKill.macro),
@@ -2845,6 +2857,7 @@ function killRobortCreaturesForFree() {
         ? freeFightFamiliar({ canChooseMacro: roboTarget.attributes.includes("FREE") })
         : $familiar`Robortender`;
 
+    setLocation($location.none);
     freeFightOutfit(
       roboTarget.attributes.includes("FREE") ? { familiar } : { ...freeKill.spec, familiar },
     ).dress();
@@ -2983,6 +2996,7 @@ function runShadowRiftTurn(): void {
     have($effect`Shadow Affinity`) &&
     get("encountersUntilSRChoice") >= 2
   ) {
+    setLocation(bestShadowRift());
     freeFightOutfit({ shirt: $item`Jurassic Parka` }).dress();
     cliExecute("parka spikolodon");
     const macro = Macro.skill($skill`Launch spikolodon spikes`).basicCombat();

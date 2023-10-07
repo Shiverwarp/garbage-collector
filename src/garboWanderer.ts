@@ -24,7 +24,7 @@ export function wanderer(): WandererManager {
       digitzesRemaining: digitizedMonstersRemainingForTurns,
       plentifulMonsters: [
         $monster`Knob Goblin Embezzler`,
-        ...(globalOptions.nobarf ? [] : getMonsters($location`Barf Mountain`)),
+        ...(globalOptions.nobarf ? [] : getMonsters($location`The Coral Corral`)),
         ...(have($item`Kramco Sausage-o-Matic™`) ? $monsters`sausage goblin` : []),
       ],
     });
