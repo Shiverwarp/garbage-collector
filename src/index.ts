@@ -485,7 +485,8 @@ export function main(argString = ""): void {
       withVIPClan(() => {
         // Fishy prep
         const estimatedDietEmbezzlers = countCopies(computeDiet().diet());
-        while (haveEffect($effect`Fishy`) < embezzlerCount() + estimatedDietEmbezzlers) {
+        while (haveEffect($effect`Fishy`) < embezzlerCount() + estimatedDietEmbezzlers + 10) {
+          // 10 buffer turns of fishy
           fishyPrep();
           postCombatActions(true);
         }
