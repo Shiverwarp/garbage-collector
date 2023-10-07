@@ -522,7 +522,7 @@ export default function fishyPrep(): void {
 
     if (success) return;
     failures++;
-    if (spentATurn) postCombatActions();
+    if (spentATurn) postCombatActions(true);
   }
   throw new Error("Tried thrice to adventure, and failed each time. Aborting.");
 }

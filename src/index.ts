@@ -487,7 +487,7 @@ export function main(argString = ""): void {
         const estimatedDietEmbezzlers = countCopies(computeDiet().diet());
         while (haveEffect($effect`Fishy`) < embezzlerCount() + estimatedDietEmbezzlers) {
           fishyPrep();
-          postCombatActions();
+          postCombatActions(true);
         }
 
         // 0. diet stuff.
