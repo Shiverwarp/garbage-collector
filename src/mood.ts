@@ -63,6 +63,7 @@ export function meatMood(
     // We do Gregs underwater, but not replacers
     if (moodType === "Greg") {
       mood.skill($skill`Donho's Bubbly Ballad`);
+      mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
       const familiarMultiplier = have($familiar`Robortender`)
         ? 2
         : have($familiar`Hobo Monkey`)
@@ -83,6 +84,7 @@ export function meatMood(
     // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
     if (moodType === "Barf") {
       mood.skill($skill`Donho's Bubbly Ballad`);
+      mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * baseMeat);
       const familiarMultiplier = have($familiar`Robortender`)
         ? 2
         : have($familiar`Hobo Monkey`)
