@@ -2,6 +2,7 @@ import {
   canEquip,
   cliExecute,
   equip,
+  getProperty,
   haveEffect,
   isBanished,
   Item,
@@ -367,21 +368,15 @@ function banishDeeps(): void {
       ).embezzler(),
     );
   } while (
-    !["funk sole brother", "pumped-up bass", "school of wizardfish"].includes(
-      get("lastEncounter"),
-    ) &&
-    !get("banishedMonsters").includes("funk sole brother")
+    get("rwbMonsterCount") < 1 &&
+    !get("banishedMonsters").includes(getProperty("rwbMonster"))
   );
 }
 
 export function initializeDireWarren(): void {
   visitUrl("museum.php?action=icehouse");
 
-  if (
-    isBanished($monster`funk sole brother`) &&
-    isBanished($monster`pumped-up bass`) &&
-    isBanished($monster`school of wizardfish`)
-  ) {
+  if (get("rwbMonsterCount") > 0 && get("banishedMonsters").includes(getProperty("rwbMonster"))) {
     return;
   }
 
