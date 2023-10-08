@@ -20,6 +20,7 @@ import {
   $item,
   $items,
   $location,
+  $locations,
   $skill,
   $slot,
   AutumnAton,
@@ -60,7 +61,7 @@ function closetStuff(): void {
 function floristFriars(): void {
   if (
     !FloristFriar.have() ||
-    myLocation() !== $location`The Coral Corral` ||
+    !$locations`The Coral Corral, The Briny Deeps`.includes(myLocation()) ||
     FloristFriar.isFull()
   ) {
     return;
