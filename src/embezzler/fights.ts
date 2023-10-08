@@ -642,6 +642,12 @@ export const conditionalSources = [
       const weWantToSaberCrates = !crateIsSabered || notEnoughCratesSabered;
       setChoice(1387, 2);
 
+      const leftoverReplacers =
+        (have($skill`Meteor Lore`) ? 10 - get("_macrometeoriteUses") : 0) +
+        (have($item`Powerful Glove`)
+          ? Math.floor((100 - get("_powerfulGloveBatteryPowerUsed")) / 10)
+          : 0);
+
       const macro = Macro.if_(
         $monster`crate`,
         Macro.externalIf(
@@ -654,7 +660,11 @@ export const conditionalSources = [
               get("_saberForceUses") < 5,
             Macro.trySkill($skill`Use the Force`),
           )
-          .skill($skill`Macrometeorite`),
+          .skill($skill`Macrometeorite`)
+          .externalIf(
+            leftoverReplacers < 3 && get("_gallapagosMonster") !== embezzler,
+            Macro.skill($skill`Gallapagosian Mating Call`),
+          ),
       ).step(options.macro);
       const adventureFunction = options.useAuto ? garboAdventureAuto : garboAdventure;
       adventureFunction($location`Noob Cave`, macro, macro);
@@ -685,6 +695,12 @@ export const conditionalSources = [
       const weWantToSaberCrates = !crateIsSabered || notEnoughCratesSabered;
       setChoice(1387, 2);
 
+      const leftoverReplacers =
+        (have($skill`Meteor Lore`) ? 10 - get("_macrometeoriteUses") : 0) +
+        (have($item`Powerful Glove`)
+          ? Math.floor((100 - get("_powerfulGloveBatteryPowerUsed")) / 10)
+          : 0);
+
       const macro = Macro.if_(
         $monster`crate`,
         Macro.externalIf(
@@ -697,7 +713,11 @@ export const conditionalSources = [
               get("_saberForceUses") < 5,
             Macro.trySkill($skill`Use the Force`),
           )
-          .skill($skill`CHEAT CODE: Replace Enemy`),
+          .skill($skill`CHEAT CODE: Replace Enemy`)
+          .externalIf(
+            leftoverReplacers < 3 && get("_gallapagosMonster") !== embezzler,
+            Macro.skill($skill`Gallapagosian Mating Call`),
+          ),
       ).step(options.macro);
       const adventureFunction = options.useAuto ? garboAdventureAuto : garboAdventure;
       adventureFunction($location`Noob Cave`, macro, macro);
