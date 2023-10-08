@@ -13,6 +13,7 @@ import {
   handlingChoice,
   haveEffect,
   inebrietyLimit,
+  isBanished,
   Item,
   logprint,
   maximize,
@@ -42,6 +43,7 @@ import {
   $item,
   $items,
   $location,
+  $monster,
   $skill,
   $slots,
   Clan,
@@ -80,7 +82,6 @@ import { endSession, startSession } from "./session";
 import { estimatedGarboTurns } from "./turns";
 import { yachtzeeChain } from "./yachtzee";
 import { garboAverageValue } from "./garboValue";
-import fishyPrep from "./fishyPrep";
 import { embezzlerCount } from "./embezzler";
 
 // Max price for tickets. You should rethink whether Barf is the best place if they're this expensive.
@@ -483,11 +484,16 @@ export function main(argString = ""): void {
     // FIXME: Dynamically figure out pointer ring approach.
     withStash(stashItems, () => {
       withVIPClan(() => {
+        // Banish
+        while (!isBanished($monster`sea cowboy`)) {
+          barfTurn("Banish");
+          postCombatActions(true);
+        }
         // Fishy prep
         const estimatedDietEmbezzlers = countCopies(computeDiet().diet());
         while (haveEffect($effect`Fishy`) < embezzlerCount() + estimatedDietEmbezzlers + 10) {
           // 10 buffer turns of fishy
-          fishyPrep();
+          barfTurn("Fishy");
           postCombatActions(true);
         }
 
@@ -535,7 +541,7 @@ export function main(argString = ""): void {
           useBuffExtenders();
           try {
             while (canContinue()) {
-              barfTurn();
+              barfTurn("Normal");
               postCombatActions();
             }
 

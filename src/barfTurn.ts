@@ -5,6 +5,7 @@ import {
   cliExecute,
   currentRound,
   eat,
+  isBanished,
   itemAmount,
   Location,
   mallPrice,
@@ -470,6 +471,27 @@ const turns: AdventureAction[] = [
     sobriety: Sobriety.DRUNK,
   },
   {
+    name: "Banish Cowboy",
+    available: () => !isBanished($monster`sea cowboy`),
+    execute: () => {
+      withLocation($location`The Coral Corral`, () =>
+        barfOutfit({ equip: $items`cursed monkey's paw` }).dress(),
+      );
+      garboAdventureAuto(
+        $location`The Coral Corral`,
+        Macro.if_($monster`sea cowboy`, Macro.skill($skill`Monkey Slap`)).meatKill(),
+        Macro.if_(
+          `(monsterid ${$monster`Knob Goblin Embezzler`.id}) && !gotjump && !(pastround 2)`,
+          Macro.meatKill(),
+        ).abort(),
+      );
+      completeBarfQuest();
+      return true;
+    },
+    spendsTurn: true,
+    sobriety: Sobriety.EITHER,
+  },
+  {
     name: "Ranch",
     available: () => true,
     execute: () => {
@@ -518,12 +540,12 @@ function runTurn() {
   return { success, spentATurn };
 }
 
-export default function barfTurn(): void {
+export default function barfTurn(turnType: "Banish" | "Fishy" | "Normal"): void {
   trackBarfSessionStatistics();
   if (SourceTerminal.have()) SourceTerminal.educate([$skill`Extract`, $skill`Digitize`]);
   if (!get("seahorseName")) {
-    acquire(3, $item`sea cowbell`, 9000, true);
-    acquire(1, $item`sea lasso`, 9000, true);
+    if (itemAmount($item`sea cowbell`) < 3) acquire(3, $item`sea cowbell`, 9000, true);
+    if (itemAmount($item`sea lasso`) < 1) acquire(1, $item`sea lasso`, 9000, true);
   }
 
   tryFillLatte();
@@ -536,7 +558,7 @@ export default function barfTurn(): void {
 
     if (success) return;
     failures++;
-    if (spentATurn) postCombatActions();
+    if (spentATurn) postCombatActions(turnType === "Banish" || turnType === "Fishy");
   }
   throw new Error("Tried thrice to adventure, and failed each time. Aborting.");
 }
