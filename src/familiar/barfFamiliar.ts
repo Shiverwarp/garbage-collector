@@ -71,7 +71,11 @@ function getCachedOutfitValues(fam: Familiar) {
     const bonuses = bonusGear(BonusEquipMode.EMBEZZLER, false);
 
     const values = {
-      weight: sum(outfit, (eq: Item) => getModifier("Familiar Weight", eq)),
+      weight: sum(
+        outfit,
+        (eq: Item) =>
+          getModifier("Familiar Weight", eq) + getModifier("Hidden Familiar Weight", eq),
+      ),
       meat: sum(outfit, (eq: Item) => getModifier("Meat Drop", eq)),
       item: sum(outfit, (eq: Item) => getModifier("Item Drop", eq)),
       bonus: sum(outfit, (eq: Item) => bonuses.get(eq) ?? 0),
