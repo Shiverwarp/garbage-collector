@@ -35,6 +35,7 @@ import {
   $location,
   $locations,
   $monster,
+  $monsters,
   $skill,
   ChateauMantegna,
   CombatLoversLocket,
@@ -246,13 +247,13 @@ export const copySources = [
     "Time-Spinner",
     () =>
       have($item`Time-Spinner`) &&
-      $locations`Noob Cave, The Dire Warren, The Haunted Kitchen`.some((location) =>
-        location.combatQueue.includes(embezzler.name),
+      $locations`Noob Cave, The Dire Warren, The Haunted Kitchen, The Briny Deeps`.some(
+        (location) => location.combatQueue.includes(embezzler.name),
       ) &&
       get("_timeSpinnerMinutesUsed") <= 7,
     () =>
       have($item`Time-Spinner`) &&
-      $locations`Noob Cave, The Dire Warren, The Haunted Kitchen`.some(
+      $locations`Noob Cave, The Dire Warren, The Haunted Kitchen, The Briny Deeps`.some(
         (location) =>
           location.combatQueue.includes(embezzler.name) || get("beGregariousCharges") > 0,
       )
@@ -474,20 +475,32 @@ const gregFights = (
     const run = ltbRun();
     const runMacro = getUsingFreeBunnyBanish() ? Macro.skill($skill`Feel Hatred`) : ltbRun().macro;
     run.constraints.preparation?.();
-    const bunnyIsBanished = isBanished($monster`fluffy bunny`);
+    const deepsIsBanished =
+      isBanished($monster`funk sole brother`) &&
+      isBanished($monster`pumped-up bass`) &&
+      isBanished($monster`school of wizardfish`);
     const adventureFunction = options.useAuto ? garboAdventureAuto : garboAdventure;
     adventureFunction(
-      $location`The Dire Warren`,
-      Macro.if_($monster`fluffy bunny`, runMacro).step(options.macro),
-      Macro.if_($monster`fluffy bunny`, runMacro).step(options.macro),
+      $location`The Briny Deeps`,
+      Macro.if_($monsters`funk sole brother, pumped-up bass, school of wizardfish`, runMacro).step(
+        options.macro,
+      ),
+      Macro.if_($monsters`funk sole brother, pumped-up bass, school of wizardfish`, runMacro).step(
+        options.macro,
+      ),
     );
 
-    if (get("lastEncounter") === $monster`fluffy bunny`.name && bunnyIsBanished) {
+    if (
+      ["funk sole brother", "pumped-up bass", "school of wizardfish"].includes(
+        get("lastEncounter"),
+      ) &&
+      deepsIsBanished
+    ) {
       const bunnyBanish = [...getBanishedMonsters().entries()].find(
-        ([, monster]) => monster === $monster`fluffy bunny`,
+        ([, monster]) => monster === $monster`funk sole brother`,
       )?.[0];
       abort(
-        `Fluffy bunny is supposedly banished by ${bunnyBanish}, but this appears not to be the case; the most likely issue is that your ${monsterProp} preference is nonzero and should probably be zero.`,
+        `The Briny Deeps is supposedly banished by ${bunnyBanish}, but this appears not to be the case; the most likely issue is that your ${monsterProp} preference is nonzero and should probably be zero.`,
       );
     }
   }
@@ -507,7 +520,7 @@ const gregFights = (
         runGregFight(options);
         // reset the crystal ball prediction by staring longingly at toast
         if (get(fightsProp) === 1 && have($item`miniature crystal ball`)) {
-          const warrenPrediction = CrystalBall.ponder().get($location`The Dire Warren`);
+          const warrenPrediction = CrystalBall.ponder().get($location`The Briny Deeps`);
           if (warrenPrediction !== embezzler) toasterGaze();
         }
       },
@@ -521,7 +534,7 @@ const gregFights = (
         get(monsterProp) === embezzler &&
         get(fightsProp) === 1 &&
         have($item`miniature crystal ball`) &&
-        !CrystalBall.ponder().get($location`The Dire Warren`),
+        !CrystalBall.ponder().get($location`The Briny Deeps`),
       () => ((get(monsterProp) === embezzler && get(fightsProp) > 0) || totalCharges() > 0 ? 1 : 0),
       runGregFight,
       {
@@ -589,17 +602,17 @@ export const conditionalSources = [
     () =>
       have($item`miniature crystal ball`) &&
       !get("_garbo_doneGregging", false) &&
-      CrystalBall.ponder().get($location`The Dire Warren`) === embezzler,
+      CrystalBall.ponder().get($location`The Briny Deeps`) === embezzler,
     () => possibleGregCrystalBall(),
     (options: RunOptions) => {
       visitUrl("inventory.php?ponder=1");
       if (
-        CrystalBall.ponder().get($location`The Dire Warren`) !== $monster`Knob Goblin Embezzler`
+        CrystalBall.ponder().get($location`The Briny Deeps`) !== $monster`Knob Goblin Embezzler`
       ) {
         return;
       }
       const adventureFunction = options.useAuto ? garboAdventureAuto : garboAdventure;
-      adventureFunction($location`The Dire Warren`, options.macro, options.macro);
+      adventureFunction($location`The Briny Deeps`, options.macro, options.macro);
       toasterGaze();
       if (!doingGregFight()) set("_garbo_doneGregging", true);
     },

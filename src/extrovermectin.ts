@@ -3,16 +3,12 @@ import {
   cliExecute,
   equip,
   haveEffect,
+  isBanished,
   Item,
   itemType,
   mallPrice,
   myFury,
-  Phylum,
   retrieveItem,
-  retrievePrice,
-  Skill,
-  toPhylum,
-  toSkill,
   useFamiliar,
   useSkill,
   visitUrl,
@@ -20,31 +16,25 @@ import {
 } from "kolmafia";
 import {
   $effect,
+  $familiar,
   $item,
   $items,
   $location,
   $monster,
+  $monsters,
   $skill,
   $slot,
   clamp,
   CrystalBall,
   get,
-  getBanishedMonsters,
   have,
   maxBy,
   property,
   Requirement,
-  set,
   tryFindFreeRun,
 } from "libram";
 import { freeFightFamiliar } from "./familiar";
-import {
-  freeRunConstraints,
-  getUsingFreeBunnyBanish,
-  ltbRun,
-  setChoice,
-  userConfirmDialog,
-} from "./lib";
+import { freeRunConstraints, getUsingFreeBunnyBanish, ltbRun, setChoice } from "./lib";
 import { garboAdventure, Macro } from "./combat";
 import { acquire } from "./acquire";
 import { globalOptions } from "./config";
@@ -348,58 +338,28 @@ const freeBunnyBanish: Banish = {
   },
 };
 
-const iceHouseBanish: Banish = {
-  name: "Ice House",
-  available: () => true,
-  macro: () => Macro.item($item`ice house`),
-  prepare: () => acquire(1, $item`ice house`, 1000000),
-};
-
 const shortBanishes = [
   combatItem($item`Louder Than Bomb`, 10000),
   combatItem($item`tennis ball`, 10000),
 ];
 
-function iceHouseAllowed(): boolean {
-  if (get("garboDisallowIceHouseNotify", false) || globalOptions.prefs.autoUserConfirm) {
-    return false;
-  }
-
-  if (
-    userConfirmDialog(
-      "Would you like to allow garbo to ice house a fluffy bunny? This saves significant costs on banishers in the long run.",
-      false,
-    )
-  ) {
-    return true;
-  }
-  set("garboDisallowIceHouseNotify", true);
-  return false;
-}
-
-function banishBunny(): void {
+function banishDeeps(): void {
   const banishes = [
     ...longBanishes,
     ...(!have($item`miniature crystal ball`) ? shortBanishes : []),
   ].filter((b) => b.available());
 
-  const usingIceHouseBanish =
-    getBanishedMonsters().get($item`ice house`) !== $monster`fluffy bunny` &&
-    retrievePrice($item`ice house`) < 1000000 &&
-    iceHouseAllowed();
-
-  const banish = usingIceHouseBanish
-    ? iceHouseBanish
-    : getUsingFreeBunnyBanish()
+  const banish = getUsingFreeBunnyBanish()
     ? freeBunnyBanish
     : maxBy(banishes, (banish: Banish) => banish.price?.() ?? 0, true);
   do {
     banish.prepare?.();
+    useFamiliar($familiar`Patriotic Eagle`);
     garboAdventure(
-      $location`The Dire Warren`,
+      $location`The Briny Deeps`,
       Macro.if_(
-        $monster`fluffy bunny`,
-        Macro.externalIf(
+        $monsters`funk sole brother, pumped-up bass, school of wizardfish`,
+        Macro.skill($skill`%fn, fire a Red, White and Blue Blast`).externalIf(
           getUsingFreeBunnyBanish(),
           Macro.skill($skill`Show them your ring`),
           banish.macro(),
@@ -407,34 +367,25 @@ function banishBunny(): void {
       ).embezzler(),
     );
   } while (
-    "fluffy bunny" !== get("lastEncounter") &&
-    !get("banishedMonsters").includes("fluffy bunny")
+    !["funk sole brother", "pumped-up bass", "school of wizardfish"].includes(
+      get("lastEncounter"),
+    ) &&
+    !get("banishedMonsters").includes("funk sole brother")
   );
-}
-
-function getBanishedPhyla(): Map<Skill | Item, Phylum> {
-  const phylumBanish = new Map<Skill | Item, Phylum>();
-  const banishPart = get("banishedPhyla").split(":").slice(0, 2);
-
-  if (banishPart.length === 2) {
-    const [skill, phylum] = banishPart;
-    // for now, the only phylum banish is Patriotic Screech, a skill
-    phylumBanish.set(toSkill(skill), toPhylum(phylum));
-  }
-
-  return phylumBanish;
 }
 
 export function initializeDireWarren(): void {
   visitUrl("museum.php?action=icehouse");
 
-  const banishedMonsters = getBanishedMonsters();
-  const banishedPhyla = getBanishedPhyla();
+  if (
+    isBanished($monster`funk sole brother`) &&
+    isBanished($monster`pumped-up bass`) &&
+    isBanished($monster`school of wizardfish`)
+  ) {
+    return;
+  }
 
-  if ([...banishedMonsters.values()].find((m) => m === $monster`fluffy bunny`)) return;
-  if ([...banishedPhyla.values()].find((p) => p === $monster`fluffy bunny`.phylum)) return;
-
-  banishBunny();
+  banishDeeps();
 }
 
 export function initializeExtrovermectinZones(): void {
@@ -464,7 +415,7 @@ export function totalGregCharges(countPartial: boolean): number {
 
 export function possibleGregCrystalBall(): number {
   if (have($item`miniature crystal ball`)) {
-    const ponderCount = CrystalBall.ponder().get($location`The Dire Warren`) === embezzler ? 1 : 0;
+    const ponderCount = CrystalBall.ponder().get($location`The Briny Deeps`) === embezzler ? 1 : 0;
     return totalGregCharges(true) + ponderCount;
   }
   return 0;

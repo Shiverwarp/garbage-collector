@@ -80,7 +80,6 @@ import {
   ensureFreeRun,
   gameDay,
   get,
-  getBanishedMonsters,
   getKramcoWandererChance,
   getTodaysHolidayWanderers,
   have,
@@ -511,8 +510,7 @@ function determineFreeBunnyBanish(): boolean {
       ? Math.floor((100 - get("_powerfulGloveBatteryPowerUsed")) / 10)
       : 0);
   const useFreeBanishes =
-    getBanishedMonsters().get($item`ice house`) !== $monster`fluffy bunny` &&
-    // 60 turns of banish from mafia middle finger ring, and 30 x 2 from two snokebombs
+    // 60 turns of banish from mafia middle finger ring, and 50 from hatred. Eagle RWB runs out after this.
     // Account for our chain-starting fight as well as other embezzler sources that occur during our greg chain
     1 +
       possibleGregsFromSpleen +
