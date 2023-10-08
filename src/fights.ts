@@ -480,7 +480,15 @@ export function dailyFights(): void {
           if (weWantToSaberCrates) saberCrateIfSafe();
         }
 
-        if (["Habitats Monster", "Be Gregarious"].includes(nextFight.name)) {
+        if (
+          [
+            "Habitats Monster",
+            "Be Gregarious",
+            "Habitats Monster (Set Up Crystal Ball)",
+            "Be Gregarious (Set Up Crystal Ball)",
+            "Orb Prediction",
+          ].includes(nextFight.name)
+        ) {
           print("Buffing for underwater greglikes!", "fuchsia");
           meatMood("Greg", 700 + baseMeat).execute(embezzlerCount());
         }
