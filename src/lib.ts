@@ -541,7 +541,7 @@ const reservedBanishes = new Map<
   ActionSource["source"],
   () => boolean // function that returns true if we should disallow usage of the source while we're reserving embezzler banishers
 >([
-  [$skill`Feel Hatred`, () => get(`_feelHatredUsed`) > 1], // We intend to save at least 1 use for embezzlers, so if we've already used 2, disallow usage.
+  [$skill`Emotionally Chipped`, () => get(`_feelHatredUsed`) > 1], // We intend to save at least 1 use for embezzlers, so if we've already used 2, disallow usage.
   [$item`mafia middle finger ring`, () => true],
 ]);
 
