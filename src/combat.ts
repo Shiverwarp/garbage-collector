@@ -44,7 +44,6 @@ import {
   $skill,
   $slot,
   CinchoDeMayo,
-  Counter,
   get,
   have,
   SongBoom,
@@ -241,45 +240,6 @@ export class Macro extends StrictMacro {
       .externalIf(
         get("cosmicBowlingBallReturnCombats") < 1,
         Macro.trySkill($skill`Bowl Straight Up`),
-      )
-      .externalIf(
-        have($skill`Transcendent Olfaction`) &&
-          (get("olfactedMonster") !== $monster`garbage tourist` || !have($effect`On the Trail`)) &&
-          get("_olfactionsUsed") < 3,
-        Macro.if_($monster`garbage tourist`, Macro.trySkill($skill`Transcendent Olfaction`)),
-      )
-      .externalIf(
-        get("_gallapagosMonster") !== $monster`garbage tourist` &&
-          have($skill`Gallapagosian Mating Call`),
-        Macro.if_($monster`garbage tourist`, Macro.trySkill($skill`Gallapagosian Mating Call`)),
-      )
-      .externalIf(
-        get("longConMonster") !== $monster`garbage tourist` &&
-          get("_longConUsed") < 5 &&
-          have($skill`Long Con`),
-        Macro.if_($monster`garbage tourist`, Macro.trySkill($skill`Long Con`)),
-      )
-      .externalIf(
-        get("motifMonster") !== $monster`garbage tourist` &&
-          have($skill`Motif`) &&
-          !have($effect`Everything Looks Blue`),
-        Macro.if_($monster`garbage tourist`, Macro.trySkill($skill`Motif`)),
-      )
-      .externalIf(
-        !get("_latteCopyUsed") &&
-          (get("_latteMonster") !== $monster`garbage tourist` ||
-            Counter.get("Latte Monster") > 30) &&
-          have($item`latte lovers member's mug`),
-        Macro.if_($monster`garbage tourist`, Macro.trySkill($skill`Offer Latte to Opponent`)),
-      )
-      .externalIf(
-        get("_feelNostalgicUsed") < 3 &&
-          get("lastCopyableMonster") === $monster`garbage tourist` &&
-          have($skill`Feel Nostalgic`),
-        Macro.if_(
-          `!monsterid ${$monster`garbage tourist`.id}`,
-          Macro.trySkill($skill`Feel Nostalgic`),
-        ),
       )
       .externalIf(opsSetup, Macro.trySkill($skill`Throw Shield`))
       .meatStasis(willCrit)
