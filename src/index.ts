@@ -491,7 +491,7 @@ export function main(argString = ""): void {
         }
         // Fishy prep
         const estimatedDietEmbezzlers = countCopies(computeDiet().diet());
-        while (haveEffect($effect`Fishy`) < embezzlerCount() + estimatedDietEmbezzlers + 10) {
+        while (haveEffect($effect`Fishy`) < embezzlerCount() + estimatedDietEmbezzlers + 20) {
           // 10 buffer turns of fishy
           barfTurn("Fishy");
           postCombatActions(true);
