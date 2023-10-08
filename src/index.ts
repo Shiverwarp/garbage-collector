@@ -485,7 +485,7 @@ export function main(argString = ""): void {
     withStash(stashItems, () => {
       withVIPClan(() => {
         // Banish
-        while (!isBanished($monster`sea cowboy`)) {
+        while (!isBanished($monster`sea cowboy`) && !globalOptions.nobarf) {
           barfTurn("Banish");
           postCombatActions(true);
         }
