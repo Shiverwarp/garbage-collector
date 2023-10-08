@@ -4,7 +4,6 @@ import {
   equip,
   getProperty,
   haveEffect,
-  isBanished,
   Item,
   itemType,
   mallPrice,
