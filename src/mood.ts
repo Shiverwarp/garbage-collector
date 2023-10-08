@@ -28,6 +28,7 @@ import {
 import { baseMeat, burnLibrams, safeRestoreMpTarget, setChoice } from "./lib";
 import { withStash } from "./clan";
 import { usingPurse } from "./outfit";
+import { globalOptions } from "./config";
 
 Mood.setDefaultOptions({
   songSlots: [
@@ -62,8 +63,15 @@ export function meatMood(
   if (moodType !== "Yachtzee") {
     // We do Gregs underwater, but not replacers
     if (moodType === "Greg") {
-      mood.skill($skill`Donho's Bubbly Ballad`);
-      mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
+      // Donho's
+      if (get("_donhosCasts") < 50 && !globalOptions.ascend) {
+        useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
+      } else if (get("_donhosCasts") < 50) {
+        mood.skill($skill`Donho's Bubbly Ballad`);
+      } else {
+        mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
+      }
+
       const familiarMultiplier = have($familiar`Robortender`)
         ? 2
         : have($familiar`Hobo Monkey`)
@@ -83,8 +91,14 @@ export function meatMood(
 
     // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
     if (moodType === "Barf") {
-      mood.skill($skill`Donho's Bubbly Ballad`);
-      mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * baseMeat);
+      // Donho's
+      if (get("_donhosCasts") < 50 && !globalOptions.ascend) {
+        useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
+      } else if (get("_donhosCasts") < 50) {
+        mood.skill($skill`Donho's Bubbly Ballad`);
+      } else {
+        mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
+      }
       const familiarMultiplier = have($familiar`Robortender`)
         ? 2
         : have($familiar`Hobo Monkey`)
