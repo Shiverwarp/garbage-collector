@@ -2,7 +2,6 @@ import {
   booleanModifier,
   canInteract,
   cliExecute,
-  equip,
   haveEffect,
   haveEquipped,
   maximize,
@@ -38,12 +37,7 @@ import { prepRobortender } from "../tasks/dailyFamiliars";
 import { yachtzeePotionSetup } from "./buffs";
 import { executeNextDietStep, yachtzeeChainDiet } from "./diet";
 import { pyecAvailable, shrugIrrelevantSongs } from "./lib";
-import {
-  getBestWaterBreathingEquipment,
-  maximizeMeat,
-  prepareOutfitAndFamiliar,
-  stickerSetup,
-} from "./outfit";
+import { maximizeMeat, prepareOutfitAndFamiliar, stickerSetup } from "./outfit";
 
 function _yachtzeeChain(): void {
   if (!canInteract()) return;
@@ -101,12 +95,6 @@ function _yachtzeeChain(): void {
     // Switch familiars in case changes in fam weight from buffs means our current familiar is no longer optimal
     prepareOutfitAndFamiliar();
     if (!have($effect`Really Deep Breath`)) {
-      const bestWaterBreathingEquipment = getBestWaterBreathingEquipment(
-        Math.min(jellyTurns, fishyTurns),
-      );
-      if (bestWaterBreathingEquipment.item !== $item.none) {
-        equip(bestWaterBreathingEquipment.item);
-      }
       if (
         haveEquipped($item`The Crown of Ed the Undying`) &&
         !booleanModifier("Adventure Underwater")
