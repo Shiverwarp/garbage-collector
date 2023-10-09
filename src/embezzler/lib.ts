@@ -1,6 +1,5 @@
-import { booleanModifier, canEquip, Location, use } from "kolmafia";
+import { Location, use } from "kolmafia";
 import { $effect, $familiar, $item, $monster, get, have, questStep } from "libram";
-import { waterBreathingEquipment } from "../outfit";
 import { DraggableFight } from "../libgarbo";
 import { OutfitSpec } from "grimoire-kolmafia";
 import { Macro } from "../combat";
@@ -37,8 +36,6 @@ export function checkUnderwater(): boolean {
     questStep("questS01OldGuy") >= 0 &&
     !(get("_envyfishEggUsed") || have($item`envyfish egg`)) &&
     (get("_garbo_weightChain", false) || !have($familiar`Pocket Professor`)) &&
-    (booleanModifier("Adventure Underwater") ||
-      waterBreathingEquipment.some((item) => have(item) && canEquip(item))) &&
     (have($effect`Fishy`) || (have($item`fishy pipe`) && !get("_fishyPipeUsed")))
   ) {
     if (!have($effect`Fishy`) && !get("_fishyPipeUsed")) use($item`fishy pipe`);

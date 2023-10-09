@@ -1,7 +1,6 @@
 import {
   availableAmount,
   canAdventure,
-  canEquip,
   cliExecute,
   currentRound,
   eat,
@@ -36,7 +35,6 @@ import {
   Counter,
   ensureEffect,
   get,
-  getModifier,
   have,
   SourceTerminal,
 } from "libram";
@@ -58,14 +56,7 @@ import {
   withLocation,
 } from "./lib";
 import { meatMood } from "./mood";
-import {
-  barfOutfit,
-  embezzlerOutfit,
-  familiarWaterBreathingEquipment,
-  freeFightOutfit,
-  tryFillLatte,
-  waterBreathingEquipment,
-} from "./outfit";
+import { barfOutfit, embezzlerOutfit, freeFightOutfit, tryFillLatte } from "./outfit";
 import postCombatActions from "./post";
 import { trackBarfSessionStatistics } from "./session";
 import { completeBarfQuest } from "./tasks/daily";
@@ -88,19 +79,6 @@ function shouldGoUnderwater(): boolean {
 
   if (questStep("questS01OldGuy") === -1) {
     visitUrl("place.php?whichplace=sea_oldman&action=oldman_oldman");
-  }
-
-  if (
-    !getModifier("Adventure Underwater") &&
-    waterBreathingEquipment.every((item) => !have(item) || !canEquip(item))
-  ) {
-    return false;
-  }
-  if (
-    !getModifier("Underwater Familiar") &&
-    familiarWaterBreathingEquipment.every((item) => !have(item))
-  ) {
-    return false;
   }
 
   if (have($item`envyfish egg`) || (globalOptions.ascend && get("_envyfishEggUsed"))) return false;

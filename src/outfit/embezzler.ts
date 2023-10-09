@@ -1,17 +1,10 @@
 import { Outfit, OutfitSpec } from "grimoire-kolmafia";
 import { toJson } from "kolmafia";
-import { $effect, $item, $items, $location, Guzzlr, have } from "libram";
+import { $item, $items, $location, Guzzlr } from "libram";
 import { meatFamiliar } from "../familiar";
 import { chooseBjorn } from "./bjorn";
 import { bonusGear } from "./dropsgear";
-import {
-  bestBjornalike,
-  cleaverCheck,
-  familiarWaterBreathingEquipment,
-  useUPCsIfNeeded,
-  validateGarbageFoldable,
-  waterBreathingEquipment,
-} from "./lib";
+import { bestBjornalike, cleaverCheck, useUPCsIfNeeded, validateGarbageFoldable } from "./lib";
 import { BonusEquipMode, modeValueOfMeat } from "../lib";
 
 export function embezzlerOutfit(spec: OutfitSpec = {}, target = $location.none): Outfit {
@@ -27,15 +20,6 @@ export function embezzlerOutfit(spec: OutfitSpec = {}, target = $location.none):
   outfit.familiar ??= meatFamiliar();
 
   const bjornChoice = chooseBjorn(BonusEquipMode.EMBEZZLER, outfit.familiar);
-
-  const underwater = target.environment === "underwater";
-  if (underwater) {
-    if (!outfit.familiar.underwater && !have($effect`Driving Waterproofly`)) {
-      outfit.equipFirst(familiarWaterBreathingEquipment);
-    }
-
-    if (!outfit.equipFirst(waterBreathingEquipment)) outfit.modifier.push("sea");
-  }
 
   useUPCsIfNeeded(outfit);
 

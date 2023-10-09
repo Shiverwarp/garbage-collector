@@ -94,9 +94,6 @@ export function useUPCsIfNeeded({ familiar }: Outfit): void {
   }
 }
 
-export const waterBreathingEquipment = $items`The Crown of Ed the Undying, aerated diving helmet, crappy Mer-kin mask, Mer-kin gladiator mask, Mer-kin scholar mask, old SCUBA tank`;
-export const familiarWaterBreathingEquipment = $items`das boot, little bitty bathysphere`;
-
 // TODO: Make this not terrible, add MSG
 export function tryFillLatte(): boolean {
   if (
