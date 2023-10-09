@@ -1,35 +1,21 @@
-import {
-  canEquip,
-  equip,
-  equippedItem,
-  haveEquipped,
-  Item,
-  mallPrice,
-  myFamiliar,
-  toSlot,
-  use,
-  useFamiliar,
-} from "kolmafia";
+import { equippedItem, mallPrice, myFamiliar, use, useFamiliar } from "kolmafia";
 import {
   $effect,
   $item,
   $items,
-  $slot,
   $slots,
   findLeprechaunMultiplier,
   get,
-  getModifier,
   have,
-  maxBy,
   Requirement,
 } from "libram";
 import { acquire } from "../acquire";
 import { withStash } from "../clan";
 import { meatFamiliar } from "../familiar";
 import { baseMeat } from "../lib";
-import { familiarWaterBreathingEquipment, useUPCs, waterBreathingEquipment } from "../outfit";
+import { useUPCs } from "../outfit";
 import { bestYachtzeeFamiliar } from "./familiar";
-import { expectedEmbezzlers, yachtzeeBuffValue } from "./lib";
+import { expectedEmbezzlers } from "./lib";
 
 export const maximizeMeat = (): boolean =>
   new Requirement(
@@ -46,23 +32,6 @@ export const maximizeMeat = (): boolean =>
     },
   ).maximize();
 
-export function getBestWaterBreathingEquipment(yachtzeeTurns: number): {
-  item: Item;
-  cost: number;
-} {
-  const waterBreathingEquipmentCosts = waterBreathingEquipment.map((it) => ({
-    item: it,
-    cost:
-      have(it) && canEquip(it)
-        ? yachtzeeTurns * yachtzeeBuffValue(equippedItem(toSlot(it)))
-        : Infinity,
-  }));
-  const bestWaterBreathingEquipment = waterBreathingEquipment.some((item) => haveEquipped(item))
-    ? { item: $item.none, cost: 0 }
-    : maxBy(waterBreathingEquipmentCosts, "cost", true);
-  return bestWaterBreathingEquipment;
-}
-
 export function prepareOutfitAndFamiliar(): void {
   useFamiliar(bestYachtzeeFamiliar());
   if (
@@ -72,15 +41,6 @@ export function prepareOutfitAndFamiliar(): void {
     withStash($items`moveable feast`, () => use($item`moveable feast`));
   }
   maximizeMeat();
-  if (!myFamiliar().underwater && !have($effect`Driving Waterproofly`)) {
-    equip(
-      $slot`familiar`,
-      maxBy(
-        familiarWaterBreathingEquipment.filter((it) => have(it)),
-        (eq) => getModifier("Familiar Weight", eq),
-      ),
-    );
-  }
 }
 
 export function stickerSetup(expectedYachts: number): void {
