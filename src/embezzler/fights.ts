@@ -526,6 +526,7 @@ const gregFights = (
       },
       {
         canInitializeWandererCounters: true,
+        location: $location`The Briny Deeps`,
       },
     ),
     new EmbezzlerFight(
@@ -542,6 +543,7 @@ const gregFights = (
           equip: $items`miniature crystal ball`.filter((item) => have(item)),
         },
         canInitializeWandererCounters: true,
+        location: $location`The Briny Deeps`,
       },
     ),
   ];
@@ -619,6 +621,7 @@ export const conditionalSources = [
     {
       spec: { equip: $items`miniature crystal ball` },
       canInitializeWandererCounters: true,
+      location: $location`The Briny Deeps`,
     },
   ),
   new EmbezzlerFight(
