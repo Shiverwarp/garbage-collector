@@ -18,8 +18,8 @@
   "license": "MIT",
   "dependencies": {
     "core-js": "^3.32.2",
-    "grimoire-kolmafia": "^0.3.22",
-    "kolmafia": "^5.27628.0",
+    "grimoire-kolmafia": "^0.3.23",
+    "kolmafia": "^5.27644.0",
     "libram": "^0.8.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -44,7 +44,7 @@
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-libram": "^0.3.2",
+    "eslint-plugin-libram": "^0.3.3",
     "madge": "^6.1.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
