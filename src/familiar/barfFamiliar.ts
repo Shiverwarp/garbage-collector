@@ -7,6 +7,7 @@ import {
   myFamiliar,
   numericModifier,
   print,
+  setLocation,
   Slot,
   useFamiliar,
   weightAdjustment,
@@ -55,6 +56,7 @@ function getCachedOutfitValues(fam: Familiar) {
   if (currentValue) return currentValue;
 
   const current = myFamiliar();
+  setLocation($location`The Coral Corral`);
   cliExecute("checkpoint");
   try {
     withLocation($location`The Coral Corral`, () =>
