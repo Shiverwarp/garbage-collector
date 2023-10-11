@@ -92,7 +92,12 @@ type MarginalFamiliar = GeneralFamiliar & { outfitWeight: number; outfitValue: n
 
 const nonOutfitWeightBonus = () =>
   weightAdjustment() -
-  sum(outfitSlots, (slot: Slot) => getModifier("Familiar Weight", equippedItem(slot)));
+  sum(
+    outfitSlots,
+    (slot: Slot) =>
+      getModifier("Familiar Weight", equippedItem(slot)) +
+      getModifier("Hidden Familiar Weight", equippedItem(slot)),
+  );
 
 function familiarModifier(familiar: Familiar, modifier: NumericModifier): number {
   const cachedOutfitWeight = getCachedOutfitValues(familiar).weight;
