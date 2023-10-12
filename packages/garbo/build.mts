@@ -14,7 +14,7 @@ const context = await esbuild.context({
     "process.env.GITHUB_REPOSITORY": '"CustomBuild"',
   },
   entryPoints: {
-    "scripts/garbage-collector/garbo": "src/index.ts",
+    "scripts/garbage-collector/rancho": "src/index.ts",
     "relay/relay_garbo": "src/relay_garbo.ts",
   },
   entryNames: "[dir]/[name]",
