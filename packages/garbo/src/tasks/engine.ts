@@ -46,9 +46,7 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
 
   dress(task: GarboTask, outfit: Outfit) {
     if (task.location) {
-      const result =
-        typeof task.location === "function" ? task.location() : task.location;
-      setLocation(result);
+      setLocation(undelay(task.location));
     } else if (task.do instanceof Location) {
       setLocation(task.do);
     } else {
