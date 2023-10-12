@@ -134,6 +134,7 @@ import {
 import {
   crateStrategy,
   doingGregFight,
+  gregReady,
   initializeExtrovermectinZones,
   saberCrateIfSafe,
 } from "./extrovermectin";
@@ -374,7 +375,7 @@ function startWandererCounter() {
     }
     do {
       let run: ActionSource;
-      if (get("beGregariousFightsLeft") > 0) {
+      if (gregReady()) {
         print(
           "You still have gregs active, so we're going to wear your meat outfit."
         );
