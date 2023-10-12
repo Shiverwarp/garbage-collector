@@ -2,6 +2,8 @@ import {
   availableChoiceOptions,
   cliExecute,
   equip,
+  haveEffect,
+  isBanished,
   itemAmount,
   mallPrice,
   myAdventures,
@@ -21,6 +23,7 @@ import {
   $items,
   $location,
   $locations,
+  $monster,
   $skill,
   $slot,
   AutumnAton,
@@ -30,6 +33,7 @@ import {
   getRemainingStomach,
   have,
   JuneCleaver,
+  set,
   uneffect,
   withProperty,
 } from "libram";
@@ -53,6 +57,7 @@ import { garboAverageValue, garboValue } from "../garboValue";
 import bestAutumnatonLocation from "./autumnaton";
 import handleWorkshed from "./workshed";
 import { wanderer } from "../garboWanderer";
+import { getRequiredFishyTurns } from "../tasks/fishyPrep";
 
 function closetStuff(): void {
   for (const i of $items`bowling ball, funky junk key`) {
@@ -267,6 +272,13 @@ export default function postCombatActions(skipDiet = false): void {
   funguySpores();
   eightBitFatLoot();
   wanderer().clear();
+  if (
+    haveEffect($effect`Fishy`) >= getRequiredFishyTurns() &&
+    isBanished($monster`sea cowboy`) &&
+    !get("_shivRanchoFishyPrepped", false)
+  ) {
+    set("_shivRanchoFishyPrepped", true);
+  }
   if (
     globalOptions.ascend ||
     AutumnAton.turnsForQuest() < estimatedGarboTurns() + remainingUserTurns()
