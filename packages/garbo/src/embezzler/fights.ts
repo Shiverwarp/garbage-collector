@@ -4,8 +4,8 @@ import {
   chatPrivate,
   cliExecute,
   getClanLounge,
+  getProperty,
   haveEquipped,
-  isBanished,
   itemAmount,
   Location,
   mallPrice,
@@ -568,9 +568,8 @@ const gregFights = (
       : ltbRun().macro;
     run.constraints.preparation?.();
     const deepsIsBanished =
-      isBanished($monster`funk sole brother`) &&
-      isBanished($monster`pumped-up bass`) &&
-      isBanished($monster`school of wizardfish`);
+      get("rwbMonsterCount") > 0 &&
+      get("banishedMonsters").includes(getProperty("rwbMonster"));
     const adventureFunction = options.useAuto
       ? garboAdventureAuto
       : garboAdventure;

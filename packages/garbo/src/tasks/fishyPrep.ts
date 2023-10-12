@@ -2,17 +2,17 @@ import {
   availableAmount,
   canAdventure,
   eat,
+  haveEffect,
+  isBanished,
   Location,
   mallPrice,
   maximize,
   myAdventures,
-  myInebriety,
   myLevel,
   runChoice,
   totalTurnsPlayed,
   toUrl,
   use,
-  useSkill,
   visitUrl,
 } from "kolmafia";
 import {
@@ -49,18 +49,18 @@ import {
   sober,
 } from "../lib";
 import {
-  barfOutfit,
   embezzlerOutfit,
+  fishyPrepOutfit,
   freeFightOutfit,
   latteFilled,
   tryFillLatte,
 } from "../outfit";
 import { digitizedMonstersRemaining } from "../turns";
 import { deliverThesisIfAble } from "../fights";
-import { computeDiet, consumeDiet } from "../diet";
+import { computeDiet, countCopies } from "../diet";
 
-import { completeBarfQuest } from "./daily";
 import { GarboTask } from "./engine";
+import { embezzlerCount } from "../embezzler";
 
 const steveAdventures: Map<Location, number[]> = new Map([
   [$location`The Haunted Bedroom`, [1, 3, 1]],
@@ -100,6 +100,12 @@ function wanderTask(
   };
 }
 
+let requiredFishyTurns: number;
+export function getRequiredFishyTurns(): number {
+  return (requiredFishyTurns ??=
+    countCopies(computeDiet().diet()) + embezzlerCount() + 10); // Extra buffer of 10 turns just in case weirdness
+}
+
 function shouldGoUnderwater(): boolean {
   if (!sober()) return false;
   if (myLevel() < 11) return false;
@@ -132,7 +138,7 @@ function shouldGoUnderwater(): boolean {
   return false;
 }
 
-const BarfTurnTasks: GarboTask[] = [
+const fishyPrepTasks: GarboTask[] = [
   {
     name: "Latte",
     completed: () => latteFilled(),
@@ -225,25 +231,6 @@ const BarfTurnTasks: GarboTask[] = [
     completed: () => howManySausagesCouldIEat() === 0,
     prepare: () => maximize("MP", false),
     do: () => eat(howManySausagesCouldIEat(), $item`magical sausage`),
-    spendsTurn: false,
-  },
-  {
-    name: "Sweatpants",
-    ready: () =>
-      !globalOptions.nodiet &&
-      have($item`designer sweatpants`) &&
-      myAdventures() <= 1 + globalOptions.saveTurns,
-    completed: () => get("_sweatOutSomeBoozeUsed") === 3,
-    do: () => {
-      while (
-        get("_sweatOutSomeBoozeUsed") < 3 &&
-        get("sweat") >= 25 &&
-        myInebriety() > 0
-      ) {
-        useSkill($skill`Sweat Out Some Booze`);
-      }
-      consumeDiet(computeDiet().sweatpants(), "SWEATPANTS");
-    },
     spendsTurn: false,
   },
   {
@@ -412,9 +399,28 @@ const BarfTurnTasks: GarboTask[] = [
     sobriety: "drunk",
   },
   {
-    name: "Ranch",
-    completed: () => myAdventures() === 0,
-    outfit: barfOutfit,
+    name: "Banish Cowboy",
+    completed: () => isBanished($monster`sea cowboy`),
+    outfit: fishyPrepOutfit({ equip: $items`cursed monkey's paw` }),
+    do: () => $location`The Coral Corral`,
+    combat: new GarboStrategy(
+      () =>
+        Macro.if_(
+          $monster`sea cowboy`,
+          Macro.skill($skill`Monkey Slap`)
+        ).meatKill(),
+      () =>
+        Macro.if_(
+          `(monsterid ${embezzler.id}) && !gotjump && !(pastround 2)`,
+          Macro.meatKill()
+        ).abort()
+    ),
+    spendsTurn: true,
+  },
+  {
+    name: "Fishy Prep",
+    completed: () => haveEffect($effect`Fishy`) >= getRequiredFishyTurns(),
+    outfit: fishyPrepOutfit,
     do: () => $location`The Coral Corral`,
     combat: new GarboStrategy(
       () => Macro.meatKill(),
@@ -424,13 +430,14 @@ const BarfTurnTasks: GarboTask[] = [
           Macro.meatKill()
         ).abort()
     ),
-    post: () => completeBarfQuest(),
     spendsTurn: true,
   },
 ];
 
-export const BarfTurnQuest: Quest<GarboTask> = {
-  name: "Barf Turn",
-  tasks: BarfTurnTasks,
-  completed: () => myAdventures() === 0,
+export const fishyPrepQuest: Quest<GarboTask> = {
+  name: "Fishy Prep",
+  tasks: fishyPrepTasks,
+  completed: () =>
+    haveEffect($effect`Fishy`) >= getRequiredFishyTurns() &&
+    isBanished($monster`sea cowboy`),
 };

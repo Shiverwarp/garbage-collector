@@ -18,7 +18,6 @@ import {
   getCampground,
   gnomadsAvailable,
   handlingChoice,
-  haveEquipped,
   haveOutfit,
   inebrietyLimit,
   isBanished,

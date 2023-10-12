@@ -11,9 +11,7 @@ import {
   getClanName,
   guildStoreAvailable,
   handlingChoice,
-  haveEffect,
   inebrietyLimit,
-  isBanished,
   Item,
   logprint,
   maximize,
@@ -43,7 +41,6 @@ import {
   $item,
   $items,
   $location,
-  $monster,
   $skill,
   $slots,
   Clan,
@@ -61,7 +58,7 @@ import {
 import { stashItems, withStash, withVIPClan } from "./clan";
 import { globalOptions } from "./config";
 import { dailySetup } from "./dailies";
-import { computeDiet, countCopies, nonOrganAdventures, runDiet } from "./diet";
+import { nonOrganAdventures, runDiet } from "./diet";
 import { dailyFights, freeFights } from "./fights";
 import {
   allMallPrices,
@@ -81,8 +78,8 @@ import { endSession, startSession } from "./session";
 import { estimatedGarboTurns } from "./turns";
 import { yachtzeeChain } from "./yachtzee";
 import { garboAverageValue } from "./garboValue";
-import { embezzlerCount } from "./embezzler";
 import { BarfTurnQuest, runGarboQuests } from "./tasks";
+import { fishyPrepQuest } from "./tasks/fishyPrep";
 
 // Max price for tickets. You should rethink whether Barf is the best place if they're this expensive.
 const TICKET_MAX_PRICE = 500000;
@@ -522,21 +519,8 @@ export function main(argString = ""): void {
     // FIXME: Dynamically figure out pointer ring approach.
     withStash(stashItems, () => {
       withVIPClan(() => {
-        // Banish
-        while (!isBanished($monster`sea cowboy`) && !globalOptions.nobarf) {
-          barfTurn("Banish");
-          postCombatActions(true);
-        }
-        // Fishy prep
-        const estimatedDietEmbezzlers = countCopies(computeDiet().diet());
-        while (
-          haveEffect($effect`Fishy`) <
-          embezzlerCount() + estimatedDietEmbezzlers + 10
-        ) {
-          // 10 buffer turns of fishy
-          barfTurn("Fishy");
-          postCombatActions(true);
-        }
+        // Banish and Fishy prep
+        runGarboQuests([fishyPrepQuest]);
 
         // 0. diet stuff.
         if (
