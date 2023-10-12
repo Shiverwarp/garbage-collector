@@ -255,9 +255,13 @@ const fishyPrepTasks: GarboTask[] = [
       shouldGoUnderwater()
         ? $location`The Briny Deeps`
         : wanderer().getTarget({ wanderer: "wanderer", allowEquipment: false }),
-    choices: shouldGoUnderwater()
-      ? {}
-      : wanderer().getChoices({ wanderer: "wanderer", allowEquipment: false }),
+    choices: () =>
+      shouldGoUnderwater()
+        ? {}
+        : wanderer().getChoices({
+            wanderer: "wanderer",
+            allowEquipment: false,
+          }),
     combat: new GarboStrategy(
       () =>
         Macro.externalIf(
