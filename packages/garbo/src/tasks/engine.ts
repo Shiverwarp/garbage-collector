@@ -2,13 +2,14 @@ import {
   Engine,
   EngineOptions,
   getTasks,
+  Outfit,
   Quest,
   StrictCombatTask,
 } from "grimoire-kolmafia";
 import { eventLog, safeInterrupt, sober } from "../lib";
 import { wanderer } from "../garboWanderer";
 import { $skill, Delayed, get, SourceTerminal, undelay } from "libram";
-import { myTotalTurnsSpent, print } from "kolmafia";
+import { Location, myTotalTurnsSpent, print, setLocation } from "kolmafia";
 import postCombatActions from "../post";
 import { GarboStrategy } from "../combat";
 
@@ -16,6 +17,7 @@ export type GarboTask = StrictCombatTask<never, GarboStrategy> & {
   sobriety?: Delayed<"drunk" | "sober">;
   spendsTurn: Delayed<boolean>;
   duplicate?: Delayed<boolean>;
+  location?: Delayed<Location>;
 };
 
 function logEmbezzler(encounterType: string) {
@@ -42,6 +44,20 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
     return super.available(task);
   }
 
+  dress(task: GarboTask, outfit: Outfit) {
+    if (task.location) {
+      const result =
+        typeof task.location === "function" ? task.location() : task.location;
+      setLocation(result);
+    } else if (task.do instanceof Location) {
+      setLocation(task.do);
+    } else {
+      setLocation(Location.none);
+    }
+
+    outfit.dress();
+  }
+
   execute(task: GarboTask): void {
     safeInterrupt();
     const spentTurns = myTotalTurnsSpent();
@@ -59,7 +75,7 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
     if (myTotalTurnsSpent() !== spentTurns) {
       if (!undelay(task.spendsTurn)) {
         print(
-          `Task ${task.name} spent a turn but was marked as not spending turns`,
+          `Task ${task.name} spent a turn but was marked as not spending turns`
         );
       }
     }

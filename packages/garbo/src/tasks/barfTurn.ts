@@ -97,6 +97,7 @@ function wanderTask(
     spendsTurn: false,
     combat: new GarboStrategy(() => Macro.basicCombat()),
     ...base,
+    location: wanderer().getTarget(undelay(details)),
   };
 }
 
@@ -187,6 +188,7 @@ const BarfTurnTasks: GarboTask[] = [
     // Ghost fights are currently hard
     // and they resist physical attacks!
     sobriety: "sober",
+    location: () => get("ghostLocation") as Location,
   },
   wanderTask(
     () => ({ wanderer: "wanderer", drunkSafe: !isGhost() }),
@@ -288,6 +290,10 @@ const BarfTurnTasks: GarboTask[] = [
     ),
     spendsTurn: () =>
       !SourceTerminal.getDigitizeMonster()?.attributes.includes("FREE"),
+    location: () =>
+      shouldGoUnderwater()
+        ? $location`The Briny Deeps`
+        : wanderer().getTarget({ wanderer: "wanderer", allowEquipment: false }),
   },
   wanderTask(
     "wanderer",
@@ -415,7 +421,7 @@ const BarfTurnTasks: GarboTask[] = [
     name: "Ranch",
     completed: () => myAdventures() === 0,
     outfit: barfOutfit,
-    do: () => $location`The Coral Corral`,
+    do: $location`The Coral Corral`,
     combat: new GarboStrategy(
       () => Macro.meatKill(),
       () =>
