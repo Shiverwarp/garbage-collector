@@ -8,6 +8,7 @@ import {
   myAdventures,
   myInebriety,
   myLevel,
+  myTurncount,
   runChoice,
   totalTurnsPlayed,
   toUrl,
@@ -99,6 +100,14 @@ function wanderTask(
     ...base,
     location: wanderer().getTarget(undelay(details)),
   };
+}
+
+function canContinue(): boolean {
+  return (
+    myAdventures() > globalOptions.saveTurns &&
+    (globalOptions.stopTurncount === null ||
+      myTurncount() < globalOptions.stopTurncount)
+  );
 }
 
 function shouldGoUnderwater(): boolean {
@@ -438,5 +447,5 @@ const BarfTurnTasks: GarboTask[] = [
 export const BarfTurnQuest: Quest<GarboTask> = {
   name: "Barf Turn",
   tasks: BarfTurnTasks,
-  completed: () => myAdventures() === 0,
+  completed: () => !canContinue(),
 };
