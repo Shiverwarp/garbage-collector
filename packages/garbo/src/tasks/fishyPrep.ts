@@ -30,6 +30,7 @@ import {
   get,
   have,
   questStep,
+  set,
   SourceTerminal,
   undelay,
 } from "libram";
@@ -432,6 +433,15 @@ const fishyPrepTasks: GarboTask[] = [
     ),
     spendsTurn: true,
   },
+  {
+    name: "Set Property",
+    ready: () =>
+      haveEffect($effect`Fishy`) >= getRequiredFishyTurns() &&
+      isBanished($monster`sea cowboy`),
+    completed: () => get("_shivRanchoFishyPrepped", false),
+    do: () => set("_shivRanchoFishyPrepped", true),
+    spendsTurn: false,
+  },
 ];
 
 export const fishyPrepQuest: Quest<GarboTask> = {
@@ -439,5 +449,6 @@ export const fishyPrepQuest: Quest<GarboTask> = {
   tasks: fishyPrepTasks,
   completed: () =>
     haveEffect($effect`Fishy`) >= getRequiredFishyTurns() &&
-    isBanished($monster`sea cowboy`),
+    isBanished($monster`sea cowboy`) &&
+    get("_shivRanchoFishyPrepped", false),
 };

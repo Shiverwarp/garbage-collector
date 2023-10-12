@@ -248,7 +248,11 @@ export default function postCombatActions(skipDiet = false): void {
   closetStuff();
   juneCleave();
   numberology();
-  if (!skipDiet && !globalOptions.nodiet) {
+  if (
+    !skipDiet &&
+    !globalOptions.nodiet &&
+    get("_shivRanchoFishyPrepped", false)
+  ) {
     fillPantsgivingFullness();
     fillSweatyLiver();
   }
