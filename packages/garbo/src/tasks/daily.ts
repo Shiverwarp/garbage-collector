@@ -9,11 +9,13 @@ import {
   floristAvailable,
   gamedayToInt,
   getClanLounge,
+  getPlayerId,
   gnomadsAvailable,
   guildStoreAvailable,
   handlingChoice,
   holiday,
   inebrietyLimit,
+  isOnline,
   Item,
   itemAmount,
   mallPrice,
@@ -32,6 +34,7 @@ import {
   use,
   visitUrl,
   votingBoothInitiatives,
+  wait,
 } from "kolmafia";
 import {
   $effect,
@@ -42,6 +45,7 @@ import {
   $monster,
   $slot,
   BeachComb,
+  Clan,
   findLeprechaunMultiplier,
   get,
   getModifier,
@@ -599,6 +603,25 @@ const DailyTasks: GarboTask[] = [
     ready: () => have($item`portable steam unit`),
     completed: () => get("_portableSteamUnitUsed"),
     do: () => use($item`portable steam unit`),
+    spendsTurn: false,
+  },
+  {
+    name: "Clan Fortune Consults",
+    ready: () =>
+      have($item`Clan VIP Lounge key`) &&
+      getClanLounge()["Clan Carnival Game"] !== undefined &&
+      isOnline("CheeseFax") &&
+      Clan.getWhitelisted().find(
+        (c) => c.name === "Bonus Adventures from Hell",
+      ) !== undefined,
+    completed: () => get("_clanFortuneConsultUses") >= 3,
+    do: (): void => {
+      Clan.with("Bonus Adventures from Hell", () =>
+        cliExecute(`fortune ${getPlayerId("CheeseFax")}`),
+      );
+      wait(10);
+    },
+    limit: { skip: 3 },
     spendsTurn: false,
   },
   {
