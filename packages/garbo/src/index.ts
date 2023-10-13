@@ -546,6 +546,7 @@ export function main(argString = ""): void {
         setDefaultMaximizeOptions({
           preventEquip: preventEquip,
           preventSlot: $slots`buddy-bjorn, crown-of-thrones`,
+          forceUpdate: true,
         });
 
         // 2. do some embezzler stuff
