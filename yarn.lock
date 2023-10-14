@@ -4287,35 +4287,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"garbo@workspace:packages/garbo":
-  version: 0.0.0-use.local
-  resolution: "garbo@workspace:packages/garbo"
-  dependencies:
-    "@babel/cli": ^7.22.15
-    "@babel/compat-data": ^7.22.9
-    "@babel/core": ^7.22.20
-    "@babel/preset-env": ^7.22.15
-    "@babel/preset-react": ^7.22.15
-    "@babel/preset-typescript": ^7.22.15
-    "@types/node": ^20.6.1
-    copyfiles: ^2.4.1
-    core-js: ^3.32.2
-    esbuild: ^0.19.3
-    esbuild-plugin-babel: ^0.2.3
-    eslint: ^8.50.0
-    eslint-config-garbo: ^0.0.1
-    garbo-lib: ^0.0.1
-    grimoire-kolmafia: ^0.3.23
-    kolmafia: ^5.27628.0
-    libram: ^0.8.13
-    lint-staged: ^14.0.1
-    madge: ^6.1.0
-    prettier: ^3.0.3
-    ts-node: ^10.9.1
-    typescript: ^5.2.2
-  languageName: unknown
-  linkType: soft
-
 "gauge@npm:^4.0.3":
   version: 4.0.4
   resolution: "gauge@npm:4.0.4"
@@ -5808,6 +5779,35 @@ __metadata:
   checksum: 955a2ead534f5b6a3f8d4dc5a4b95ac6468213d3fb11f8c1592a0a56345c45a3d14d5ca04d3de2bc9891493fcac38c03dfa91c48a6159aef50124e9c5afcea49
   languageName: node
   linkType: hard
+
+"rancho@workspace:packages/garbo":
+  version: 0.0.0-use.local
+  resolution: "rancho@workspace:packages/garbo"
+  dependencies:
+    "@babel/cli": ^7.22.15
+    "@babel/compat-data": ^7.22.9
+    "@babel/core": ^7.22.20
+    "@babel/preset-env": ^7.22.15
+    "@babel/preset-react": ^7.22.15
+    "@babel/preset-typescript": ^7.22.15
+    "@types/node": ^20.6.1
+    copyfiles: ^2.4.1
+    core-js: ^3.32.2
+    esbuild: ^0.19.3
+    esbuild-plugin-babel: ^0.2.3
+    eslint: ^8.50.0
+    eslint-config-garbo: ^0.0.1
+    garbo-lib: ^0.0.1
+    grimoire-kolmafia: ^0.3.23
+    kolmafia: ^5.27628.0
+    libram: ^0.8.13
+    lint-staged: ^14.0.1
+    madge: ^6.1.0
+    prettier: ^3.0.3
+    ts-node: ^10.9.1
+    typescript: ^5.2.2
+  languageName: unknown
+  linkType: soft
 
 "rc@npm:^1.2.7":
   version: 1.2.8
