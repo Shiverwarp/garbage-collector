@@ -137,7 +137,7 @@ import {
   gregReady,
   initializeExtrovermectinZones,
   saberCrateIfSafe,
-} from "./extrovermectin";
+} from "./resources/extrovermectin";
 import {
   bestFairy,
   freeFightFamiliar,
@@ -186,6 +186,7 @@ import { garboValue } from "./garboValue";
 import { wanderer } from "./garboWanderer";
 import { runEmbezzlerFight } from "./embezzler/execution";
 import { EmbezzlerFightRunOptions } from "./embezzler/staging";
+import { faxMonster } from "./resources/fax";
 
 const firstChainMacro = () =>
   Macro.if_(
@@ -433,6 +434,9 @@ export function dailyFights(): void {
     cliExecute("fold spooky putty sheet");
   }
 
+  // Fax an embezzler before starting, to prevent an abort in case the faxbot networks are down
+  faxMonster($monster`Knob Goblin Embezzler`);
+
   if (embezzlerSources.some((source) => source.potential())) {
     withStash($items`Spooky Putty sheet`, () => {
       // check if user wants to wish for embezzler before doing setup
@@ -638,6 +642,7 @@ class FreeFight {
   }
 
   isAvailable(): boolean {
+    if (myAdventures() === 0) return false;
     const avail = this.available();
     return typeof avail === "number" ? avail > 0 : avail;
   }

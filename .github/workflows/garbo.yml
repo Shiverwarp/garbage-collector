@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: ${{ env.node-version }}
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable --immutable-cache
       - run: yarn workspace garbo-lib build
       - run: yarn workspace garbo run check
       #- run: yarn run test TODO: Readd once we have tests
@@ -39,11 +39,11 @@ jobs:
         with:
           node-version: ${{ env.node-version }}
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable --immutable-cache
       - run: yarn workspace garbo-lib build
       - run: yarn run lint
 
-  circular-dependencies-script:
+  circular-dependencies-all:
     runs-on: ubuntu-latest
 
     steps:
@@ -53,13 +53,13 @@ jobs:
         with:
           node-version: ${{ env.node-version }}
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable --immutable-cache
       - run: yarn workspace garbo-lib build
-      - run: yarn workspace garbo run madge
+      - run: yarn madge
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [test-script, lint-all, circular-dependencies-script]
+    needs: [test-script, lint-all, circular-dependencies-all]
     if: github.ref == 'refs/heads/main'
 
     steps:
@@ -69,7 +69,7 @@ jobs:
         with:
           node-version: ${{ env.node-version }}
           cache: yarn
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable --immutable-cache
       - run: yarn build
       - uses: s0/git-publish-subdir-action@develop
         env:
