@@ -3,9 +3,11 @@ import {
   Effect,
   getWorkshed,
   haveEffect,
+  inebrietyLimit,
   itemAmount,
   mallPrice,
   myClass,
+  myInebriety,
   myLevel,
   numericModifier,
   use,
@@ -72,6 +74,16 @@ export function meatMood(
   } else {
     useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
     mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
+  }
+
+  // Overdrunk survivability
+  if (myInebriety() > inebrietyLimit()) {
+    mood.skill($skill`Quiet Determination`);
+    mood.skill($skill`Get Big`);
+    mood.skill($skill`Song of Bravado`);
+    mood.skill($skill`Stevedave's Shanty of Superiority`);
+    mood.skill($skill`Rage of the Reindeer`);
+    mood.skill($skill`Disco Fever`);
   }
 
   // Underwater only effects do not work during yachtzee
