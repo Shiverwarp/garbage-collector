@@ -1151,102 +1151,102 @@ const freeFightSources = [
     true
   ),
 
- // Do free fights until the NC is ready if we have a food or booze quest.
- new FreeFight(
-  () =>
-    get("neverendingPartyAlways") &&
-    questStep("_questPartyFair") < 999 &&
-    !(
+  // Do free fights until the NC is ready if we have a food or booze quest.
+  new FreeFight(
+    () =>
+      get("neverendingPartyAlways") &&
+      questStep("_questPartyFair") < 999 &&
+      !(
+        get("encountersUntilNEPChoice") === 0 &&
+        get("_questPartyFair") === "started"
+      )
+        ? clamp(
+            10 -
+              get("_neverendingPartyFreeTurns") -
+              (!molemanReady() &&
+              !get("_thesisDelivered") &&
+              have($familiar`Pocket Professor`)
+                ? 1
+                : 0),
+            0,
+            10
+          )
+        : 0,
+    () => {
+      const constructedMacro = Macro.step("pickpocket")
+        .tryHaveSkill($skill`Feel Pride`)
+        .basicCombat();
+      setNepQuestChoicesAndPrepItems();
+      garboAdventure($location`The Neverending Party`, constructedMacro);
+    },
+    true,
+    {
+      spec: () => ({
+        modifier:
+          get("_questPartyFairQuest") === "trash"
+            ? ["100 Item Drop"]
+            : get("_questPartyFairQuest") === "dj"
+            ? ["100 Meat Drop"]
+            : [],
+        equip: have($item`January's Garbage Tote`)
+          ? $items`makeshift garbage shirt`
+          : [],
+      }),
+    }
+  ),
+
+  // Check our quest
+  new FreeFight(
+    () =>
+      get("neverendingPartyAlways") &&
       get("encountersUntilNEPChoice") === 0 &&
-      get("_questPartyFair") === "started"
-    )
-      ? clamp(
-          10 -
-            get("_neverendingPartyFreeTurns") -
-            (!molemanReady() &&
-            !get("_thesisDelivered") &&
-            have($familiar`Pocket Professor`)
-              ? 1
-              : 0),
-          0,
-          10
-        )
-      : 0,
-  () => {
-    const constructedMacro = Macro.step("pickpocket")
-      .tryHaveSkill($skill`Feel Pride`)
-      .basicCombat();
-    setNepQuestChoicesAndPrepItems();
-    garboAdventure($location`The Neverending Party`, constructedMacro);
-  },
-  true,
-  {
-    spec: () => ({
-      modifier:
-        get("_questPartyFairQuest") === "trash"
-          ? ["100 Item Drop"]
-          : get("_questPartyFairQuest") === "dj"
-          ? ["100 Meat Drop"]
-          : [],
-      equip: have($item`January's Garbage Tote`)
-        ? $items`makeshift garbage shirt`
-        : [],
-    }),
-  }
-),
+      get("_questPartyFair") === "started",
+    () => {
+      cliExecute("duffo go");
+    },
+    false,
+    {
+      noncombat: () => true,
+    }
+  ),
 
-// Check our quest
-new FreeFight(
-  () =>
-    get("neverendingPartyAlways") &&
-    get("encountersUntilNEPChoice") === 0 &&
-    get("_questPartyFair") === "started",
-  () => {
-    cliExecute("duffo go");
-  },
-  false,
-  {
-    noncombat: () => true,
-  }
-),
-
-new FreeFight(
-  () =>
-    get("neverendingPartyAlways") && questStep("_questPartyFair") < 999
-      ? clamp(
-          10 -
-            get("_neverendingPartyFreeTurns") -
-            (!molemanReady() &&
-            !get("_thesisDelivered") &&
-            have($familiar`Pocket Professor`)
-              ? 1
-              : 0),
-          0,
-          10
-        )
-      : 0,
-  () => {
-    const constructedMacro = Macro.tryHaveSkill(
-      $skill`Feel Pride`
-    ).basicCombat();
-    setNepQuestChoicesAndPrepItems();
-    garboAdventure($location`The Neverending Party`, constructedMacro);
-  },
-  true,
-  {
-    spec: () => ({
-      modifier:
-        get("_questPartyFairQuest") === "trash"
-          ? ["100 Item Drop"]
-          : get("_questPartyFairQuest") === "dj"
-          ? ["100 Meat Drop"]
+  new FreeFight(
+    () =>
+      get("neverendingPartyAlways") && questStep("_questPartyFair") < 999
+        ? clamp(
+            10 -
+              get("_neverendingPartyFreeTurns") -
+              (!molemanReady() &&
+              !get("_thesisDelivered") &&
+              have($familiar`Pocket Professor`)
+                ? 1
+                : 0),
+            0,
+            10
+          )
+        : 0,
+    () => {
+      const constructedMacro = Macro.tryHaveSkill(
+        $skill`Feel Pride`
+      ).basicCombat();
+      setNepQuestChoicesAndPrepItems();
+      garboAdventure($location`The Neverending Party`, constructedMacro);
+    },
+    true,
+    {
+      spec: () => ({
+        modifier:
+          get("_questPartyFairQuest") === "trash"
+            ? ["100 Item Drop"]
+            : get("_questPartyFairQuest") === "dj"
+            ? ["100 Meat Drop"]
+            : [],
+        equip: have($item`January's Garbage Tote`)
+          ? $items`makeshift garbage shirt`
           : [],
-      equip: have($item`January's Garbage Tote`)
-        ? $items`makeshift garbage shirt`
-        : [],
-    }),
-  }
-),
+      }),
+    }
+  ),
 
   // Get a li'l ninja costume for 150% item drop
   new FreeFight(
@@ -1335,6 +1335,9 @@ new FreeFight(
     () => {
       if (have($item`Rufus's shadow lodestone`)) {
         setChoice(1500, 2); // Turn in lodestone if you have it
+        if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
+          equip($item`continuum transfunctioner`);
+        }
         adv1(bestShadowRift(), -1, "");
       }
       if (
@@ -1356,6 +1359,9 @@ new FreeFight(
         ) {
           ClosedCircuitPayphone.chooseQuest(() => 2);
         }
+        if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
+          equip($item`continuum transfunctioner`);
+        }
         adv1(bestShadowRift(), -1, ""); // grab the NC
       }
 
@@ -1364,6 +1370,9 @@ new FreeFight(
       }
 
       if (have($item`Rufus's shadow lodestone`)) {
+        if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
+          equip($item`continuum transfunctioner`);
+        }
         setChoice(1500, 2); // Check for lodestone at the end again
         adv1(bestShadowRift(), -1, "");
       }
@@ -2042,7 +2051,15 @@ const freeRunFightSources = [
       !have($effect`Shadow Affinity`) &&
       get("encountersUntilSRChoice") > 0,
     (runSource: ActionSource) =>
-      garboAdventure(bestShadowRift(), runSource.macro)
+      garboAdventure(bestShadowRift(), runSource.macro),
+    {
+      spec: {
+        equip:
+          bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+            ? $items`continuum transfunctioner`
+            : [],
+      },
+    }
   ),
   // Try for an ultra-rare with mayfly runs if we didn't have a manuel ;)
   new FreeRunFight(
@@ -2937,6 +2954,9 @@ function runShadowRiftTurn(): void {
     get("rufusQuestType") === "items" ||
     get("rufusQuestType") === "entity" // We can't handle bosses... yet
   ) {
+    if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
+      equip($item`continuum transfunctioner`);
+    }
     adv1(bestShadowRift(), -1, ""); // We shouldn't be using NC forcers
     return;
   }
@@ -2962,8 +2982,14 @@ function runShadowRiftTurn(): void {
     freeFightOutfit({ shirt: $item`Jurassic Parka` }).dress();
     cliExecute("parka spikolodon");
     const macro = Macro.skill($skill`Launch spikolodon spikes`).basicCombat();
+    if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
+      equip($item`continuum transfunctioner`);
+    }
     garboAdventureAuto(bestShadowRift(), macro);
   } else {
+    if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
+      equip($item`continuum transfunctioner`);
+    }
     adv1(bestShadowRift(), -1, ""); // We wanted to use NC forcers, but none are suitable now
   }
 }
