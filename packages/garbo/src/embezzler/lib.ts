@@ -75,8 +75,8 @@ export function changeLastAdvLocationTask(): {
 } {
   const base = {
     ready: () =>
-      CrystalBall.ponder().get($location`The Dire Warren`) !== embezzler,
-    completed: () => myLocation() !== $location`The Dire Warren`,
+      CrystalBall.ponder().get($location`The Briny Deeps`) !== embezzler,
+    completed: () => myLocation() !== $location`The Briny Deeps`,
   };
   switch (getChangeLastAdvLocationMethod()) {
     case "hiddencity":
