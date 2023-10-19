@@ -79,6 +79,7 @@ import { yachtzeeChain } from "./yachtzee";
 import { garboAverageValue } from "./garboValue";
 import { BarfTurnQuest, runGarboQuests } from "./tasks";
 import { fishyPrepQuest } from "./tasks/fishyPrep";
+import { SetupEmbezzlerQuest } from "./tasks/embezzler";
 
 // Max price for tickets. You should rethink whether Barf is the best place if they're this expensive.
 const TICKET_MAX_PRICE = 500000;
@@ -551,6 +552,7 @@ export function main(argString = ""): void {
 
         // 2. do some embezzler stuff
         freeFights();
+        runGarboQuests([SetupEmbezzlerQuest]);
         yachtzeeChain();
         dailyFights();
 
