@@ -29,6 +29,7 @@ import { baseMeat, burnLibrams, safeRestoreMpTarget, setChoice } from "./lib";
 import { withStash } from "./clan";
 import { usingPurse } from "./outfit";
 import { globalOptions } from "./config";
+import { estimatedGarboTurns } from "./turns";
 
 Mood.setDefaultOptions({
   songSlots: [
@@ -59,19 +60,24 @@ export function meatMood(
 
   mood.skill($skill`Ruthless Efficiency`);
 
+  // Donho's
+  const availableDonhoTurnsFromSkill = 10 * (50 - get("_donhosCasts"));
+  if (get("_donhosCasts") < 50 && !globalOptions.ascend) {
+    useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
+  } else if (
+    get("_donhosCasts") < 50 &&
+    availableDonhoTurnsFromSkill > estimatedGarboTurns()
+  ) {
+    mood.skill($skill`Donho's Bubbly Ballad`);
+  } else {
+    useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
+    mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
+  }
+
   // Underwater only effects do not work during yachtzee
   if (moodType !== "Yachtzee") {
     // We do Gregs underwater, but not replacers
     if (moodType === "Greg") {
-      // Donho's
-      if (get("_donhosCasts") < 50 && !globalOptions.ascend) {
-        useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
-      } else if (get("_donhosCasts") < 50) {
-        mood.skill($skill`Donho's Bubbly Ballad`);
-      } else {
-        mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
-      }
-
       const familiarMultiplier = have($familiar`Robortender`)
         ? 2
         : have($familiar`Hobo Monkey`)
@@ -95,14 +101,6 @@ export function meatMood(
 
     // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
     if (moodType === "Barf") {
-      // Donho's
-      if (get("_donhosCasts") < 50 && !globalOptions.ascend) {
-        useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
-      } else if (get("_donhosCasts") < 50) {
-        mood.skill($skill`Donho's Bubbly Ballad`);
-      } else {
-        mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
-      }
       const familiarMultiplier = have($familiar`Robortender`)
         ? 2
         : have($familiar`Hobo Monkey`)
