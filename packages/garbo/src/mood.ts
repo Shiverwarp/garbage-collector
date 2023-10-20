@@ -45,7 +45,7 @@ Mood.setDefaultOptions({
 
 export function meatMood(
   moodType: "Yachtzee" | "Greg" | "Replacer" | "Barf",
-  meat = baseMeat
+  meat = baseMeat,
 ): Mood {
   // Reserve the amount of MP we try to restore before each fight.
   const mood = new Mood({ reserveMp: safeRestoreMpTarget() });
@@ -78,10 +78,8 @@ export function meatMood(
 
   // Overdrunk survivability
   if (myInebriety() > inebrietyLimit()) {
-    mood.skill($skill`Quiet Determination`);
     mood.skill($skill`Get Big`);
     mood.skill($skill`Song of Bravado`);
-    mood.skill($skill`Stevedave's Shanty of Superiority`);
     mood.skill($skill`Rage of the Reindeer`);
     mood.skill($skill`Disco Fever`);
   }
@@ -106,7 +104,7 @@ export function meatMood(
       // Underwater only potions
       mood.potion(
         $item`temporary teardrop tattoo`,
-        ((10 * marginalValue) / 100) * meat
+        ((10 * marginalValue) / 100) * meat,
       );
       mood.potion($item`sea grease`, ((5 * marginalValue) / 100) * meat);
     }
@@ -129,7 +127,7 @@ export function meatMood(
       // Underwater only potions
       mood.potion(
         $item`temporary teardrop tattoo`,
-        ((10 * marginalValue) / 100) * baseMeat
+        ((10 * marginalValue) / 100) * baseMeat,
       );
       mood.potion($item`sea grease`, ((5 * marginalValue) / 100) * baseMeat);
       // Pressure reduction potions
@@ -182,7 +180,7 @@ export function meatMood(
         cliExecute(
           `Briefcase buff ${new Array<string>(buffTries)
             .fill("meat")
-            .join(" ")}`
+            .join(" ")}`,
         );
       }
     });
@@ -228,7 +226,7 @@ export function meatMood(
   if (
     have($skill`Incredible Self-Esteem`) &&
     $effects`Always be Collecting, Work For Hours a Week`.some((effect) =>
-      have(effect)
+      have(effect),
     ) &&
     !get("_incredibleSelfEsteemCast")
   ) {
@@ -243,13 +241,13 @@ export function meatMood(
     if (have($skill`The Ballad of Richie Thingfinder`)) {
       useSkill(
         $skill`The Ballad of Richie Thingfinder`,
-        10 - get("_thingfinderCasts")
+        10 - get("_thingfinderCasts"),
       );
     }
     if (have($skill`Chorale of Companionship`)) {
       useSkill(
         $skill`Chorale of Companionship`,
-        10 - get("_companionshipCasts")
+        10 - get("_companionshipCasts"),
       );
     }
   }
@@ -269,7 +267,7 @@ export function freeFightMood(...additionalEffects: Effect[]): Mood {
   if (haveEffect($effect`Blue Swayed`) < 50) {
     use(
       Math.ceil((50 - haveEffect($effect`Blue Swayed`)) / 10),
-      $item`pulled blue taffy`
+      $item`pulled blue taffy`,
     );
   }
   mood.potion($item`white candy heart`, 30);
