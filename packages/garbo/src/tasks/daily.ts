@@ -127,11 +127,11 @@ function voterSetup(): void {
   if (!get("voteAlways") && !get("_voteToday")) {
     const availableInitiatives: Map<string, number> = new Map(
       Object.keys(
-        votingBoothInitiatives(myClass(), myPath(), myDaycount())
+        votingBoothInitiatives(myClass(), myPath(), myDaycount()),
       ).map((init) => {
         const val = initPriority.get(init) ?? 0;
         return [init, val];
-      })
+      }),
     );
 
     const initiativeValue = 2 * Math.max(...availableInitiatives.values());
@@ -193,7 +193,7 @@ function voterSetup(): void {
   const init = maxBy(voteLocalPriorityArr, "value").urlString;
 
   visitUrl(
-    `choice.php?option=1&whichchoice=1331&g=${monsterVote}&local[]=${init}&local[]=${init}`
+    `choice.php?option=1&whichchoice=1331&g=${monsterVote}&local[]=${init}&local[]=${init}`,
   );
 }
 
@@ -224,8 +224,8 @@ function pantogram(): void {
   }
   const cloverPrice = Math.min(
     ...$items`ten-leaf clover, disassembled clover`.map((item) =>
-      mallPrice(item)
-    )
+      mallPrice(item),
+    ),
   );
   if (cloverPrice + mallPrice($item`porquoise`) > pantogramValue) {
     return;
@@ -239,7 +239,7 @@ function pantogram(): void {
     "Sleaze Resistance: 2",
     "MP Regen Max: 15",
     "Drops Items: true",
-    "Meat Drop: 60"
+    "Meat Drop: 60",
   );
 }
 
@@ -274,7 +274,7 @@ export function configureSnojo(): void {
         (7 * garboValue($item`ancient medicinal herbs`) +
           garboValue($item`training scroll:  Shattering Punch`)) /
           5,
-        1
+        1,
       );
     }
     if (get("snojoMysticalityWins") < 50) {
@@ -282,7 +282,7 @@ export function configureSnojo(): void {
         (7 * garboValue($item`ice rice`) +
           garboValue($item`training scroll:  Snokebomb`)) /
           5,
-        2
+        2,
       );
     }
     if (get("snojoMoxieWins") < 50) {
@@ -290,7 +290,7 @@ export function configureSnojo(): void {
         (7 * garboValue($item`iced plum wine`) +
           garboValue($item`training scroll:  Shivering Monkey Technique`)) /
           5,
-        3
+        3,
       );
     }
   }
@@ -466,7 +466,7 @@ const DailyTasks: GarboTask[] = [
     completed: () => get("_defectiveTokenUsed"),
     do: () =>
       withStash([$item`defective Game Grid token`], () =>
-        use(1, $item`defective Game Grid token`)
+        use(1, $item`defective Game Grid token`),
       ),
     spendsTurn: false,
   },
@@ -618,7 +618,7 @@ const DailyTasks: GarboTask[] = [
     completed: () => get("_bittycar") === "meatcar",
     do: () =>
       withStash([$item`BittyCar MeatCar`], () =>
-        use(1, $item`BittyCar MeatCar`)
+        use(1, $item`BittyCar MeatCar`),
       ),
     spendsTurn: false,
   },
@@ -629,7 +629,7 @@ const DailyTasks: GarboTask[] = [
     completed: () => get("_bittycar") === "soulcar",
     do: () =>
       withStash([$item`BittyCar SoulCar`], () =>
-        use(1, $item`BittyCar SoulCar`)
+        use(1, $item`BittyCar SoulCar`),
       ),
     spendsTurn: false,
   },

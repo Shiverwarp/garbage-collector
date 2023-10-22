@@ -62,9 +62,9 @@ function gunSpec(outfit: Outfit) {
 }
 
 const POINTER_RING_SPECS: (
-  outfit: Outfit
+  outfit: Outfit,
 ) => Delayed<{ available: boolean; items: Item[] | OutfitSpec }>[] = (
-  outfit: Outfit
+  outfit: Outfit,
 ) => [
   {
     available: have($skill`Furious Wallop`) && myFury() > 0,
@@ -99,7 +99,7 @@ export function fishyPrepOutfit(spec: OutfitSpec = {}, sim = false): Outfit {
   if (get("ledCandleMode") !== "ultraviolet") cliExecute("ledcandle meat");
   const outfit = Outfit.from(
     spec,
-    new Error(`Failed to construct outfit from spec ${toJson(spec)}!`)
+    new Error(`Failed to construct outfit from spec ${toJson(spec)}!`),
   );
 
   outfit.familiar ??= $familiar`Jill-of-All-Trades`;
@@ -110,13 +110,13 @@ export function fishyPrepOutfit(spec: OutfitSpec = {}, sim = false): Outfit {
   outfit.modifier.push(
     `${modeValueOfMeat(BonusEquipMode.BARF)} Meat Drop`,
     `${modeValueOfItem(BonusEquipMode.BARF)} Item Drop`,
-    "-tie"
+    "-tie",
   );
 
   if (myInebriety() > trueInebrietyLimit()) {
     if (!outfit.equip($item`Drunkula's wineglass`)) {
       throw new Error(
-        "We're overdrunk but have found ourself unable to equip a wineglass!"
+        "We're overdrunk but have found ourself unable to equip a wineglass!",
       );
     }
   } else {
@@ -143,7 +143,7 @@ export function fishyPrepOutfit(spec: OutfitSpec = {}, sim = false): Outfit {
   if (bjornalike) {
     outfit.setBonus(bjornalike, bjornChoice.value);
     const other = $items`Buddy Bjorn, Crown of Thrones`.filter(
-      (i) => i !== bjornalike
+      (i) => i !== bjornalike,
     )[0];
     outfit.avoid.push(other);
 

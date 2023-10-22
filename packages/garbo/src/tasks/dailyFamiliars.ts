@@ -119,7 +119,7 @@ export function prepRobortender(): void {
     "Single entendre": { priceCap: entendreValue(), mandatory: false },
   };
   for (const [drinkName, { priceCap, mandatory }] of Object.entries(
-    roboDrinks
+    roboDrinks,
   )) {
     if (get("_roboDrinks").toLowerCase().includes(drinkName.toLowerCase())) {
       continue;
@@ -132,11 +132,11 @@ export function prepRobortender(): void {
         if (
           !userConfirmDialog(
             `Garbo cannot find a reasonably priced drive-by-shooting (price cap: ${priceCap}), and will not be using your robortender. Is that cool with you?`,
-            true
+            true,
           )
         ) {
           abort(
-            "Alright, then, I guess you should try to find a reasonbly priced drive-by-shooting. Or do different things with your day."
+            "Alright, then, I guess you should try to find a reasonbly priced drive-by-shooting. Or do different things with your day.",
           );
         }
         break;
@@ -217,7 +217,7 @@ const DailyFamiliarTasks: GarboTask[] = [
         myPrimestat().toString(),
         "Stench Damage",
         hippyStoneBroken() ? "PvP Fights" : "HP Regen",
-        "Red Ray"
+        "Red Ray",
       ),
     outfit: { familiar: $familiar`Crimbo Shrub` },
     spendsTurn: false,

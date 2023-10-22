@@ -111,7 +111,7 @@ const worksheds = [
       } else if (globalOptions.ascend && estimatedGarboTurns() <= 40) {
         print(
           "Refusing to reconfigure trainset, to save a reconfiguration for your upcoming ascension.",
-          HIGHLIGHT
+          HIGHLIGHT,
         );
         return;
       } else {
@@ -119,7 +119,7 @@ const worksheds = [
         if (bestStations.includes(TrainSet.next())) return;
         print(
           `Reconfiguring trainset, as our next station is ${TrainSet.next()}`,
-          HIGHLIGHT
+          HIGHLIGHT,
         );
         return rotateToOptimalCycle();
       }
@@ -147,7 +147,7 @@ const worksheds = [
       AsdonMartin.drive(
         $effect`Driving Waterproofly`,
         estimatedGarboTurns() +
-          (globalOptions.ascend ? 0 : estimatedTurnsTomorrow)
+          (globalOptions.ascend ? 0 : estimatedTurnsTomorrow),
       );
     },
   }),
@@ -174,13 +174,13 @@ const worksheds = [
     },
   }),
   ...$items`diabolic pizza cube, portable Mayo Clinic, warbear high-efficiency still, warbear induction oven`.map(
-    (item) => new GarboWorkshed({ workshed: item, done: dietCompleted })
+    (item) => new GarboWorkshed({ workshed: item, done: dietCompleted }),
   ),
   ...$items`warbear chemistry lab, warbear LP-ROM burner`.map(
-    (item) => new GarboWorkshed({ workshed: item, done: potionSetupCompleted })
+    (item) => new GarboWorkshed({ workshed: item, done: potionSetupCompleted }),
   ),
   ...$items`snow machine, warbear jackhammer drill press, warbear auto-anvil`.map(
-    (item) => new GarboWorkshed({ workshed: item })
+    (item) => new GarboWorkshed({ workshed: item }),
   ),
 ];
 

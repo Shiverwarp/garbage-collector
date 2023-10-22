@@ -14,18 +14,18 @@ import { BonusEquipMode, modeValueOfMeat } from "../lib";
 
 export function embezzlerOutfit(
   spec: OutfitSpec = {},
-  target = $location.none
+  target = $location.none,
 ): Outfit {
   cleaverCheck();
   validateGarbageFoldable(spec);
   const outfit = Outfit.from(
     spec,
-    new Error(`Failed to construct outfit from spec ${toJson(spec)}`)
+    new Error(`Failed to construct outfit from spec ${toJson(spec)}`),
   );
 
   outfit.modifier.push(
     `${modeValueOfMeat(BonusEquipMode.EMBEZZLER)} Meat Drop`,
-    "-tie"
+    "-tie",
   );
   outfit.avoid.push($item`cheap sunglasses`); // Even if we're adventuring in Barf Mountain itself, these are bad
   outfit.familiar ??= meatFamiliar();
@@ -44,7 +44,7 @@ export function embezzlerOutfit(
   ) {
     outfit.addBonus(
       $item`Guzzlr pants`,
-      Guzzlr.expectedReward(true) - Guzzlr.expectedReward(false)
+      Guzzlr.expectedReward(true) - Guzzlr.expectedReward(false),
     );
   }
 
@@ -52,7 +52,7 @@ export function embezzlerOutfit(
     outfit.setBonus(bjornalike, bjornChoice.value);
     outfit.equip(bjornalike);
     const other = $items`Buddy Bjorn, Crown of Thrones`.filter(
-      (i) => i !== bjornalike
+      (i) => i !== bjornalike,
     )[0];
     outfit.avoid.push(other);
     switch (bjornalike) {

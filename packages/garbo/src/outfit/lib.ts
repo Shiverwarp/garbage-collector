@@ -38,7 +38,7 @@ import { digitizedMonstersRemaining } from "../turns";
 
 export function bestBjornalike(outfit: Outfit): Item | null {
   const bjornalikes = $items`Buddy Bjorn, Crown of Thrones`.filter((item) =>
-    outfit.canEquip(item)
+    outfit.canEquip(item),
   );
   if (bjornalikes.length === 0) return null;
   if (bjornalikes.length === 1) return bjornalikes[0];
@@ -69,7 +69,7 @@ export function useUPCs(): void {
   const UPC = $item`scratch 'n' sniff UPC sticker`;
   if (
     $items`scratch 'n' sniff sword, scratch 'n' sniff crossbow`.every(
-      (i) => !have(i)
+      (i) => !have(i),
     )
   ) {
     visitUrl(`bedazzle.php?action=juststick&sticker=${toInt(UPC)}&pwd`);
@@ -83,7 +83,7 @@ export function useUPCs(): void {
       visitUrl(`bedazzle.php?action=peel&pwd&slot=${slotNumber}`);
     }
     visitUrl(
-      `bedazzle.php?action=stick&pwd&slot=${slotNumber}&sticker=${toInt(UPC)}`
+      `bedazzle.php?action=stick&pwd&slot=${slotNumber}&sticker=${toInt(UPC)}`,
     );
   }
 }
@@ -117,7 +117,7 @@ export function latteFilled(): boolean {
         get("latteUnlocks").includes("rawhide") &&
         (numericModifier(
           $item`latte lovers member's mug`,
-          "Familiar Weight"
+          "Familiar Weight",
         ) !== 5 ||
           numericModifier($item`latte lovers member's mug`, "Meat Drop") !==
             40 ||
@@ -132,7 +132,7 @@ export function tryFillLatte(): boolean {
   if (!latteFilled()) {
     const goodLatteIngredients = ["cajun", "rawhide", "carrot"];
     const latteIngredients = goodLatteIngredients.filter((ingredient) =>
-      get("latteUnlocks").includes(ingredient)
+      get("latteUnlocks").includes(ingredient),
     );
     if (latteIngredients.length < 3) latteIngredients.push("pumpkin");
     if (latteIngredients.length < 3) latteIngredients.push("vanilla");
@@ -189,7 +189,7 @@ export function validateGarbageFoldable(spec: OutfitSpec): void {
       Object.values(spec).some(
         (specEntry) =>
           specEntry === garbageItem ||
-          (Array.isArray(specEntry) && specEntry.includes(garbageItem))
+          (Array.isArray(specEntry) && specEntry.includes(garbageItem)),
       )
     ) {
       if (!have(garbageItem)) cliExecute(`fold ${garbageItem}`);

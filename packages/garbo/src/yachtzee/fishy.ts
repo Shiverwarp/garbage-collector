@@ -48,7 +48,7 @@ function fishyCloverAdventureOpportunityCost(pipe: boolean) {
 
 export function optimizeForFishy(
   yachtzeeTurns: number,
-  setup?: boolean
+  setup?: boolean,
 ): number {
   // Returns the lowest cost for fishy
   // Assume we already maximized for meat; this returns the cost of swapping out meat% equips for underwater breathing equips
@@ -79,7 +79,7 @@ export function optimizeForFishy(
         acquire(
           1,
           $item`fish juice box`,
-          1.2 * mallPrice($item`fish juice box`)
+          1.2 * mallPrice($item`fish juice box`),
         );
         if (!have($item`fish juice box`)) {
           throw new Error("Unable to obtain fish juice box");
@@ -101,7 +101,7 @@ export function optimizeForFishy(
         acquire(
           2,
           $item`fish juice box`,
-          1.2 * mallPrice($item`fish juice box`)
+          1.2 * mallPrice($item`fish juice box`),
         );
         if (availableAmount($item`fish juice box`) < 2) {
           throw new Error("Unable to obtain sufficient fish juice boxes");
@@ -123,7 +123,7 @@ export function optimizeForFishy(
         acquire(
           1,
           $item`cuppa Gill tea`,
-          1.2 * mallPrice($item`cuppa Gill tea`)
+          1.2 * mallPrice($item`cuppa Gill tea`),
         );
         if (!have($item`cuppa Gill tea`)) {
           throw new Error("Unable to obtain cuppa Gill tea");
@@ -145,7 +145,7 @@ export function optimizeForFishy(
         acquire(
           1,
           $item`powdered candy sushi set`,
-          1.2 * mallPrice($item`powdered candy sushi set`)
+          1.2 * mallPrice($item`powdered candy sushi set`),
         );
         if (!have($item`powdered candy sushi set`)) {
           throw new Error("Unable to obtain powdered candy sushi set");
@@ -167,7 +167,7 @@ export function optimizeForFishy(
         acquire(
           1,
           $item`concentrated fish broth`,
-          1.2 * mallPrice($item`concentrated fish broth`)
+          1.2 * mallPrice($item`concentrated fish broth`),
         );
         if (!have($item`concentrated fish broth`)) {
           throw new Error("Unable to obtain concentrated fish broth");
@@ -260,7 +260,7 @@ export function optimizeForFishy(
         if (get("lastAdventure") !== "The Brinier Deepers") {
           print(
             "We failed to adventure in The Brinier Deepers, even though we thought we could. Try manually adventuring there for a lucky adventure.",
-            "red"
+            "red",
           );
         }
         if (
@@ -287,7 +287,7 @@ export function optimizeForFishy(
           acquire(
             1,
             $item`11-leaf clover`,
-            1.2 * mallPrice($item`11-leaf clover`)
+            1.2 * mallPrice($item`11-leaf clover`),
           );
           if (!have($item`11-leaf clover`)) {
             throw new Error("Unable to get 11-leaf clover for fishy!");
@@ -299,7 +299,7 @@ export function optimizeForFishy(
         if (get("lastAdventure") !== "The Brinier Deepers") {
           print(
             "We failed to adventure in The Brinier Deepers, even though we thought we could. Try manually adventuring there for a lucky adventure.",
-            "red"
+            "red",
           );
         }
         if (
@@ -327,16 +327,16 @@ export function optimizeForFishy(
 
   const bestFishySource = maxBy(
     fishySources.filter(
-      (source) => source.turns + haveEffect($effect`Fishy`) >= yachtzeeTurns
+      (source) => source.turns + haveEffect($effect`Fishy`) >= yachtzeeTurns,
     ),
     "cost",
-    true
+    true,
   );
 
   print("Cost of viable Fishy sources:", "blue");
   fishySources
     .filter(
-      (source) => source.turns + haveEffect($effect`Fishy`) >= yachtzeeTurns
+      (source) => source.turns + haveEffect($effect`Fishy`) >= yachtzeeTurns,
     )
     .forEach((source) => {
       print(`${source.name} (${source.cost})`, "blue");

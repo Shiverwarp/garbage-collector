@@ -240,7 +240,7 @@ export function mapMonster(location: Location, monster: Monster): void {
   }
 
   const fightPage = visitUrl(
-    `choice.php?pwd&whichchoice=1435&option=1&heyscriptswhatsupwinkwink=${monster.id}`
+    `choice.php?pwd&whichchoice=1435&option=1&heyscriptswhatsupwinkwink=${monster.id}`,
   );
   if (!fightPage.includes(monster.name)) {
     throw "Something went wrong starting the fight.";
@@ -341,8 +341,8 @@ export function printHelpMenu(): void {
   });
   printHtml(
     `<table border=2 width=800 style="font-family:monospace;">${tableRows.join(
-      ``
-    )}</table>`
+      ``,
+    )}</table>`,
   );
 }
 
@@ -409,7 +409,7 @@ export function howManySausagesCouldIEat() {
     23 - get("_sausagesEaten"),
     0,
     itemAmount($item`magical sausage`) +
-      itemAmount($item`magical sausage casing`)
+      itemAmount($item`magical sausage casing`),
   );
 }
 
@@ -429,7 +429,7 @@ export function safeRestore(): void {
       uneffect($effect`Beaten Up`);
     } else {
       throw new Error(
-        "Hey, you're beaten up, and that's a bad thing. Lick your wounds, handle your problems, and run me again when you feel ready."
+        "Hey, you're beaten up, and that's a bad thing. Lick your wounds, handle your problems, and run me again when you feel ready.",
       );
     }
   }
@@ -437,7 +437,7 @@ export function safeRestore(): void {
     myHp() <
     Math.min(
       myMaxhp() * (myInebriety() > inebrietyLimit() ? 0.9 : 0.5),
-      get("garbo_restoreHpTarget", 2000)
+      get("garbo_restoreHpTarget", 2000),
     )
   ) {
     restoreHp(Math.min(myMaxhp() * 0.9, get("garbo_restoreHpTarget", 2000)));
@@ -450,7 +450,7 @@ export function safeRestore(): void {
   }
 
   const soulFoodCasts = Math.floor(
-    mySoulsauce() / soulsauceCost($skill`Soul Food`)
+    mySoulsauce() / soulsauceCost($skill`Soul Food`),
   );
   if (shouldRestoreMp() && soulFoodCasts > 0) {
     useSkill(soulFoodCasts, $skill`Soul Food`);
@@ -471,7 +471,7 @@ export function checkGithubVersion(): void {
     if (
       gitAtHead("loathers-garbage-collector-release") ||
       gitAtHead(
-        "Loathing-Associates-Scripting-Society-garbage-collector-release"
+        "Loathing-Associates-Scripting-Society-garbage-collector-release",
       )
     ) {
       print("Garbo is up to date!", HIGHLIGHT);
@@ -479,20 +479,20 @@ export function checkGithubVersion(): void {
       const gitBranches: { name: string; commit: { sha: string } }[] =
         JSON.parse(
           visitUrl(
-            `https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/branches`
-          )
+            `https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/branches`,
+          ),
         );
       const releaseCommit = gitBranches.find(
-        (branchInfo) => branchInfo.name === "release"
+        (branchInfo) => branchInfo.name === "release",
       )?.commit;
       print("Garbo is out of date. Please run 'git update!'", "red");
       print(
         `Local Version: ${
           gitInfo("loathers-garbage-collector-release").commit ||
           gitInfo(
-            "Loathing-Associates-Scripting-Society-garbage-collector-release"
+            "Loathing-Associates-Scripting-Society-garbage-collector-release",
           ).commit
-        }.`
+        }.`,
       );
       print(`Release Version: ${releaseCommit?.sha}.`);
     }
@@ -506,7 +506,7 @@ export function formatNumber(num: number): string {
 export function getChoiceOption(partialText: string): number {
   if (handlingChoice()) {
     const findResults = Object.entries(availableChoiceOptions()).find(
-      (value) => value[1].indexOf(partialText) > -1
+      (value) => value[1].indexOf(partialText) > -1,
     );
     if (findResults) {
       return parseInt(findResults[0]);
@@ -525,7 +525,7 @@ export function getChoiceOption(partialText: string): number {
 export function userConfirmDialog(
   msg: string,
   defaultValue: boolean,
-  timeOut?: number
+  timeOut?: number,
 ): boolean {
   if (globalOptions.prefs.autoUserConfirm) {
     print(`Automatically selected ${defaultValue} for ${msg}`, "red");
@@ -612,7 +612,7 @@ export function freeRunConstraints(latteActionSource: boolean): {
       ).filter((equipment) => equipment !== $item`latte lovers member's mug`);
       return (
         forceEquipsOtherThanLatte.every(
-          (equipment) => toSlot(equipment) !== $slot`off-hand`
+          (equipment) => toSlot(equipment) !== $slot`off-hand`,
         ) &&
         sum(forceEquipsOtherThanLatte, weaponHands) < 2 &&
         !(disallowUsage?.() && getUsingFreeBunnyBanish())
@@ -656,11 +656,11 @@ export function valueJuneCleaverOption(result: Item | number): number {
 }
 
 export function bestJuneCleaverOption(
-  id: (typeof JuneCleaver.choices)[number]
+  id: (typeof JuneCleaver.choices)[number],
 ): 1 | 2 | 3 {
   const options = [1, 2, 3] as const;
   return maxBy(options, (option) =>
-    valueJuneCleaverOption(juneCleaverChoiceValues[id][option])
+    valueJuneCleaverOption(juneCleaverChoiceValues[id][option]),
   );
 }
 
@@ -700,11 +700,11 @@ export function bestShadowRift(): Location {
             return sum(
               itemDropsArray(m),
               ({ drop, rate }) =>
-                garboValue(drop) * clamp((rate * dropModifier) / 100, 0, 1)
+                garboValue(drop) * clamp((rate * dropModifier) / 100, 0, 1),
             );
           });
         },
-      })
+      }),
     );
     if (!_bestShadowRift) {
       throw new Error("Failed to find a suitable Shadow Rift to adventure in");
@@ -733,7 +733,7 @@ export function freeRest(): boolean {
       // burn some mp so that we can rest
       const bestSkill = maxBy(
         Skill.all().filter((sk) => have(sk) && mpCost(sk) >= 1),
-        (sk) => -mpCost(sk)
+        (sk) => -mpCost(sk),
       ); // are there any other skills that cost mana which we should blacklist?
       // Facial expressions? But this usually won't be an issue since all *NORMAL* classes have access to a level1 1mp skill
       useSkill(bestSkill);
@@ -776,20 +776,20 @@ export function printEventLog(): void {
 
   print(
     `You fought ${eventLog.initialEmbezzlersFought} KGEs at the beginning of the day, and an additional ${eventLog.digitizedEmbezzlersFought} digitized KGEs throughout the day. Good work, probably!`,
-    HIGHLIGHT
+    HIGHLIGHT,
   );
   print(
     `Including this, you have fought ${totalEmbezzlers} across all ascensions today`,
-    HIGHLIGHT
+    HIGHLIGHT,
   );
   if (yacthzeeCount > 0) {
     print(
       `You explored the undersea yacht ${eventLog.yachtzees} times`,
-      HIGHLIGHT
+      HIGHLIGHT,
     );
     print(
       `Including this, you explored the undersea yacht ${yacthzeeCount} times across all ascensions today`,
-      HIGHLIGHT
+      HIGHLIGHT,
     );
   }
 }
@@ -801,7 +801,7 @@ function untangleDigitizes(turnCount: number, chunks: number): number {
 }
 
 export function digitizedMonstersRemainingForTurns(
-  estimatedTurns: number
+  estimatedTurns: number,
 ): number {
   if (!SourceTerminal.have()) return 0;
 
@@ -809,7 +809,7 @@ export function digitizedMonstersRemainingForTurns(
   if (digitizesLeft === SourceTerminal.getMaximumDigitizeUses()) {
     return untangleDigitizes(
       estimatedTurns,
-      SourceTerminal.getMaximumDigitizeUses()
+      SourceTerminal.getMaximumDigitizeUses(),
     );
   }
 
@@ -918,7 +918,7 @@ let monsterManuelCached: boolean | undefined = undefined;
 export function monsterManuelAvailable(): boolean {
   if (monsterManuelCached !== undefined) return Boolean(monsterManuelCached);
   monsterManuelCached = visitUrl("questlog.php?which=3").includes(
-    "Monster Manuel"
+    "Monster Manuel",
   );
   return Boolean(monsterManuelCached);
 }
@@ -936,7 +936,7 @@ export function felizValue(): number {
       "garbo_felizValue",
       (
         sum(felizDrops, (name) => garboValue(toItem(name))) / felizDrops.length
-      ).toFixed(0)
+      ).toFixed(0),
     );
     set("garbo_felizValueDate", gameDay().getTime());
   }
@@ -957,7 +957,7 @@ export function newarkValue(): number {
       (
         sum(newarkDrops, (name) => garboValue(toItem(name))) /
         newarkDrops.length
-      ).toFixed(0)
+      ).toFixed(0),
     );
     set("garbo_newarkValueDate", gameDay().getTime());
   }

@@ -46,7 +46,7 @@ export function bestYachtzeeFamiliar(): Familiar {
         findLeprechaunMultiplier(fam) > 0 &&
         fam !== $familiar`Ghost of Crimbo Commerce` &&
         fam !== $familiar`Robortender` &&
-        have($effect`Driving Waterproofly`)
+        have($effect`Driving Waterproofly`),
     )
     .sort(
       (left, right) =>
@@ -54,14 +54,14 @@ export function bestYachtzeeFamiliar(): Familiar {
           right,
           "Meat Drop",
           getBuffedFamiliarWeight(right),
-          bestFamUnderwaterGear(right)
+          bestFamUnderwaterGear(right),
         ) -
         numericModifier(
           left,
           "Meat Drop",
           getBuffedFamiliarWeight(left),
-          bestFamUnderwaterGear(left)
-        )
+          bestFamUnderwaterGear(left),
+        ),
     );
 
   print(`Familiar bonus meat%:`, "blue");
@@ -71,9 +71,9 @@ export function bestYachtzeeFamiliar(): Familiar {
         fam,
         "Meat Drop",
         getBuffedFamiliarWeight(fam),
-        bestFamUnderwaterGear(fam)
+        bestFamUnderwaterGear(fam),
       ).toFixed(2)}%)`,
-      "blue"
+      "blue",
     );
   });
 

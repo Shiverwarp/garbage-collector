@@ -96,7 +96,7 @@ export function expectedGregs(skillSource: "habitat" | "extro"): number[] {
   const firstReplaces = clamp(
     replacementsPerGreg(baseGregs[0]),
     0,
-    macrometeors + replaceEnemies
+    macrometeors + replaceEnemies,
   );
   const initialCast: { replacesLeft: number; sources: GregSource[] } = {
     replacesLeft: macrometeors + replaceEnemies - firstReplaces,
@@ -115,7 +115,7 @@ export function expectedGregs(skillSource: "habitat" | "extro"): number[] {
       const currentReplaces = clamp(
         replacementsPerGreg(curr),
         0,
-        acc.replacesLeft
+        acc.replacesLeft,
       );
       return {
         replacesLeft: acc.replacesLeft - currentReplaces,
@@ -188,7 +188,7 @@ export function saberCrateIfSafe(): void {
 
     useFamiliar(
       run.constraints.familiar?.() ??
-        freeFightFamiliar({ canChooseMacro: false })
+        freeFightFamiliar({ canChooseMacro: false }),
     );
     run.constraints.preparation?.();
     new Requirement([], {
@@ -196,7 +196,7 @@ export function saberCrateIfSafe(): void {
       preventEquip: $items`Kramco Sausage-o-Matic™`,
     })
       .merge(
-        run.constraints.equipmentRequirements?.() ?? new Requirement([], {})
+        run.constraints.equipmentRequirements?.() ?? new Requirement([], {}),
       )
       .maximize();
     setChoice(1387, 2);
@@ -205,7 +205,7 @@ export function saberCrateIfSafe(): void {
       Macro.if_(crate, Macro.skill($skill`Use the Force`))
         .if_($monster`sausage goblin`, Macro.kill())
         .ifHolidayWanderer(run.macro)
-        .abort()
+        .abort(),
     );
   } while (
     [
@@ -264,7 +264,7 @@ function initializeCrates(): void {
         .externalIf(
           get("_gallapagosMonster") !== crate &&
             have($skill`Gallapagosian Mating Call`),
-          Macro.trySkill($skill`Gallapagosian Mating Call`)
+          Macro.trySkill($skill`Gallapagosian Mating Call`),
         )
         .trySkill($skill`Use the Force`)
         .step(run.macro);
@@ -273,23 +273,23 @@ function initializeCrates(): void {
       // Crank up ML to make sure the crate survives several rounds; we may have some passive damage
       useFamiliar(
         run.constraints.familiar?.() ??
-          freeFightFamiliar({ canChooseMacro: false })
+          freeFightFamiliar({ canChooseMacro: false }),
       );
       run.constraints.preparation?.();
       new Requirement(["100 Monster Level"], {
         forceEquip:
           $items`latte lovers member's mug, Fourth of May Cosplay Saber`.filter(
-            (item) => have(item)
+            (item) => have(item),
           ),
         preventEquip: $items`carnivorous potted plant`,
       })
         .merge(
-          run.constraints.equipmentRequirements?.() ?? new Requirement([], {})
+          run.constraints.equipmentRequirements?.() ?? new Requirement([], {}),
         )
         .maximize();
       garboAdventure(
         $location`Noob Cave`,
-        Macro.if_(crate, macro).ifHolidayWanderer(run.macro).abort()
+        Macro.if_(crate, macro).ifHolidayWanderer(run.macro).abort(),
       );
       visitUrl(`desc_effect.php?whicheffect=${$effect`On the Trail`.descid}`);
     } else if (
@@ -314,7 +314,7 @@ function getClub() {
         canEquip(i) &&
         weaponHands(i) === 2 &&
         (itemType(i) === "club" ||
-          (have($effect`Iron Palms`) && itemType(i) === "sword"))
+          (have($effect`Iron Palms`) && itemType(i) === "sword")),
     ) ?? $item`amok putter`;
   retrieveItem(availableClub);
   return availableClub;
@@ -404,9 +404,9 @@ function banishDeeps(): void {
         Macro.skill($skill`%fn, fire a Red, White and Blue Blast`).externalIf(
           getUsingFreeBunnyBanish(),
           Macro.skill($skill`Show them your ring`),
-          banish.macro()
-        )
-      ).embezzler()
+          banish.macro(),
+        ),
+      ).embezzler(),
     );
   } while (
     get("rwbMonsterCount") < 1 &&

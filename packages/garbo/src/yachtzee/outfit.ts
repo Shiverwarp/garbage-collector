@@ -35,7 +35,7 @@ export const maximizeMeat = (): boolean =>
     ],
     {
       preventEquip: $items`anemoney clip, cursed magnifying glass, Kramco Sausage-o-Matic™, cheap sunglasses`,
-    }
+    },
   ).maximize();
 
 export function prepareOutfitAndFamiliar(): void {
@@ -51,7 +51,7 @@ export function prepareOutfitAndFamiliar(): void {
 
 export function stickerSetup(expectedYachts: number): void {
   const currentStickers = $slots`sticker1, sticker2, sticker3`.map((s) =>
-    equippedItem(s)
+    equippedItem(s),
   );
   const UPC = $item`scratch 'n' sniff UPC sticker`;
   if (currentStickers.every((sticker) => sticker === UPC)) return;
