@@ -135,7 +135,7 @@ export function meatMood(
       mood.potion($item`Mer-kin fastjuice`, 0.1 * baseMeat);
       mood.potion($item`sea salt crystal`, 0.1 * baseMeat);
       mood.potion($item`shavin' razor`, 0.2 * baseMeat);
-      mood.potion($item`shark cartilage`, 0.4 * baseMeat);
+      mood.potion($item`shark cartilage`, 0.4 * baseMeat); // Meat drop and meat drop penalty are included
     }
   }
 
