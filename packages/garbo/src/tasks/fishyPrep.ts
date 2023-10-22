@@ -443,7 +443,8 @@ export const fishyPrepQuest: Quest<GarboTask> = {
   name: "Fishy Prep",
   tasks: fishyPrepTasks,
   completed: () =>
-    haveEffect($effect`Fishy`) >= getRequiredFishyTurns() &&
-    isBanished($monster`sea cowboy`) &&
-    get("_shivRanchoFishyPrepped", false),
+    globalOptions.nobarf ||
+    (haveEffect($effect`Fishy`) >= getRequiredFishyTurns() &&
+      isBanished($monster`sea cowboy`) &&
+      get("_shivRanchoFishyPrepped", false)),
 };
