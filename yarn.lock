@@ -5784,7 +5784,7 @@ __metadata:
 
 "rancho@workspace:packages/garbo":
   version: 0.0.0-use.local
-  resolution: "garbo@workspace:packages/garbo"
+  resolution: "rancho@workspace:packages/garbo"
   dependencies:
     "@babel/cli": ^7.22.15
     "@babel/compat-data": ^7.22.9
