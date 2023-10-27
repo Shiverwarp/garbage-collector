@@ -283,9 +283,9 @@ export function endSession(printLog = true): void {
   const totalTurns = turns + getGarboDaily("garboResultsTurns");
 
   if (printLog) {
-    // list the top 3 gaining and top 3 losing items
-    const losers = itemDetails.sort((a, b) => a.value - b.value).slice(0, 3);
-    const winners = itemDetails.reverse().slice(0, 3);
+    // list the top 10 gaining and top 5 losing items
+    const losers = itemDetails.sort((a, b) => a.value - b.value).slice(0, 5);
+    const winners = itemDetails.reverse().slice(0, 10);
     print(`Extreme Items:`, HIGHLIGHT);
     for (const detail of [...winners, ...losers]) {
       print(
