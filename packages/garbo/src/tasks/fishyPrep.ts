@@ -425,7 +425,7 @@ const fishyPrepTasks: GarboTask[] = [
   {
     name: "Fishy Prep",
     completed: () => haveEffect($effect`Fishy`) >= getRequiredFishyTurns(),
-    outfit: fishyPrepOutfit,
+    outfit: () => fishyPrepOutfit(),
     do: () => $location`The Coral Corral`,
     combat: new GarboStrategy(
       () => Macro.meatKill(),
