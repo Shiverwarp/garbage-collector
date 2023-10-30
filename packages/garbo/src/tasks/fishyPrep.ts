@@ -406,7 +406,7 @@ const fishyPrepTasks: GarboTask[] = [
   {
     name: "Banish Cowboy",
     completed: () => isBanished($monster`sea cowboy`),
-    outfit: fishyPrepOutfit({ equip: $items`cursed monkey's paw` }),
+    outfit: () => fishyPrepOutfit({ equip: $items`cursed monkey's paw` }),
     do: () => $location`The Coral Corral`,
     combat: new GarboStrategy(
       () =>
