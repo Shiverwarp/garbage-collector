@@ -404,6 +404,13 @@ const fishyPrepTasks: GarboTask[] = [
     sobriety: "drunk",
   },
   {
+    name: "Use Fishy Pipe",
+    ready: () => have($item`fishy pipe`),
+    completed: () => haveEffect($effect`Fishy`) > 1 || get("_fishyPipeUsed"),
+    do: () => use(1, $item`fishy pipe`),
+    spendsTurn: false,
+  },
+  {
     name: "Banish Cowboy",
     completed: () => isBanished($monster`sea cowboy`),
     outfit: () => fishyPrepOutfit({ equip: $items`cursed monkey's paw` }),
