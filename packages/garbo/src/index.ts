@@ -245,7 +245,7 @@ export function main(argString = ""): void {
     }
   }
 
-  if (!have($effect`Fishy`)) {
+  if (!have($effect`Fishy`) && get("_fishyPipeUsed")) {
     throw `We should have gotten fishy before running! Did something go wrong?`;
   }
 
