@@ -4,7 +4,6 @@ import {
   equip,
   familiarEquippedEquipment,
   hippyStoneBroken,
-  itemAmount,
   myPrimestat,
   mySpleenUse,
   retrieveItem,
@@ -185,17 +184,6 @@ const DailyFamiliarTasks: GarboTask[] = [
       use($item`box of Familiar Jacks`);
     },
     outfit: { familiar: $familiar`Cornbeefadon` },
-    spendsTurn: false,
-  },
-  {
-    // TODO: Consider other familiars?
-    name: "Equip tiny stillsuit",
-    ready: () =>
-      itemAmount($item`tiny stillsuit`) > 0 && have($familiar`Cornbeefadon`),
-    completed: () =>
-      familiarEquippedEquipment($familiar`Cornbeefadon`) ===
-      $item`tiny stillsuit`,
-    do: () => equip($familiar`Cornbeefadon`, $item`tiny stillsuit`),
     spendsTurn: false,
   },
   {

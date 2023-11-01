@@ -6,12 +6,28 @@ import {
   Quest,
   StrictCombatTask,
 } from "grimoire-kolmafia";
-import { eventLog, safeInterrupt, sober } from "../lib";
+import { eventLog, safeInterrupt, safeRestore, sober } from "../lib";
 import { wanderer } from "../garboWanderer";
-import { $skill, Delayed, get, SourceTerminal, undelay } from "libram";
-import { Location, print, setLocation, totalTurnsPlayed } from "kolmafia";
-import postCombatActions from "../post";
+import {
+  $familiar,
+  $item,
+  $skill,
+  Delayed,
+  get,
+  SourceTerminal,
+  undelay,
+} from "libram";
+import {
+  equip,
+  itemAmount,
+  Location,
+  print,
+  setLocation,
+  totalTurnsPlayed,
+} from "kolmafia";
 import { GarboStrategy } from "../combat";
+import { sessionSinceStart } from "../session";
+import { garboValue } from "../garboValue";
 
 export type GarboTask = StrictCombatTask<never, GarboStrategy> & {
   sobriety?: Delayed<"drunk" | "sober" | undefined>;
@@ -54,6 +70,10 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
     }
 
     outfit.dress();
+    super.dress(task, outfit);
+    if (itemAmount($item`tiny stillsuit`) > 0) {
+      equip($familiar`Cornbeefadon`, $item`tiny stillsuit`);
+    }
   }
 
   execute(task: GarboTask): void {
@@ -68,8 +88,8 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
     ) {
       SourceTerminal.educate([$skill`Extract`, $skill`Duplicate`]);
     }
+    if ("combat" in task) safeRestore();
     super.execute(task);
-    postCombatActions();
     if (totalTurnsPlayed() !== spentTurns) {
       if (!undelay(task.spendsTurn)) {
         print(
@@ -80,6 +100,7 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
     const foughtAnEmbezzler = get("lastEncounter") === "Knob Goblin Embezzler";
     if (foughtAnEmbezzler) logEmbezzler(task.name);
     wanderer().clear();
+    sessionSinceStart().value(garboValue);
     if (duplicate && SourceTerminal.have()) {
       for (const skill of before) {
         SourceTerminal.educate(skill);
