@@ -2,7 +2,9 @@ import {
   availableChoiceOptions,
   canAdventure,
   cliExecute,
+  haveEffect,
   inebrietyLimit,
+  isBanished,
   itemAmount,
   mallPrice,
   myAdventures,
@@ -22,6 +24,8 @@ import {
   $item,
   $items,
   $location,
+  $locations,
+  $monster,
   $skill,
   AutumnAton,
   CinchoDeMayo,
@@ -31,6 +35,7 @@ import {
   getRemainingStomach,
   have,
   JuneCleaver,
+  set,
   undelay,
 } from "libram";
 import { GarboStrategy, Macro } from "../../combat";
@@ -51,6 +56,7 @@ import { garboAverageValue } from "../../garboValue";
 import workshedTasks from "./worksheds";
 import { GarboPostTask } from "./lib";
 import { GarboTask } from "../engine";
+import { getRequiredFishyTurns } from "../fishyPrep";
 
 const STUFF_TO_CLOSET = $items`bowling ball, funky junk key`;
 function closetStuff(): GarboPostTask {
@@ -62,16 +68,16 @@ function closetStuff(): GarboPostTask {
 }
 
 const BARF_PLANTS = [
-  FloristFriar.StealingMagnolia,
-  FloristFriar.AloeGuvnor,
-  FloristFriar.PitcherPlant,
+  FloristFriar.Crookweed,
+  FloristFriar.Snori,
+  FloristFriar.ElectricEelgrass,
 ];
 function floristFriars(): GarboPostTask {
   return {
     name: "Florist Plants",
     completed: () => FloristFriar.isFull(),
     ready: () =>
-      myLocation() === $location`Barf Mountain` &&
+      $locations`The Coral Corral, The Briny Deeps`.includes(myLocation()) &&
       FloristFriar.have() &&
       BARF_PLANTS.some((flower) => flower.available()),
     do: () =>
@@ -86,10 +92,21 @@ function floristFriars(): GarboPostTask {
 function fillPantsgivingFullness(): GarboPostTask {
   return {
     name: "Fill Pantsgiving Fullness",
-    ready: () => !globalOptions.nodiet,
+    ready: () => !globalOptions.nodiet && get("_shivRanchoFishyPrepped", false),
     completed: () => getRemainingStomach() <= 0,
     do: () => consumeDiet(computeDiet().pantsgiving(), "PANTSGIVING"),
     available: () => have($item`Pantsgiving`),
+  };
+}
+
+function setFishyPrepPref(): GarboPostTask {
+  return {
+    name: "Set Fishy Prep Preference",
+    ready: () =>
+      haveEffect($effect`Fishy`) >= getRequiredFishyTurns() &&
+      isBanished($monster`sea cowboy`),
+    completed: () => get("_shivRanchoFishyPrepped", false),
+    do: () => set("_shivRanchoFishyPrepped", true),
   };
 }
 
@@ -99,6 +116,7 @@ function fillSweatyLiver(): GarboPostTask {
     ready: () =>
       have($item`designer sweatpants`) &&
       !globalOptions.nodiet &&
+      get("_shivRanchoFishyPrepped", false) &&
       get("sweat") >= 25 * clamp(3 - get("_sweatOutSomeBoozeUsed"), 0, 3),
     completed: () => get("_sweatOutSomeBoozeUsed") >= 3,
     do: () => {
@@ -287,6 +305,7 @@ export function PostQuest(completed?: () => boolean): Quest<GarboTask> {
       fillSweatyLiver(),
       funGuySpores(),
       eightBitFatLoot(),
+      setFishyPrepPref(),
       refillCinch(),
     ]
       .filter(({ available }) => undelay(available ?? true))
