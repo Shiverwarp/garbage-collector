@@ -2066,11 +2066,12 @@ const freeRunFightSources = [
     (runSource: ActionSource) =>
       garboAdventure(bestShadowRift(), runSource.macro),
     {
-      spec: {
-        equip:
+      spec: () => {
+        const spec: OutfitSpec =
           bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
-            ? $items`continuum transfunctioner`
-            : [],
+            ? { equip: $items`continuum transfunctioner` }
+            : {};
+        return spec;
       },
     },
   ),
