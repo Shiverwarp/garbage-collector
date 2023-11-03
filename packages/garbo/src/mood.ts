@@ -86,29 +86,6 @@ export function meatMood(
 
   // Underwater only effects do not work during yachtzee
   if (moodType !== "Yachtzee") {
-    // We do Gregs underwater, but not replacers
-    if (moodType === "Greg") {
-      const familiarMultiplier = have($familiar`Robortender`)
-        ? 2
-        : have($familiar`Hobo Monkey`)
-        ? 1.25
-        : 1;
-      // Assume base weight of 100 pounds. This is off but close enough.
-      const assumedBaseWeight = 100;
-      // Marginal value of familiar weight in % meat drop.
-      const marginalValue =
-        2 * familiarMultiplier +
-        Math.sqrt(220 * familiarMultiplier) /
-          (2 * Math.sqrt(assumedBaseWeight));
-
-      // Underwater only potions
-      mood.potion(
-        $item`temporary teardrop tattoo`,
-        ((10 * marginalValue) / 100) * meat,
-      );
-      mood.potion($item`sea grease`, ((5 * marginalValue) / 100) * meat);
-    }
-
     // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
     if (moodType === "Barf") {
       const familiarMultiplier = have($familiar`Robortender`)
