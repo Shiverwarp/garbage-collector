@@ -724,7 +724,7 @@ const pygmyBanishHandlers = [
     pygmy: $monster`pygmy orderlies`,
     skill: $skill`Feel Hatred`,
     check: "_feelHatredUsed",
-    limit: getUsingFreeBunnyBanish() ? 2 : 3,
+    limit: getUsingFreeBunnyBanish() ? 1 : 3,
     item: $item`divine champagne popper`,
   },
   {
@@ -834,7 +834,7 @@ const freeFightSources = [
           retrieveItem(1, $item`Louder Than Bomb`);
           retrieveItem(1, $item`divine champagne popper`);
         }
-        const hatredLimit = getUsingFreeBunnyBanish() ? 2 : 3;
+        const hatredLimit = getUsingFreeBunnyBanish() ? 1 : 3;
         garboAdventure(
           $location`Domed City of Grimacia`,
           Macro.if_(
