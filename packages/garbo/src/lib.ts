@@ -563,7 +563,7 @@ function determineFreeBunnyBanish(): boolean {
       ? Math.floor((100 - get("_powerfulGloveBatteryPowerUsed")) / 10)
       : 0);
   const useFreeBanishes =
-    // 60 turns of banish from mafia middle finger ring, and 50 from hatred. Eagle RWB runs out after this.
+    // 60 turns of banish from mafia middle finger ring, and 100 from 2x hatred.
     // Account for our chain-starting fight as well as other embezzler sources that occur during our greg chain
     1 +
       possibleGregsFromSpleen +
@@ -572,12 +572,12 @@ function determineFreeBunnyBanish(): boolean {
       expectedPocketProfFights +
       expectedDigitizesDuringGregs +
       expectedReplacerFights <
-      110 &&
+      160 &&
     habitatFights + currentAvailableGregs + possibleGregsFromSpleen > 0 &&
     have($item`mafia middle finger ring`) &&
     !get("_mafiaMiddleFingerRingUsed") &&
     have($skill`Feel Hatred`) &&
-    get(`_feelHatredUsed`) <= 2;
+    get(`_feelHatredUsed`) <= 1;
 
   return useFreeBanishes;
 }

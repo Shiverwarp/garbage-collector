@@ -2,13 +2,16 @@ import {
   canEquip,
   cliExecute,
   equip,
-  getProperty,
   haveEffect,
   Item,
   itemType,
   mallPrice,
   myFury,
+  Phylum,
   retrieveItem,
+  Skill,
+  toPhylum,
+  toSkill,
   useFamiliar,
   useSkill,
   visitUrl,
@@ -16,17 +19,16 @@ import {
 } from "kolmafia";
 import {
   $effect,
-  $familiar,
   $item,
   $items,
   $location,
   $monster,
-  $monsters,
   $skill,
   $slot,
   clamp,
   CrystalBall,
   get,
+  getBanishedMonsters,
   have,
   maxBy,
   property,
@@ -385,7 +387,7 @@ const shortBanishes = [
   combatItem($item`tennis ball`, 10000),
 ];
 
-function banishDeeps(): void {
+function banishBunny(): void {
   const banishes = [
     ...longBanishes,
     ...(!have($item`miniature crystal ball`) ? shortBanishes : []),
@@ -396,35 +398,46 @@ function banishDeeps(): void {
     : maxBy(banishes, (banish: Banish) => banish.price?.() ?? 0, true);
   do {
     banish.prepare?.();
-    useFamiliar($familiar`Patriotic Eagle`);
     garboAdventure(
-      $location`The Briny Deeps`,
-      Macro.if_(
-        $monsters`funk sole brother, pumped-up bass, school of wizardfish`,
-        Macro.skill($skill`%fn, fire a Red, White and Blue Blast`).externalIf(
-          getUsingFreeBunnyBanish(),
-          Macro.skill($skill`Show them your ring`),
-          banish.macro(),
-        ),
-      ).embezzler(),
+      $location`The Dire Warren`,
+      Macro.if_($monster`fluffy bunny`, banish.macro()).embezzler(),
     );
   } while (
-    get("rwbMonsterCount") < 1 &&
-    !get("banishedMonsters").includes(getProperty("rwbMonster"))
+    "fluffy bunny" !== get("lastEncounter") &&
+    !get("banishedMonsters").includes("fluffy bunny")
   );
+}
+function getBanishedPhyla(): Map<Skill | Item, Phylum> {
+  const phylumBanish = new Map<Skill | Item, Phylum>();
+  const banishPart = get("banishedPhyla").split(":").slice(0, 2);
+
+  if (banishPart.length === 2) {
+    const [skill, phylum] = banishPart;
+    // for now, the only phylum banish is Patriotic Screech, a skill
+    phylumBanish.set(toSkill(skill), toPhylum(phylum));
+  }
+
+  return phylumBanish;
 }
 
 export function initializeDireWarren(): void {
   visitUrl("museum.php?action=icehouse");
 
+  const banishedMonsters = getBanishedMonsters();
+  const banishedPhyla = getBanishedPhyla();
+
   if (
-    get("rwbMonsterCount") > 0 &&
-    get("banishedMonsters").includes(getProperty("rwbMonster"))
+    [...banishedMonsters.values()].find((m) => m === $monster`fluffy bunny`)
+  ) {
+    return;
+  }
+  if (
+    [...banishedPhyla.values()].find((p) => p === $monster`fluffy bunny`.phylum)
   ) {
     return;
   }
 
-  banishDeeps();
+  banishBunny();
 }
 
 export function initializeExtrovermectinZones(): void {
@@ -457,7 +470,7 @@ export function totalGregCharges(countPartial: boolean): number {
 export function possibleGregCrystalBall(): number {
   if (have($item`miniature crystal ball`)) {
     const ponderCount =
-      CrystalBall.ponder().get($location`The Briny Deeps`) === embezzler
+      CrystalBall.ponder().get($location`The Dire Warren`) === embezzler
         ? 1
         : 0;
     return totalGregCharges(true) + ponderCount;

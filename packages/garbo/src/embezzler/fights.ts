@@ -3,8 +3,8 @@ import {
   canAdventure,
   cliExecute,
   getClanLounge,
-  getProperty,
   haveEquipped,
+  isBanished,
   itemAmount,
   Location,
   mallPrice,
@@ -30,7 +30,6 @@ import {
   $location,
   $locations,
   $monster,
-  $monsters,
   $skill,
   ChateauMantegna,
   CombatLoversLocket,
@@ -523,35 +522,25 @@ const gregFights = (
       ? Macro.skill($skill`Feel Hatred`)
       : ltbRun().macro;
     run.constraints.preparation?.();
-    const deepsIsBanished =
-      get("rwbMonsterCount") > 0 &&
-      get("banishedMonsters").includes(getProperty("rwbMonster"));
+    const bunnyIsBanished = isBanished($monster`fluffy bunny`);
     const adventureFunction = options.useAuto
       ? garboAdventureAuto
       : garboAdventure;
     adventureFunction(
-      $location`The Briny Deeps`,
-      Macro.if_(
-        $monsters`funk sole brother, pumped-up bass, school of wizardfish`,
-        runMacro,
-      ).step(options.macro),
-      Macro.if_(
-        $monsters`funk sole brother, pumped-up bass, school of wizardfish`,
-        runMacro,
-      ).step(options.macro),
+      $location`The Dire Warren`,
+      Macro.if_($monster`fluffy bunny`, runMacro).step(options.macro),
+      Macro.if_($monster`fluffy bunny`, runMacro).step(options.macro),
     );
 
     if (
-      ["funk sole brother", "pumped-up bass", "school of wizardfish"].includes(
-        get("lastEncounter"),
-      ) &&
-      deepsIsBanished
+      get("lastEncounter") === $monster`fluffy bunny`.name &&
+      bunnyIsBanished
     ) {
       const bunnyBanish = [...getBanishedMonsters().entries()].find(
-        ([, monster]) => monster === $monster`funk sole brother`,
+        ([, monster]) => monster === $monster`fluffy bunny`,
       )?.[0];
       abort(
-        `The Briny Deeps is supposedly banished by ${bunnyBanish}, but this appears not to be the case; the most likely issue is that your ${monsterProp} preference is nonzero and should probably be zero.`,
+        `Fluffy bunny is supposedly banished by ${bunnyBanish}, but this appears not to be the case; the most likely issue is that your ${monsterProp} preference is nonzero and should probably be zero.`,
       );
     }
   }
@@ -572,14 +561,14 @@ const gregFights = (
         // reset the crystal ball prediction by staring longingly at toast
         if (get(fightsProp) === 1 && have($item`miniature crystal ball`)) {
           const warrenPrediction = CrystalBall.ponder().get(
-            $location`The Briny Deeps`,
+            $location`The Dire Warren`,
           );
           if (warrenPrediction !== embezzler) changeLastAdvLocation();
         }
       },
       {
         canInitializeWandererCounters: true,
-        location: $location`The Briny Deeps`,
+        location: $location`The Dire Warren`,
       },
     ),
     new EmbezzlerFight(
@@ -588,7 +577,7 @@ const gregFights = (
         get(monsterProp) === embezzler &&
         get(fightsProp) === 1 &&
         have($item`miniature crystal ball`) &&
-        !CrystalBall.ponder().get($location`The Briny Deeps`),
+        !CrystalBall.ponder().get($location`The Dire Warren`),
       () =>
         (get(monsterProp) === embezzler && get(fightsProp) > 0) ||
         totalCharges() > 0
@@ -600,7 +589,7 @@ const gregFights = (
           equip: $items`miniature crystal ball`.filter((item) => have(item)),
         },
         canInitializeWandererCounters: true,
-        location: $location`The Briny Deeps`,
+        location: $location`The Dire Warren`,
       },
     ),
   ];
@@ -664,12 +653,12 @@ export const conditionalSources = [
     () =>
       have($item`miniature crystal ball`) &&
       !get("_garbo_doneGregging", false) &&
-      CrystalBall.ponder().get($location`The Briny Deeps`) === embezzler,
+      CrystalBall.ponder().get($location`The Dire Warren`) === embezzler,
     () => possibleGregCrystalBall(),
     (options: RunOptions) => {
       visitUrl("inventory.php?ponder=1");
       if (
-        CrystalBall.ponder().get($location`The Briny Deeps`) !==
+        CrystalBall.ponder().get($location`The Dire Warren`) !==
         $monster`Knob Goblin Embezzler`
       ) {
         return;
@@ -678,7 +667,7 @@ export const conditionalSources = [
         ? garboAdventureAuto
         : garboAdventure;
       adventureFunction(
-        $location`The Briny Deeps`,
+        $location`The Dire Warren`,
         options.macro,
         options.macro,
       );
@@ -688,7 +677,7 @@ export const conditionalSources = [
     {
       spec: { equip: $items`miniature crystal ball` },
       canInitializeWandererCounters: true,
-      location: $location`The Briny Deeps`,
+      location: $location`The Dire Warren`,
     },
   ),
   new EmbezzlerFight(
@@ -710,12 +699,6 @@ export const conditionalSources = [
       const weWantToSaberCrates = !crateIsSabered || notEnoughCratesSabered;
       setChoice(1387, 2);
 
-      const leftoverReplacers =
-        (have($skill`Meteor Lore`) ? 10 - get("_macrometeoriteUses") : 0) +
-        (have($item`Powerful Glove`)
-          ? Math.floor((100 - get("_powerfulGloveBatteryPowerUsed")) / 10)
-          : 0);
-
       const macro = Macro.if_(
         $monster`crate`,
         Macro.externalIf(
@@ -730,11 +713,7 @@ export const conditionalSources = [
               get("_saberForceUses") < 5,
             Macro.trySkill($skill`Use the Force`),
           )
-          .skill($skill`Macrometeorite`)
-          .externalIf(
-            leftoverReplacers < 3 && get("_gallapagosMonster") !== embezzler,
-            Macro.skill($skill`Gallapagosian Mating Call`),
-          ),
+          .skill($skill`Macrometeorite`),
       ).step(options.macro);
       const adventureFunction = options.useAuto
         ? garboAdventureAuto
@@ -767,12 +746,6 @@ export const conditionalSources = [
       const weWantToSaberCrates = !crateIsSabered || notEnoughCratesSabered;
       setChoice(1387, 2);
 
-      const leftoverReplacers =
-        (have($skill`Meteor Lore`) ? 10 - get("_macrometeoriteUses") : 0) +
-        (have($item`Powerful Glove`)
-          ? Math.floor((100 - get("_powerfulGloveBatteryPowerUsed")) / 10)
-          : 0);
-
       const macro = Macro.if_(
         $monster`crate`,
         Macro.externalIf(
@@ -787,11 +760,7 @@ export const conditionalSources = [
               get("_saberForceUses") < 5,
             Macro.trySkill($skill`Use the Force`),
           )
-          .skill($skill`CHEAT CODE: Replace Enemy`)
-          .externalIf(
-            leftoverReplacers < 3 && get("_gallapagosMonster") !== embezzler,
-            Macro.skill($skill`Gallapagosian Mating Call`),
-          ),
+          .skill($skill`CHEAT CODE: Replace Enemy`),
       ).step(options.macro);
       const adventureFunction = options.useAuto
         ? garboAdventureAuto
