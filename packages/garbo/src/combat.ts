@@ -247,7 +247,8 @@ export class Macro extends StrictMacro {
           .skill($skill`Micrometeorite`)
           .trySkill($skill`Pocket Crumbs`)
           .item([$item`train whistle`, $item`HOA citation pad`])
-          .skill($skill`Entangling Noodles`),
+          .skill($skill`Entangling Noodles`)
+          .tryHaveItem($item`Rain-Doh indigo cup`),
       )
       .trySingAlong()
       .familiarActions()
