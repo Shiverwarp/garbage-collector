@@ -256,7 +256,12 @@ export function optimizeForFishy(
           }
         }
         if (haveFishyPipe) use(1, $item`fishy pipe`);
-        garboAdventure($location`The Brinier Deepers`, Macro.abort());
+        garboAdventure(
+          $location`The Brinier Deepers`,
+          Macro.abortWithMsg(
+            "We tried to get fishy in the Brinier Deepers, but are in a fight!",
+          ),
+        );
         if (get("lastAdventure") !== "The Brinier Deepers") {
           print(
             "We failed to adventure in The Brinier Deepers, even though we thought we could. Try manually adventuring there for a lucky adventure.",
@@ -295,7 +300,12 @@ export function optimizeForFishy(
           use(1, $item`11-leaf clover`);
         }
         if (haveFishyPipe) use(1, $item`fishy pipe`);
-        garboAdventure($location`The Brinier Deepers`, Macro.abort());
+        garboAdventure(
+          $location`The Brinier Deepers`,
+          Macro.abortWithMsg(
+            "We tried to get fishy in the Brinier Deepers, but are in a fight!",
+          ),
+        );
         if (get("lastAdventure") !== "The Brinier Deepers") {
           print(
             "We failed to adventure in The Brinier Deepers, even though we thought we could. Try manually adventuring there for a lucky adventure.",

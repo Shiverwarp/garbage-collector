@@ -29,6 +29,7 @@ import {
   $items,
   $skill,
   $skills,
+  BurningLeaves,
   ChateauMantegna,
   ClosedCircuitPayphone,
   get,
@@ -97,7 +98,7 @@ function pickCargoPocket(): void {
     if (pocket in items) {
       value += sum(
         Object.entries(pocketItems(pocket)),
-        ([item, count]) => garboValue(toItem(item), true) * count,
+        ([item, count]) => garboValue(toItem(item)) * count,
       );
     }
     if (pocket in meats) {
@@ -395,6 +396,16 @@ const DailyItemTasks: GarboTask[] = [
     completed: () => get("_sitCourseCompleted") || have($skill`Insectologist`),
     do: () => use($item`S.I.T. Course Completion Certificate`),
     choices: { 1494: 2 },
+    spendsTurn: false,
+  },
+  {
+    name: "Rake Leaves",
+    ready: () => BurningLeaves.have(),
+    completed: () => have($item`rake`),
+    do: () => {
+      visitUrl("campground.php?preaction=leaves");
+      visitUrl("main.php"); // Mafia not marking as can walk away
+    },
     spendsTurn: false,
   },
   {

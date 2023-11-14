@@ -91,6 +91,7 @@ import {
   gameDay,
   get,
   getFoldGroup,
+  GingerBread,
   have,
   maxBy,
   property,
@@ -175,6 +176,7 @@ import { EmbezzlerFightRunOptions } from "./embezzler/staging";
 import { faxMonster } from "./resources/fax";
 import { FreeFightQuest, runGarboQuests } from "./tasks";
 import { expectedFreeFights, possibleTentacleFights } from "./tasks/freeFight";
+import { bestMidnightAvailable } from "./resources";
 import { PostQuest } from "./tasks/post";
 
 const firstChainMacro = () =>
@@ -1538,8 +1540,7 @@ const freeRunFightSources = [
     () =>
       mallPrice($item`gingerbread cigarette`) <
         globalOptions.prefs.valueOfFreeFight &&
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      !gingerNCAvailable() &&
+      GingerBread.available() &&
       get(`breathitinCharges`) <= 0 &&
       canAdventure($location`Gingerbread Upscale Retail District`),
     () => {
@@ -1581,9 +1582,8 @@ const freeRunFightSources = [
     () =>
       mallPrice($item`gingerbread cigarette`) <
         globalOptions.prefs.valueOfFreeFight &&
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      !gingerNCAvailable() &&
-      canAdventure($location`Gingerbread Civic Center`),
+      GingerBread.available() &&
+      !gingerNCAvailable(),
     (runSource: ActionSource) => {
       propertyManager.setChoices({
         1215: 2, // Gingerbread Civic Center advance clock
@@ -1648,10 +1648,8 @@ const freeRunFightSources = [
     () =>
       mallPrice($item`gingerbread cigarette`) >
         globalOptions.prefs.valueOfFreeFight &&
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      get("_gingerbreadCityTurns") +
-        (get("_gingerbreadClockAdvanced") ? 5 : 0) <
-        9,
+      GingerBread.available() &&
+      GingerBread.minutesToNoon() > 0,
     (runSource: ActionSource) => {
       propertyManager.setChoices({
         1215: 1, // Gingerbread Civic Center advance clock
@@ -1684,11 +1682,7 @@ const freeRunFightSources = [
     },
   ),
   new FreeFight(
-    () =>
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      get("_gingerbreadCityTurns") +
-        (get("_gingerbreadClockAdvanced") ? 5 : 0) ===
-        9,
+    () => GingerBread.available() && GingerBread.minutesToNoon() === 0,
     () => {
       propertyManager.setChoices({
         1204: 1, // Gingerbread Train Station Noon random candy
@@ -1720,13 +1714,9 @@ const freeRunFightSources = [
     () =>
       mallPrice($item`gingerbread cigarette`) >
         globalOptions.prefs.valueOfFreeFight &&
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      get("_gingerbreadCityTurns") +
-        (get("_gingerbreadClockAdvanced") ? 5 : 0) >=
-        10 &&
-      get("_gingerbreadCityTurns") +
-        (get("_gingerbreadClockAdvanced") ? 5 : 0) <
-        19 &&
+      GingerBread.available() &&
+      GingerBread.minutesToMidnight() > 0 &&
+      GingerBread.minutesToNoon() < 0 &&
       availableAmount($item`sprinkles`) >= 300 &&
       haveOutfit("gingerbread best"),
     (runSource: ActionSource) => {
@@ -1805,21 +1795,21 @@ const freeRunFightSources = [
   ),
   new FreeFight(
     () =>
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
-      get("_gingerbreadCityTurns") +
-        (get("_gingerbreadClockAdvanced") ? 5 : 0) ===
-        19 &&
+      GingerBread.available() &&
+      GingerBread.minutesToMidnight() === 0 &&
       availableAmount($item`sprinkles`) >= 300 &&
       haveOutfit("gingerbread best"),
     () => {
-      propertyManager.setChoices({
-        1215: 1, // Gingerbread Civic Center advance clock
-        1209: 2, // enter the gallery at Upscale Midnight
-        1214: 2, // Purchase fancy chocolate sculpture
-      });
+      const { choices, location } = bestMidnightAvailable();
+      propertyManager.setChoices(choices);
+      if (location === $location`Gingerbread Upscale Retail District`) {
+        outfit("gingerbread best");
+      }
       garboAdventure(
-        $location`Gingerbread Upscale Retail District`,
-        Macro.abort(),
+        location,
+        Macro.abortWithMsg(
+          "We thought it was Midnight here in Gingerbread City, but we're in a fight!",
+        ),
       );
     },
     false,
@@ -2864,7 +2854,7 @@ function killRobortCreaturesForFree() {
 const isFree = (monster: Monster) => monster.attributes.includes("FREE");
 const valueDrops = (monster: Monster) =>
   sum(itemDropsArray(monster), ({ drop, rate, type }) =>
-    !["c", "0", "p"].includes(type) ? (garboValue(drop, true) * rate) / 100 : 0,
+    !["c", "0", "p"].includes(type) ? (garboValue(drop) * rate) / 100 : 0,
   );
 
 export function estimatedFreeFights(): number {

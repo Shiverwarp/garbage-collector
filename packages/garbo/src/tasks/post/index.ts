@@ -10,7 +10,6 @@ import {
   myAdventures,
   myInebriety,
   myLevel,
-  myLocation,
   putCloset,
   reverseNumberology,
   runChoice,
@@ -24,7 +23,6 @@ import {
   $item,
   $items,
   $location,
-  $locations,
   $monster,
   $skill,
   AutumnAton,
@@ -76,17 +74,19 @@ const BARF_PLANTS = [
 function floristFriars(): GarboPostTask {
   return {
     name: "Florist Plants",
-    completed: () => FloristFriar.isFull(),
+    completed: () => FloristFriar.isFull($location`Barf Mountain`),
     ready: () =>
-      $locations`The Coral Corral, The Briny Deeps`.includes(myLocation()) &&
+      (get("lastAdventure") === $location`The Coral Corral`.toString() ||
+        get("lastAdventure") === $location`The Briny Deeps`.toString()) &&
       FloristFriar.have() &&
-      BARF_PLANTS.some((flower) => flower.available()),
+      BARF_PLANTS.some((flower) => flower.available($location`Barf Mountain`)),
     do: () =>
-      BARF_PLANTS.filter((flower) => flower.available()).forEach((flower) =>
-        flower.plant(),
-      ),
+      BARF_PLANTS.filter((flower) =>
+        flower.available($location`Barf Mountain`),
+      ).forEach((flower) => flower.plant()),
     available: () =>
-      FloristFriar.have() && BARF_PLANTS.some((flower) => flower.available()),
+      FloristFriar.have() &&
+      BARF_PLANTS.some((flower) => flower.available($location`Barf Mountain`)),
   };
 }
 

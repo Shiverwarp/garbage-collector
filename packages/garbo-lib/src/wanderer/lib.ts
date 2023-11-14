@@ -20,6 +20,7 @@ import {
   $skill,
   clamp,
   get,
+  GingerBread,
   have,
   realmAvailable,
   sum,
@@ -34,7 +35,7 @@ export const draggableFights = [
 ] as const;
 export type DraggableFight = (typeof draggableFights)[number];
 export function isDraggableFight<T>(
-  fight: T | string
+  fight: T | string,
 ): fight is DraggableFight {
   return draggableFights.includes(fight as DraggableFight);
 }
@@ -60,7 +61,7 @@ export type WandererFactoryOptions = {
 export type WandererFactory = (
   type: DraggableFight,
   locationSkiplist: Location[],
-  options: WandererFactoryOptions
+  options: WandererFactoryOptions,
 ) => WandererTarget[];
 export type WandererLocation = {
   location: Location;
@@ -119,10 +120,10 @@ export function underwater(location: Location): boolean {
 const ILLEGAL_PARENTS = ["Clan Basement", "Psychoses", "PirateRealm"];
 const ILLEGAL_ZONES = ["The Drip", "The Mer-Kin Deepcity"];
 const canAdventureOrUnlockSkipList = [
-  ...$locations`The Oasis, The Bubblin' Caldera, Barrrney's Barrr, The F'c'le, The Poop Deck, Belowdecks, Madness Bakery, The Secret Government Laboratory, The Dire Warren, Inside the Palindome, The Haiku Dungeon, An Incredibly Strange Place (Bad Trip), An Incredibly Strange Place (Mediocre Trip), An Incredibly Strange Place (Great Trip), El Vibrato Island, The Daily Dungeon, Trick-or-Treating, Seaside Megalopolis`,
+  ...$locations`The Oasis, The Bubblin' Caldera, Barrrney's Barrr, The F'c'le, The Poop Deck, Belowdecks, Madness Bakery, The Secret Government Laboratory, The Dire Warren, Inside the Palindome, The Haiku Dungeon, An Incredibly Strange Place (Bad Trip), An Incredibly Strange Place (Mediocre Trip), An Incredibly Strange Place (Great Trip), El Vibrato Island, The Daily Dungeon, Trick-or-Treating, Seaside Megalopolis, Frat House`,
   ...Location.all().filter(
     ({ parent, zone }) =>
-      ILLEGAL_PARENTS.includes(parent) || ILLEGAL_ZONES.includes(zone)
+      ILLEGAL_PARENTS.includes(parent) || ILLEGAL_ZONES.includes(zone),
   ),
 ];
 export function canAdventureOrUnlock(loc: Location): boolean {
@@ -133,8 +134,16 @@ export function canAdventureOrUnlock(loc: Location): boolean {
   ) {
     skiplist.push($location`The Icy Peak`);
   }
+
+  if (
+    GingerBread.minutesToNoon() === 0 ||
+    GingerBread.minutesToMidnight() === 0
+  ) {
+    skiplist.push(...GingerBread.LOCATIONS);
+  }
+
   const canUnlock = UnlockableZones.some(
-    (z) => loc.zone === z.zone && (z.available() || !z.noInv)
+    (z) => loc.zone === z.zone && (z.available() || !z.noInv),
   );
   return !skiplist.includes(loc) && (canAdventure(loc) || canUnlock);
 }
@@ -150,7 +159,7 @@ export function unlock(loc: Location, value: number): boolean {
 const backupSkiplist = $locations`The Overgrown Lot, The Skeleton Store, The Mansion of Dr. Weirdeaux, Professor Jacking's Huge-A-Ma-tron`;
 
 // These are locations where all non-combats have skips or lead to a combat.
-const backupSafelist = $locations`The Haunted Gallery, The Haunted Ballroom, The Haunted Library, The Penultimate Fantasy Airship, Cobb's Knob Barracks, The Castle in the Clouds in the Sky (Basement), The Castle in the Clouds in the Sky (Ground Floor), The Castle in the Clouds in the Sky (Top Floor), The Haiku Dungeon, Twin Peak, A Mob of Zeppelin Protesters, The Upper Chamber`;
+const backupSafelist = $locations`The Haunted Gallery, The Haunted Ballroom, The Haunted Library, The Penultimate Fantasy Airship, Cobb's Knob Barracks, The Castle in the Clouds in the Sky (Basement), The Castle in the Clouds in the Sky (Ground Floor), The Castle in the Clouds in the Sky (Top Floor), The Haiku Dungeon, Twin Peak, A Mob of Zeppelin Protesters, The Upper Chamber, Frat House`;
 // These are locations where all non-combats are skippable
 const yellowRaySafelist = $locations`The Haunted Gallery, The Haunted Ballroom, The Haunted Library, Cobb's Knob Barracks, The Castle in the Clouds in the Sky (Basement), The Castle in the Clouds in the Sky (Ground Floor), The Haiku Dungeon, Twin Peak, A Mob of Zeppelin Protesters, The Upper Chamber`;
 function canWanderTypeBackup(location: Location): boolean {
@@ -207,7 +216,7 @@ export class WandererTarget {
     name: string,
     location: Location,
     value: number,
-    prepareTurn: () => boolean = () => true
+    prepareTurn: () => boolean = () => true,
   ) {
     this.name = name;
     this.value = value;
@@ -260,7 +269,7 @@ const WanderingSources: WanderingSource[] = [
 
 export function wandererTurnsAvailableToday(
   options: WandererFactoryOptions,
-  location: Location
+  location: Location,
 ): number {
   const canWanderCache: Record<DraggableFight, boolean> = {
     backup: canWander(location, "backup"),
@@ -284,7 +293,7 @@ export function wandererTurnsAvailableToday(
   const wanderers = sum(WanderingSources, (source) =>
     canWanderCache[source.type] && have(source.item)
       ? clamp(get(source.property), 0, source.max)
-      : 0
+      : 0,
   );
 
   return digitize + pigSkinnerRay + yellowRay + wanderers;
@@ -293,7 +302,7 @@ export function wandererTurnsAvailableToday(
 const LIMITED_BOFA_DROPS = $items`pocket wish, tattered scrap of paper`;
 export function bofaValue(
   { plentifulMonsters, itemValue, effectValue }: WandererFactoryOptions,
-  monster: Monster
+  monster: Monster,
 ): number {
   switch (monster.factType) {
     case "item": {
