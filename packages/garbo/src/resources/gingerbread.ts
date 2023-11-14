@@ -43,6 +43,12 @@ const MIDNIGHTS = [
     },
   },
   {
+    location: $location`Gingerbread Upscale Retail District`,
+    choices: { 1209: 2, 1214: 2 },
+    available: () => have($item`sprinkles`, 500),
+    value: () => garboValue($item`fancy chocolate sculpture`),
+  },
+  {
     location: $location`Gingerbread Civic Center`,
     choices: { 1203: 4 },
     available: () => have($item`sprinkles`, 5) && !GingerBread.canJudgeFudge(),
