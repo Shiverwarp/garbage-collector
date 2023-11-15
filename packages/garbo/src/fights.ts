@@ -1541,6 +1541,7 @@ const freeRunFightSources = [
       mallPrice($item`gingerbread cigarette`) <
         globalOptions.prefs.valueOfFreeFight &&
       GingerBread.available() &&
+      !gingerNCAvailable() &&
       get(`breathitinCharges`) <= 0 &&
       canAdventure($location`Gingerbread Upscale Retail District`),
     () => {
@@ -1624,7 +1625,7 @@ const freeRunFightSources = [
     () =>
       mallPrice($item`gingerbread cigarette`) >
         globalOptions.prefs.valueOfFreeFight &&
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      GingerBread.available() &&
       get("gingerAdvanceClockUnlocked") &&
       !get("_gingerbreadClockVisited") &&
       get("_gingerbreadCityTurns") <= 3,
@@ -1755,7 +1756,7 @@ const freeRunFightSources = [
     () =>
       mallPrice($item`gingerbread cigarette`) <
         globalOptions.prefs.valueOfFreeFight &&
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      GingerBread.available() &&
       !gingerNCAvailable() &&
       get(`breathitinCharges`) <= 0 &&
       canAdventure($location`Gingerbread Upscale Retail District`),
@@ -1825,7 +1826,7 @@ const freeRunFightSources = [
     () =>
       mallPrice($item`gingerbread cigarette`) <
         globalOptions.prefs.valueOfFreeFight &&
-      (get("gingerbreadCityAvailable") || get("_gingerbreadCityToday")) &&
+      GingerBread.available() &&
       !gingerNCAvailable() &&
       get(`breathitinCharges`) <= 0 &&
       canAdventure($location`Gingerbread Upscale Retail District`),
