@@ -76,8 +76,8 @@ function floristFriars(): GarboPostTask {
     name: "Florist Plants",
     completed: () => FloristFriar.isFull($location`Barf Mountain`),
     ready: () =>
-      (get("lastAdventure") === $location`The Coral Corral`.toString() ||
-        get("lastAdventure") === $location`The Briny Deeps`.toString()) &&
+      (get("lastAdventure") === $location`The Coral Corral` ||
+        get("lastAdventure") === $location`The Briny Deeps`) &&
       FloristFriar.have() &&
       BARF_PLANTS.some((flower) => flower.available($location`Barf Mountain`)),
     do: () =>
