@@ -245,15 +245,15 @@ export function main(argString = ""): void {
     }
   }
 
-  if (!have($effect`Fishy`) && get("_fishyPipeUsed")) {
+  if (!have($effect`Fishy`) && get("_fishyPipeUsed") && !globalOptions.nobarf) {
     throw `We should have gotten fishy before running! Did something go wrong?`;
   }
 
-  if (!have($effect`Driving Waterproofly`)) {
+  if (!have($effect`Driving Waterproofly`) && !globalOptions.nobarf) {
     throw `We should have gotten Driving Waterproofly before running! Did something go wrong?`;
   }
 
-  if (!canAdventure($location`The Coral Corral`)) {
+  if (!canAdventure($location`The Coral Corral`) && !globalOptions.nobarf) {
     throw `We need to be able to adventure at Coral Corral! Did we fail to unlock it?`;
   }
 
