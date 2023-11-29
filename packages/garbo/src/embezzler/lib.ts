@@ -16,6 +16,7 @@ import { OutfitSpec } from "grimoire-kolmafia";
 
 import { Macro } from "../combat";
 import { embezzler } from "../lib";
+import { globalOptions } from "../config";
 
 /**
  * Configure the behavior of the fights in use in different parts of the fight engine
@@ -44,6 +45,7 @@ export interface RunOptions {
 export function checkUnderwater(): boolean {
   // first check to see if underwater even makes sense
   if (
+    !globalOptions.nobarf &&
     questStep("questS01OldGuy") >= 0 &&
     !(get("_envyfishEggUsed") || have($item`envyfish egg`)) &&
     (get("_garbo_weightChain", false) || !have($familiar`Pocket Professor`)) &&
