@@ -119,6 +119,7 @@ function canContinue(): boolean {
 function shouldGoUnderwater(): boolean {
   if (!sober()) return false;
   if (myLevel() < 11) return false;
+  if (globalOptions.nobarf) return false;
 
   if (questStep("questS01OldGuy") === -1) {
     visitUrl("place.php?whichplace=sea_oldman&action=oldman_oldman");
