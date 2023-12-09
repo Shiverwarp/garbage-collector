@@ -2675,7 +2675,7 @@ function setupItemStealZones() {
     164: 3,
     165: 4,
     166: 1,
-    888: 4,
+    888: 5,
     889: 5,
   });
 }
@@ -2732,6 +2732,7 @@ function voidMonster(): void {
   postCombatActions();
 }
 
+const BAD_CLL_MONSTERS = $monsters`alert mariachi`;
 type FreeKill = { spec?: OutfitSpec; macro: Skill | Item; used: () => boolean };
 const freeKills: FreeKill[] = [
   {
@@ -2802,7 +2803,7 @@ function killRobortCreaturesForFree() {
     CombatLoversLocket.reminiscesLeft() > 1
   ) {
     const roboTarget = CombatLoversLocket.findMonster(
-      () => true,
+      (monster: Monster) => !BAD_CLL_MONSTERS.includes(monster),
       (monster: Monster) =>
         valueDrops(monster) +
         garboValue(Robortender.dropFrom(monster)) * Robortender.dropChance(),
@@ -2810,7 +2811,7 @@ function killRobortCreaturesForFree() {
 
     if (!roboTarget) break;
     const regularTarget = CombatLoversLocket.findMonster(
-      () => true,
+      (monster: Monster) => !BAD_CLL_MONSTERS.includes(monster),
       valueDrops,
     );
     const familiar =
