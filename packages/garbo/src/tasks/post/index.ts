@@ -74,19 +74,23 @@ const BARF_PLANTS = [
 function floristFriars(): GarboPostTask {
   return {
     name: "Florist Plants",
-    completed: () => FloristFriar.isFull($location`Barf Mountain`),
+    completed: () => FloristFriar.isFull($location`The Coral Corral`),
     ready: () =>
       (get("lastAdventure") === $location`The Coral Corral` ||
         get("lastAdventure") === $location`The Briny Deeps`) &&
       FloristFriar.have() &&
-      BARF_PLANTS.some((flower) => flower.available($location`Barf Mountain`)),
+      BARF_PLANTS.some((flower) =>
+        flower.available($location`The Coral Corral`),
+      ),
     do: () =>
       BARF_PLANTS.filter((flower) =>
-        flower.available($location`Barf Mountain`),
+        flower.available($location`The Coral Corral`),
       ).forEach((flower) => flower.plant()),
     available: () =>
       FloristFriar.have() &&
-      BARF_PLANTS.some((flower) => flower.available($location`Barf Mountain`)),
+      BARF_PLANTS.some((flower) =>
+        flower.available($location`The Coral Corral`),
+      ),
   };
 }
 
