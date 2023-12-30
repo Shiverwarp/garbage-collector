@@ -48,19 +48,14 @@ import {
   setChoice,
   sober,
 } from "../lib";
-import {
-  embezzlerOutfit,
-  fishyPrepOutfit,
-  freeFightOutfit,
-  latteFilled,
-  tryFillLatte,
-} from "../outfit";
+import { embezzlerOutfit, fishyPrepOutfit, freeFightOutfit } from "../outfit";
 import { digitizedMonstersRemaining } from "../turns";
 import { deliverThesisIfAble } from "../fights";
 import { computeDiet, countCopies } from "../diet";
 
 import { GarboTask } from "./engine";
 import { embezzlerCount } from "../embezzler";
+import { shouldFillLatte, tryFillLatte } from "../resources";
 
 const steveAdventures: Map<Location, number[]> = new Map([
   [$location`The Haunted Bedroom`, [1, 3, 1]],
@@ -142,7 +137,7 @@ function shouldGoUnderwater(): boolean {
 const fishyPrepTasks: GarboTask[] = [
   {
     name: "Latte",
-    completed: () => latteFilled(),
+    completed: () => !shouldFillLatte(),
     do: () => tryFillLatte(),
     spendsTurn: false,
   },
