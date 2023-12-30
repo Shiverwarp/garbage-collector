@@ -18,13 +18,13 @@ import {
 function averageYrValue(
   location: Location,
   forceItemDrops: boolean,
-  options: WandererFactoryOptions
+  options: WandererFactoryOptions,
 ) {
   const badAttributes = ["LUCKY", "ULTRARARE", "BOSS"];
   const rates = appearanceRates(location);
   const monsters = getMonsters(location).filter(
     (m) =>
-      !badAttributes.some((s) => m.attributes.includes(s)) && rates[m.name] > 0
+      !badAttributes.some((s) => m.attributes.includes(s)) && rates[m.name] > 0,
   );
 
   const canDuplicate =
@@ -35,7 +35,7 @@ function averageYrValue(
     return (
       sum(monsters, (m) => {
         const items = itemDropsArray(m).filter((drop) =>
-          ["", "n"].includes(drop.type)
+          ["", "n"].includes(drop.type),
         );
         const duplicateFactor =
           canDuplicate && !m.attributes.includes("NOCOPY") ? 2 : 1;
@@ -57,16 +57,16 @@ function averageYrValue(
 
 function monsterValues(
   forceItemDrops: boolean,
-  options: WandererFactoryOptions
+  options: WandererFactoryOptions,
 ): Map<Location, number> {
   const values = new Map<Location, number>();
   for (const location of Location.all().filter((l) =>
-    canAdventureOrUnlock(l)
+    canAdventureOrUnlock(l),
   )) {
     values.set(
       location,
       averageYrValue(location, forceItemDrops, options) +
-        options.freeFightExtraValue(location)
+        options.freeFightExtraValue(location),
     );
   }
   return values;
@@ -76,30 +76,34 @@ function monsterValues(
 export function freefightFactory(
   type: DraggableFight,
   locationSkiplist: Location[],
-  options: WandererFactoryOptions
+  options: WandererFactoryOptions,
 ): WandererTarget[] {
   if (type === "yellow ray" || type === "freefight") {
     const validLocations = Location.all().filter(
       (location) =>
-        canWander(location, "yellow ray") && canAdventureOrUnlock(location)
+        canWander(location, "yellow ray") && canAdventureOrUnlock(location),
     );
     const locationValues = monsterValues(type === "yellow ray", options);
 
-    const bestZones = new Set<Location>([
-      maxBy(validLocations, (l: Location) => locationValues.get(l) ?? 0),
-    ]);
+    const bestZones = new Set<Location>(
+      validLocations.length > 0
+        ? [maxBy(validLocations, (l: Location) => locationValues.get(l) ?? 0)]
+        : [],
+    );
     for (const unlockableZone of UnlockableZones) {
       const extraLocations = Location.all().filter(
-        (l) => l.zone === unlockableZone.zone && !locationSkiplist.includes(l)
+        (l) => l.zone === unlockableZone.zone && !locationSkiplist.includes(l),
       );
-      bestZones.add(
-        maxBy(extraLocations, (l: Location) => locationValues.get(l) ?? 0)
-      );
+      if (extraLocations.length > 0) {
+        bestZones.add(
+          maxBy(extraLocations, (l: Location) => locationValues.get(l) ?? 0),
+        );
+      }
     }
     if (bestZones.size > 0) {
       return [...bestZones].map(
         (l: Location) =>
-          new WandererTarget(`Yellow Ray ${l}`, l, locationValues.get(l) ?? 0)
+          new WandererTarget(`Yellow Ray ${l}`, l, locationValues.get(l) ?? 0),
       );
     }
   }

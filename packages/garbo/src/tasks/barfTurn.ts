@@ -52,21 +52,19 @@ import {
   romanticMonsterImpossible,
   sober,
 } from "../lib";
-import {
-  barfOutfit,
-  embezzlerOutfit,
-  freeFightOutfit,
-  latteFilled,
-  tryFillLatte,
-} from "../outfit";
+import { barfOutfit, embezzlerOutfit, freeFightOutfit } from "../outfit";
 import { digitizedMonstersRemaining } from "../turns";
 import { deliverThesisIfAble } from "../fights";
 import { computeDiet, consumeDiet } from "../diet";
 
 import { GarboTask } from "./engine";
-import { completeBarfQuest } from "../resources/realm";
 import { garboValue } from "../garboValue";
-import { bestMidnightAvailable } from "../resources";
+import {
+  bestMidnightAvailable,
+  completeBarfQuest,
+  shouldFillLatte,
+  tryFillLatte,
+} from "../resources";
 import { acquire } from "../acquire";
 
 const steveAdventures: Map<Location, number[]> = new Map([
@@ -367,7 +365,7 @@ const NonBarfTurnTasks: AlternateTask[] = [
 const BarfTurnTasks: GarboTask[] = [
   {
     name: "Latte",
-    completed: () => latteFilled(),
+    completed: () => !shouldFillLatte(),
     do: () => tryFillLatte(),
     spendsTurn: false,
   },
