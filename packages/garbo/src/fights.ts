@@ -1618,7 +1618,12 @@ const freeRunFightSources = [
       propertyManager.setChoices({
         1215: 2, // Gingerbread Civic Center advance clock
       });
-      retrieveItem($item`gingerbread cigarette`);
+      acquire(
+        1,
+        $item`gingerbread cigarette`,
+        globalOptions.prefs.valueOfFreeFight,
+        true,
+      );
       garboAdventure(
         $location`Gingerbread Upscale Retail District`,
         Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
@@ -1659,7 +1664,12 @@ const freeRunFightSources = [
       propertyManager.setChoices({
         1215: 2, // Gingerbread Civic Center advance clock
       });
-      retrieveItem($item`gingerbread cigarette`);
+      acquire(
+        1,
+        $item`gingerbread cigarette`,
+        globalOptions.prefs.valueOfFreeFight,
+        true,
+      );
       garboAdventure(
         $location`Gingerbread Civic Center`,
         Macro.if_(
@@ -1834,7 +1844,12 @@ const freeRunFightSources = [
       propertyManager.setChoices({
         1215: 2, // Gingerbread Civic Center advance clock
       });
-      retrieveItem($item`gingerbread cigarette`);
+      acquire(
+        1,
+        $item`gingerbread cigarette`,
+        globalOptions.prefs.valueOfFreeFight,
+        true,
+      );
       garboAdventure(
         $location`Gingerbread Upscale Retail District`,
         Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
@@ -1904,7 +1919,12 @@ const freeRunFightSources = [
       propertyManager.setChoices({
         1215: 2, // Gingerbread Civic Center advance clock
       });
-      retrieveItem($item`gingerbread cigarette`);
+      acquire(
+        1,
+        $item`gingerbread cigarette`,
+        globalOptions.prefs.valueOfFreeFight,
+        true,
+      );
       garboAdventure(
         $location`Gingerbread Upscale Retail District`,
         Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
