@@ -146,7 +146,7 @@ export function meatMood(
     mood.skill($skill`Bind Lasagmbie`);
   }
 
-  if (getWorkshed() === $item`Asdon Martin keyfob`) {
+  if (getWorkshed() === $item`Asdon Martin keyfob (on ring)`) {
     mood.drive(AsdonMartin.Driving.Waterproofly);
   }
 
@@ -253,7 +253,7 @@ export function freeFightMood(...additionalEffects: Effect[]): Mood {
 
   shrugBadEffects(...additionalEffects);
 
-  if (getWorkshed() === $item`Asdon Martin keyfob`) {
+  if (getWorkshed() === $item`Asdon Martin keyfob (on ring)`) {
     mood.drive(AsdonMartin.Driving.Waterproofly);
   }
 
