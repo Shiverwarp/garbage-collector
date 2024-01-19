@@ -2869,7 +2869,10 @@ function getBofaWishes() {
         Macro.item($item`shadow brick`),
       )
         .if_($monsters`Knob Goblin Mutant`, bofaFreeRun.macro)
-        .if_($monsters`sausage goblin`, Macro.basicCombat())
+        .if_(
+          $monsters`sausage goblin, giant rubber spider, time-spinner prank`,
+          Macro.basicCombat(),
+        )
         .abortWithMsg(
           "Encountered an unknown monster while getting bofa wishes",
         ),
