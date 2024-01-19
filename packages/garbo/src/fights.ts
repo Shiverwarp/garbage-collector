@@ -22,6 +22,7 @@ import {
   Item,
   itemAmount,
   itemDropsArray,
+  itemFact,
   Location,
   mallPrice,
   maximize,
@@ -2298,6 +2299,8 @@ export function freeFights(): void {
     1324: 5, // Fight a random partier
   });
 
+  getBofaWishes();
+
   freeRunFights();
 
   killRobortCreaturesForFree();
@@ -2832,6 +2835,41 @@ function killRobortCreaturesForFree() {
     if (!have($item`drive-by shooting`)) create($item`drive-by shooting`);
     Robortender.feed($item`drive-by shooting`);
     setBestLeprechaunAsMeatFamiliar();
+  }
+}
+
+function getBofaWishes() {
+  if (
+    itemFact($monster`BASIC Elemental`) !== $item`pocket wish` ||
+    itemFact($monster`Fruit Golem`) !== $item`pocket wish`
+  ) {
+    return;
+  }
+
+  let bofaFreeRun = tryFindFreeRun(freeRunConstraints(false));
+  while (
+    bofaFreeRun &&
+    get("_shadowBricksUsed") < 13 &&
+    mallPrice($item`shadow brick`) < 7000 &&
+    canAdventure($location`Cobb's Knob Menagerie, Level 1`) &&
+    get("_bookOfFactsWishes") < 3
+  ) {
+    acquire(1, $item`shadow brick`, 7000, true);
+    setLocation($location`Cobb's Knob Menagerie, Level 1`);
+    freeFightOutfit(toSpec(bofaFreeRun)).dress();
+    garboAdventure(
+      $location`Cobb's Knob Menagerie, Level 1`,
+      Macro.if_(
+        $monsters`BASIC Elemental, Fruit Golem`,
+        Macro.item($item`shadow brick`),
+      )
+        .if_($monsters`Knob Goblin Mutant`, bofaFreeRun.macro)
+        .if_($monsters`sausage goblin`, Macro.basicCombat())
+        .abortWithMsg(
+          "Encountered an unknown monster while getting bofa wishes",
+        ),
+    );
+    bofaFreeRun = tryFindFreeRun(freeRunConstraints(false));
   }
 }
 
