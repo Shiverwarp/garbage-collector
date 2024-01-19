@@ -2856,6 +2856,11 @@ function getBofaWishes() {
   ) {
     acquire(1, $item`shadow brick`, 7000, true);
     setLocation($location`Cobb's Knob Menagerie, Level 1`);
+    useFamiliar(
+      bofaFreeRun.constraints.familiar?.() ??
+        freeFightFamiliar({ canChooseMacro: false }),
+    );
+    bofaFreeRun.constraints.preparation?.();
     freeFightOutfit(toSpec(bofaFreeRun)).dress();
     garboAdventure(
       $location`Cobb's Knob Menagerie, Level 1`,
