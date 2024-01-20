@@ -192,7 +192,7 @@ export function nonOrganAdventures(): void {
     2 * MPA,
   );
 
-  while (get("_loveChocolatesUsed") < 3) {
+  while (get("_loveChocolatesUsed") < 3 && myInebriety() <= inebrietyLimit()) {
     const price = have($item`LOV Extraterrestrial Chocolate`) ? 15000 : 20000;
     const value =
       clamp(3 - get("_loveChocolatesUsed"), 0, 3) * get("valueOfAdventure");
