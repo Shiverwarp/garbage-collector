@@ -40,7 +40,6 @@ import { GarboStrategy, Macro } from "../combat";
 import { globalOptions } from "../config";
 import { wanderer } from "../garboWanderer";
 import {
-  embezzler,
   EMBEZZLER_MULTIPLIER,
   howManySausagesCouldIEat,
   kramcoGuaranteed,
@@ -54,7 +53,7 @@ import { deliverThesisIfAble } from "../fights";
 import { computeDiet, countCopies } from "../diet";
 
 import { GarboTask } from "./engine";
-import { embezzlerCount } from "../embezzler";
+import { copyTargetCount } from "../embezzler";
 import { shouldFillLatte, tryFillLatte } from "../resources";
 
 const steveAdventures: Map<Location, number[]> = new Map([
@@ -70,7 +69,8 @@ const steveAdventures: Map<Location, number[]> = new Map([
 const canDuplicate = () =>
   SourceTerminal.have() && SourceTerminal.duplicateUsesRemaining() > 0;
 const digitizedEmbezzler = () =>
-  SourceTerminal.have() && SourceTerminal.getDigitizeMonster() === embezzler;
+  SourceTerminal.have() &&
+  SourceTerminal.getDigitizeMonster() === globalOptions.target;
 
 const isGhost = () => get("_voteMonster") === $monster`angry ghost`;
 const isMutant = () => get("_voteMonster") === $monster`terrible mutant`;
@@ -99,7 +99,7 @@ function wanderTask(
 let requiredFishyTurns: number;
 export function getRequiredFishyTurns(): number {
   return (requiredFishyTurns ??=
-    countCopies(computeDiet().diet()) + embezzlerCount() + 10); // Extra buffer of 10 turns just in case weirdness
+    countCopies(computeDiet().diet()) + copyTargetCount() + 10); // Extra buffer of 10 turns just in case weirdness
 }
 
 function shouldGoUnderwater(): boolean {
@@ -233,7 +233,8 @@ const fishyPrepTasks: GarboTask[] = [
     name: "Digitize Wanderer",
     completed: () => Counter.get("Digitize Monster") > 0,
     acquire: () =>
-      SourceTerminal.getDigitizeMonster() === embezzler && shouldGoUnderwater()
+      SourceTerminal.getDigitizeMonster() === globalOptions.target &&
+      shouldGoUnderwater()
         ? [{ item: $item`pulled green taffy` }]
         : [],
     outfit: () =>
@@ -265,7 +266,7 @@ const fishyPrepTasks: GarboTask[] = [
         ).meatKill(),
       () =>
         Macro.if_(
-          `(monsterid ${embezzler.id}) && !gotjump && !(pastround 2)`,
+          `(monsterid ${globalOptions.target.id}) && !gotjump && !(pastround 2)`,
           Macro.externalIf(
             shouldGoUnderwater(),
             Macro.item($item`pulled green taffy`),
@@ -303,7 +304,8 @@ const fishyPrepTasks: GarboTask[] = [
   {
     name: "Envyfish Egg",
     ready: () =>
-      have($item`envyfish egg`) && get("envyfishMonster") === embezzler,
+      have($item`envyfish egg`) &&
+      get("envyfishMonster") === globalOptions.target,
     completed: () => get("_envyfishEggUsed"),
     do: () => use($item`envyfish egg`),
     spendsTurn: true,
@@ -318,7 +320,7 @@ const fishyPrepTasks: GarboTask[] = [
       ready: () => have($skill`Fondeluge`) && romanticMonsterImpossible(),
       completed: () => have($effect`Everything Looks Yellow`),
       combat: new GarboStrategy(() =>
-        Macro.if_(embezzler, Macro.meatKill())
+        Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
           .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
           .skill($skill`Fondeluge`),
@@ -335,7 +337,7 @@ const fishyPrepTasks: GarboTask[] = [
       ready: () => have($item`Jurassic Parka`) && romanticMonsterImpossible(),
       completed: () => have($effect`Everything Looks Yellow`),
       combat: new GarboStrategy(() =>
-        Macro.if_(embezzler, Macro.meatKill())
+        Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
           .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
           .skill($skill`Spit jurassic acid`),
@@ -352,7 +354,7 @@ const fishyPrepTasks: GarboTask[] = [
       ready: () => have($skill`Free-For-All`) && romanticMonsterImpossible(),
       completed: () => have($effect`Everything Looks Red`),
       combat: new GarboStrategy(() =>
-        Macro.if_(embezzler, Macro.meatKill())
+        Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
           .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
           .skill($skill`Free-For-All`),
@@ -368,7 +370,7 @@ const fishyPrepTasks: GarboTask[] = [
       ready: () => romanticMonsterImpossible(),
       completed: () => get("shockingLickCharges") === 0,
       combat: new GarboStrategy(() =>
-        Macro.if_(embezzler, Macro.meatKill())
+        Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
           .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
           .skill($skill`Shocking Lick`),
@@ -419,7 +421,7 @@ const fishyPrepTasks: GarboTask[] = [
         ).meatKill(),
       () =>
         Macro.if_(
-          `(monsterid ${embezzler.id}) && !gotjump && !(pastround 2)`,
+          `(monsterid ${globalOptions.target.id}) && !gotjump && !(pastround 2)`,
           Macro.meatKill(),
         ).abort(),
     ),
@@ -434,7 +436,7 @@ const fishyPrepTasks: GarboTask[] = [
       () => Macro.meatKill(),
       () =>
         Macro.if_(
-          `(monsterid ${embezzler.id}) && !gotjump && !(pastround 2)`,
+          `(monsterid ${globalOptions.target.id}) && !gotjump && !(pastround 2)`,
           Macro.meatKill(),
         ).abort(),
     ),
