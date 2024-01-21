@@ -15,7 +15,6 @@ import { DraggableFight } from "garbo-lib";
 import { OutfitSpec } from "grimoire-kolmafia";
 
 import { Macro } from "../combat";
-import { embezzler } from "../lib";
 import { globalOptions } from "../config";
 
 /**
@@ -77,7 +76,8 @@ export function changeLastAdvLocationTask(): {
 } {
   const base = {
     ready: () =>
-      CrystalBall.ponder().get($location`The Dire Warren`) !== embezzler,
+      CrystalBall.ponder().get($location`The Dire Warren`) !==
+      globalOptions.target,
     completed: () => myLocation() !== $location`The Dire Warren`,
   };
   switch (getChangeLastAdvLocationMethod()) {

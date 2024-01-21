@@ -26,6 +26,7 @@ import {
   totalTurnsPlayed,
 } from "kolmafia";
 import { GarboStrategy } from "../combat";
+import { globalOptions } from "../config";
 import { sessionSinceStart } from "../session";
 import { garboValue } from "../garboValue";
 
@@ -39,9 +40,9 @@ export type GarboTask = StrictCombatTask<never, GarboStrategy> & {
 function logEmbezzler(encounterType: string) {
   const isDigitize = encounterType.includes("Digitize Wanderer");
   isDigitize
-    ? eventLog.digitizedEmbezzlersFought++
-    : eventLog.initialEmbezzlersFought++;
-  eventLog.embezzlerSources.push(isDigitize ? "Digitize" : "Unknown Source");
+    ? eventLog.digitizedCopyTargetsFought++
+    : eventLog.initialCopyTargetsFought++;
+  eventLog.copyTargetSources.push(isDigitize ? "Digitize" : "Unknown Source");
 }
 
 /** A base engine for Garbo!
@@ -101,7 +102,8 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
         );
       }
     }
-    const foughtAnEmbezzler = get("lastEncounter") === "Knob Goblin Embezzler";
+    const foughtAnEmbezzler =
+      get("lastEncounter") === globalOptions.target.name;
     if (foughtAnEmbezzler) logEmbezzler(task.name);
     wanderer().clear();
     sessionSinceStart().value(garboValue);

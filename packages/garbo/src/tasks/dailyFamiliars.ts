@@ -27,7 +27,7 @@ import {
 } from "libram";
 import { withStash } from "../clan";
 import { globalOptions } from "../config";
-import { embezzlerCount } from "../embezzler";
+import { copyTargetCount } from "../embezzler";
 import { meatFamiliar, setBestLeprechaunAsMeatFamiliar } from "../familiar";
 import {
   baseMeat,
@@ -43,7 +43,7 @@ import { garboValue } from "../garboValue";
 import { acquire } from "../acquire";
 
 function drivebyValue(): number {
-  const embezzlers = embezzlerCount();
+  const embezzlers = copyTargetCount();
   const cows = estimatedGarboTurns() - embezzlers;
   const marginalRoboWeight = 50;
   const meatPercentDelta =
@@ -56,7 +56,7 @@ function drivebyValue(): number {
 }
 
 function bloodyNoraValue(): number {
-  const embezzlers = embezzlerCount();
+  const embezzlers = copyTargetCount();
   const extraOrbFights = have($item`miniature crystal ball`) ? 1 : 0;
   const possibleGregsFromSpleen =
     Math.floor((spleenLimit() - mySpleenUse()) / 2) * (3 + extraOrbFights);
@@ -86,7 +86,7 @@ function bloodyNoraValue(): number {
 }
 
 function entendreValue(): number {
-  const cows = estimatedGarboTurns() - embezzlerCount();
+  const cows = estimatedGarboTurns() - copyTargetCount();
   const marginalRoboWeight = 50;
   const itemPercent =
     Math.sqrt(55 * marginalRoboWeight) + marginalRoboWeight - 3;

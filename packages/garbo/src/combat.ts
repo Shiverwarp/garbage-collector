@@ -53,7 +53,7 @@ import {
 import { globalOptions, isQuickCombat } from "./config";
 import { canOpenRedPresent, meatFamiliar, timeToMeatify } from "./familiar";
 import { digitizedMonstersRemaining } from "./turns";
-import { embezzler, maxPassiveDamage, monsterManuelAvailable } from "./lib";
+import { maxPassiveDamage, monsterManuelAvailable } from "./lib";
 import { CombatStrategy } from "grimoire-kolmafia";
 
 export function shouldRedigitize(): boolean {
@@ -222,10 +222,7 @@ export class Macro extends StrictMacro {
 
     return this.externalIf(
       shouldRedigitize(),
-      Macro.if_(
-        $monster`Knob Goblin Embezzler`,
-        Macro.trySkill($skill`Digitize`),
-      ),
+      Macro.if_(globalOptions.target, Macro.trySkill($skill`Digitize`)),
     )
       .if_(
         $monsters`sea cowboy, Mer-kin rustler`,
@@ -263,10 +260,7 @@ export class Macro extends StrictMacro {
         digitizedMonstersRemaining() <= 5 - get("_meteorShowerUses") &&
           have($skill`Meteor Lore`) &&
           get("_meteorShowerUses") < 5,
-        Macro.if_(
-          $monster`Knob Goblin Embezzler`,
-          Macro.trySkill($skill`Meteor Shower`),
-        ),
+        Macro.if_(globalOptions.target, Macro.trySkill($skill`Meteor Shower`)),
       )
       .externalIf(
         get("cosmicBowlingBallReturnCombats") < 1,
@@ -376,7 +370,7 @@ export class Macro extends StrictMacro {
     // Ignore unexpected monsters, holiday scaling monsters seem to abort with monsterhpabove
     // Delevel the sausage goblins as otherwise they can kind of hurt
     return this.if_(
-      "monstername sea cow || monstername Knob Goblin Embezzler || monstername sausage goblin",
+      `monstername sea cow || monstername ${globalOptions.target} || monstername sausage goblin`,
       Macro.externalIf(
         have($item`Time-Spinner`),
         Macro.if_(
@@ -660,7 +654,7 @@ export class Macro extends StrictMacro {
       (get("_monsterHabitatsRecalled") === 3 &&
         get("_monsterHabitatsFightsLeft") <= 1);
     return this.if_(
-      embezzler,
+      globalOptions.target,
       Macro.if_(
         $location`The Briny Deeps`,
         Macro.tryCopier($item`pulled green taffy`),
@@ -676,7 +670,7 @@ export class Macro extends StrictMacro {
         .externalIf(
           doneHabitat &&
             get("beGregariousCharges") > 0 &&
-            (get("beGregariousMonster") !== embezzler ||
+            (get("beGregariousMonster") !== globalOptions.target ||
             have($item`miniature crystal ball`)
               ? get("beGregariousFightsLeft") === 0
               : get("beGregariousFightsLeft") <= 1),
@@ -685,7 +679,7 @@ export class Macro extends StrictMacro {
         .externalIf(
           have($skill`Just the Facts`) &&
             get("_monsterHabitatsRecalled") < 3 &&
-            (get("_monsterHabitatsMonster") !== embezzler ||
+            (get("_monsterHabitatsMonster") !== globalOptions.target ||
             have($item`miniature crystal ball`)
               ? get("_monsterHabitatsFightsLeft") === 0
               : get("_monsterHabitatsFightsLeft") <= 1),
@@ -697,7 +691,7 @@ export class Macro extends StrictMacro {
           Macro.trySkill($skill`Recall Facts: %phylum Circadian Rhythms`),
         )
         .externalIf(
-          SourceTerminal.getDigitizeMonster() !== embezzler ||
+          SourceTerminal.getDigitizeMonster() !== globalOptions.target ||
             shouldRedigitize(),
           Macro.tryCopier($skill`Digitize`),
         )
@@ -710,7 +704,9 @@ export class Macro extends StrictMacro {
           Macro.tryCopier($item`LOV Enamorang`),
         )
         .meatKill(),
-    ).abortWithMsg(`Expected ${embezzler} but encountered something else.`);
+    ).abortWithMsg(
+      `Expected ${globalOptions.target} but encountered something else.`,
+    );
   }
 
   static embezzler(): Macro {
@@ -731,7 +727,7 @@ function customizeMacro<M extends StrictMacro>(macro: M) {
       Macro.externalIf(
         haveEquipped($item`backup camera`) &&
           get("_backUpUses") < 11 &&
-          get("lastCopyableMonster") === $monster`Knob Goblin Embezzler` &&
+          get("lastCopyableMonster") === globalOptions.target &&
           myFamiliar() === meatFamiliar(),
         Macro.skill($skill`Back-Up to your Last Enemy`).step(macro),
         Macro.basicCombat(),
