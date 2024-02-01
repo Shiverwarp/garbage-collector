@@ -1957,7 +1957,7 @@ const freeRunFightSources = [
           myClass() === $class`Accordion Thief` ||
           myClass() === $class`Disco Bandit`;
         const bestPickpocketItem =
-          $items`tiny black hole, mime army infiltration glove`.find(
+          $items`mime army infiltration glove, tiny black hole`.find(
             (item) => have(item) && canEquip(item),
           );
         // Base drop is 30%, so 1% pickpocket gives .003
