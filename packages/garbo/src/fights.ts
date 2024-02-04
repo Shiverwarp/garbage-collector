@@ -2651,7 +2651,6 @@ function getBestItemStealZone(mappingMonster = false): ItemStealZone | null {
 
 function setupItemStealZones() {
   // Haunted Library is full of free noncombats
-  propertyManager.set({ lightsOutAutomation: 2 });
   propertyManager.setChoices({
     163: 4,
     164: 3,
