@@ -34,7 +34,7 @@ export const maximizeMeat = (): boolean =>
         : ["underwater familiar"]),
     ],
     {
-      preventEquip: $items`anemoney clip, cursed magnifying glass, Kramco Sausage-o-Matic™, cheap sunglasses`,
+      preventEquip: $items`anemoney clip, cursed magnifying glass, Kramco Sausage-o-Matic™, cheap sunglasses, over-the-shoulder Folder Holder`,
     },
   ).maximize();
 
