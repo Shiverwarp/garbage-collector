@@ -1,4 +1,5 @@
 import {
+  adv1,
   availableChoiceOptions,
   canAdventure,
   cliExecute,
@@ -36,6 +37,7 @@ import {
   JuneCleaver,
   set,
   undelay,
+  withProperty,
 } from "libram";
 import { GarboStrategy, Macro } from "../../combat";
 import { globalOptions } from "../../config";
@@ -186,10 +188,13 @@ function juneCleaver(): GarboPostTask {
       teleportEffects.every((e) => !have(e)) &&
       myAdventures() > 0,
     completed: () => get("_juneCleaverFightsLeft") > 0,
-    do: () =>
-      myInebriety() > inebrietyLimit()
-        ? $location`Drunken Stupor`
-        : $location`Noob Cave`,
+    do: () => {
+      const location =
+        myInebriety() > inebrietyLimit()
+          ? $location`Drunken Stupor`
+          : $location`Noob Cave`;
+      withProperty("recoveryScript", "", () => adv1(location, 1));
+    },
     outfit: { weapon: $item`June cleaver` },
     combat: new GarboStrategy(() =>
       Macro.abortWithMsg(
