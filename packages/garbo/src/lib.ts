@@ -14,6 +14,7 @@ import {
   handlingChoice,
   haveEquipped,
   haveSkill,
+  holiday,
   inebrietyLimit,
   isDarkMode,
   Item,
@@ -79,6 +80,7 @@ import {
   CombatLoversLocket,
   Counter,
   ensureFreeRun,
+  FindActionSourceConstraints,
   get,
   getKramcoWandererChance,
   getTodaysHolidayWanderers,
@@ -93,6 +95,8 @@ import {
   SongBoom,
   SourceTerminal,
   sum,
+  tryFindBanish,
+  tryFindFreeRun,
   uneffect,
 } from "libram";
 import { acquire } from "./acquire";
@@ -286,14 +290,21 @@ export function tryFeast(familiar: Familiar): void {
   }
 }
 
-export const ltbRun: () => ActionSource = () => {
-  return ensureFreeRun({
-    requireUnlimited: () => true,
-    noFamiliar: () => true,
-    noRequirements: () => true,
-    maximumCost: () => get("autoBuyPriceLimit") ?? 20000,
-  });
+export function tryFindFreeRunOrBanish(
+  constraints?: FindActionSourceConstraints,
+): ActionSource | null {
+  return tryFindFreeRun(constraints) ?? tryFindBanish(constraints);
+}
+
+const ltbRestraints: FindActionSourceConstraints = {
+  requireUnlimited: () => true,
+  noFamiliar: () => true,
+  noRequirements: () => true,
+  maximumCost: () => get("autoBuyPriceLimit"),
 };
+export function ltbRun(): ActionSource {
+  return tryFindFreeRunOrBanish(ltbRestraints) ?? ensureFreeRun(ltbRestraints);
+}
 
 export function coinmasterPrice(item: Item): number {
   // TODO: Get this from coinmasters.txt if more are needed
@@ -632,13 +643,72 @@ export function freeRunConstraints(latteActionSource: boolean): {
   };
 }
 
-export function dogOrHolidayWanderer(extraEncounters: string[] = []): boolean {
+// Barf setup info
+const olfactionCopies = have($skill`Transcendent Olfaction`) ? 3 : 0;
+const gallapagosCopies = have($skill`Gallapagosian Mating Call`) ? 1 : 0;
+const garbageTourists = 1 + olfactionCopies + gallapagosCopies,
+  touristFamilies = 1,
+  angryTourists = 1;
+const barfTourists = garbageTourists + touristFamilies + angryTourists;
+export const garbageTouristRatio = garbageTourists / barfTourists;
+const touristFamilyRatio = touristFamilies / barfTourists;
+// 30 tourists till NC, with families counting as 3
+// Estimate number of turns till the counter hits 27
+// then estimate the expected number of turns required to hit a counter of >= 30
+export const turnsToNC =
+  (27 * barfTourists) /
+    (garbageTourists + angryTourists + 3 * touristFamilies) +
+  1 * touristFamilyRatio +
+  2 * (1 - touristFamilyRatio) * touristFamilyRatio +
+  3 * (1 - touristFamilyRatio) * (1 - touristFamilyRatio);
+
+const GHOST_DOG_ADVENTURES = [
+  "Puttin' it on Wax",
+  "Wooof! Wooooooof!",
+  "Playing Fetch*",
+  "Your Dog Found Something Again",
+] as const;
+
+const JUNE_CLEAVER_ADVENTURES = [
+  "Aunts not Ants",
+  "Bath Time",
+  "Beware of Aligator",
+  "Delicious Sprouts",
+  "Hypnotic Master",
+  "Lost and Found",
+  "Poetic Justice",
+  "Summer Days",
+  "Teacher's Pet",
+] as const;
+
+type LastAdventureOptions = {
+  extraEncounters: string[];
+  includeHolidayWanderers: boolean;
+  includeJuneCleaver: boolean;
+  includeGhostDog: boolean;
+};
+const DEFAULT_LAST_ADVENTURE_OPTIONS = {
+  extraEncounters: [],
+  includeGhostDog: true,
+  includeHolidayWanderers: true,
+  includeJuneCleaver: true,
+} as const;
+export function lastAdventureWasWeird(
+  options: Partial<LastAdventureOptions> = {},
+): boolean {
+  const {
+    extraEncounters,
+    includeGhostDog,
+    includeHolidayWanderers,
+    includeJuneCleaver,
+  } = { ...DEFAULT_LAST_ADVENTURE_OPTIONS, ...options };
   return [
     ...extraEncounters,
-    "Wooof! Wooooooof!",
-    "Playing Fetch*",
-    "Your Dog Found Something Again",
-    ...getTodaysHolidayWanderers().map((monster) => monster.name),
+    ...(includeGhostDog ? GHOST_DOG_ADVENTURES : []),
+    ...(includeHolidayWanderers
+      ? getTodaysHolidayWanderers().map((monster) => monster.name)
+      : []),
+    ...(includeJuneCleaver ? JUNE_CLEAVER_ADVENTURES : []),
   ].includes(get("lastEncounter"));
 }
 
@@ -984,4 +1054,10 @@ export function setCombatFlags(...flags: { flag: string; value: boolean }[]) {
       true)
     }`,
   );
+}
+
+export function aprilFoolsRufus() {
+  if (holiday().includes("April Fool's Day")) {
+    visitUrl("questlog.php?which=7");
+  }
 }

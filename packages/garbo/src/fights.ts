@@ -104,7 +104,6 @@ import {
   set,
   SourceTerminal,
   sum,
-  tryFindFreeRun,
   undelay,
   withChoice,
 } from "libram";
@@ -140,11 +139,11 @@ import {
   setBestLeprechaunAsMeatFamiliar,
 } from "./familiar";
 import {
+  aprilFoolsRufus,
   asArray,
   baseMeat,
   bestShadowRift,
   burnLibrams,
-  dogOrHolidayWanderer,
   ESTIMATED_OVERDRUNK_TURNS,
   eventLog,
   expectedEmbezzlerProfit,
@@ -153,6 +152,7 @@ import {
   getUsingFreeBunnyBanish,
   HIGHLIGHT,
   kramcoGuaranteed,
+  lastAdventureWasWeird,
   logMessage,
   ltbRun,
   mapMonster,
@@ -163,6 +163,7 @@ import {
   romanticMonsterImpossible,
   safeRestore,
   setChoice,
+  tryFindFreeRunOrBanish,
   userConfirmDialog,
   withLocation,
 } from "./lib";
@@ -250,7 +251,7 @@ function embezzlerSetup() {
     setChoice(582, 1);
     setChoice(579, 3);
     while (get("lastTempleAdventures") < myAscensions()) {
-      const run = tryFindFreeRun(freeRunConstraints(false)) ?? ltbRun();
+      const run = tryFindFreeRunOrBanish(freeRunConstraints(false)) ?? ltbRun();
       if (!run) break;
       run.constraints.preparation?.();
       setLocation($location`The Hidden Temple`);
@@ -381,18 +382,20 @@ function startWandererCounter() {
         );
       } else {
         print("You do not have gregs active, so this is a regular free run.");
-        run = tryFindFreeRun(freeRunConstraints(false)) ?? ltbRun();
+        run = tryFindFreeRunOrBanish(freeRunConstraints(false)) ?? ltbRun();
         run.constraints.preparation?.();
         setLocation($location`The Haunted Kitchen`);
         freeFightOutfit(toSpec(run)).dress();
       }
       garboAdventure(
         $location`The Haunted Kitchen`,
-        Macro.if_(globalOptions.target, Macro.embezzler()).step(run.macro),
+        Macro.if_(globalOptions.target, Macro.embezzler("wanderer")).step(
+          run.macro,
+        ),
       );
     } while (
       get("lastCopyableMonster") === $monster`Government agent` ||
-      dogOrHolidayWanderer(["Lights Out in the Kitchen"])
+      lastAdventureWasWeird({ extraEncounters: ["Lights Out in the Kitchen"] })
     );
   }
 }
@@ -489,6 +492,7 @@ export function dailyFights(): void {
             runEmbezzlerFight(fightSource, {
               macro: macro(),
               useAuto: false,
+              action: "Pocket Professor",
             });
             eventLog.initialCopyTargetsFought +=
               1 + get("_pocketProfessorLectures") - startLectures;
@@ -557,7 +561,7 @@ export function dailyFights(): void {
         setLocation(location);
         embezzlerOutfit({ ...nextFight.spec, ...famSpec }, location).dress();
 
-        runEmbezzlerFight(nextFight);
+        runEmbezzlerFight(nextFight, { action: nextFight.name });
         postCombatActions();
 
         print(`Finished ${nextFight.name}`);
@@ -692,7 +696,7 @@ class FreeRunFight extends FreeFight {
         noFamiliar: () => "familiar" in initialSpec,
         ...this.constraints,
       };
-      const runSource = tryFindFreeRun(constraints);
+      const runSource = tryFindFreeRunOrBanish(constraints);
       if (!runSource) break;
       runSource.constraints.preparation?.();
       const mergingOutfit = Outfit.from(
@@ -1335,6 +1339,7 @@ const freeFightSources = [
         !ClosedCircuitPayphone.rufusTarget()
       ) {
         ClosedCircuitPayphone.chooseQuest(() => 2); // Choose an artifact (not supporting boss for now)
+        aprilFoolsRufus();
       }
 
       runShadowRiftTurn();
@@ -1348,6 +1353,7 @@ const freeFightSources = [
           !ClosedCircuitPayphone.rufusTarget()
         ) {
           ClosedCircuitPayphone.chooseQuest(() => 2);
+          aprilFoolsRufus();
         }
         if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
           equip($item`continuum transfunctioner`);
