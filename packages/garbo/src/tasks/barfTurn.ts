@@ -681,7 +681,7 @@ export const BarfTurnQuest: Quest<GarboTask> = {
     {
       name: "Ranch",
       completed: () => myAdventures() === 0,
-      outfit: () => barfOutfit(),
+      outfit: () => barfOutfit({}),
       do: $location`The Coral Corral`,
       combat: new GarboStrategy(
         () => Macro.meatKill(),
