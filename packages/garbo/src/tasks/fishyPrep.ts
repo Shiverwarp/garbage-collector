@@ -410,14 +410,17 @@ const fishyPrepTasks: GarboTask[] = [
   },
   {
     name: "Banish Cowboy",
-    completed: () => isBanished($monster`sea cowboy`),
-    outfit: () => fishyPrepOutfit({ equip: $items`cursed monkey's paw` }),
+    // We don't need to banish if we already have the required turns. We will banish during normal barf turns otherwise.
+    completed: () =>
+      isBanished($monster`sea cowboy`) ||
+      haveEffect($effect`Fishy`) >= getRequiredFishyTurns(),
+    outfit: () => fishyPrepOutfit({ equip: $items`spring shoes` }),
     do: () => $location`The Coral Corral`,
     combat: new GarboStrategy(
       () =>
         Macro.if_(
           $monster`sea cowboy`,
-          Macro.skill($skill`Monkey Slap`),
+          Macro.skill($skill`Spring Kick`).trySkill($skill`Spring Away`),
         ).meatKill(),
       () =>
         Macro.if_(

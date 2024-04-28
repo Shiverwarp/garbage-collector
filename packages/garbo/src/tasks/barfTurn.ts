@@ -2,6 +2,7 @@ import {
   availableAmount,
   canAdventure,
   eat,
+  isBanished,
   Location,
   mallPrice,
   maximize,
@@ -735,6 +736,25 @@ export const NonBarfTurnQuest: Quest<GarboTask> = {
 export const BarfTurnQuest: Quest<GarboTask> = {
   name: "Barf Turn",
   tasks: [
+    {
+      name: "Banish Cowboy Barf",
+      completed: () => isBanished($monster`sea cowboy`),
+      outfit: () => barfOutfit({ equip: $items`spring shoes` }),
+      do: () => $location`The Coral Corral`,
+      combat: new GarboStrategy(
+        () =>
+          Macro.if_(
+            $monster`sea cowboy`,
+            Macro.skill($skill`Spring Kick`).trySkill($skill`Spring Away`),
+          ).meatKill(),
+        () =>
+          Macro.if_(
+            `(monsterid ${globalOptions.target.id}) && !gotjump && !(pastround 2)`,
+            Macro.meatKill(),
+          ).abort(),
+      ),
+      spendsTurn: true,
+    },
     {
       name: "Ranch",
       completed: () => myAdventures() === 0,
