@@ -32,6 +32,8 @@ export function wanderer(): WandererManager {
           ? $monsters`sausage goblin`
           : []),
       ],
+      valueOfAdventure: get("valueOfAdventure"),
+      takeTurnForProfit: true,
     });
   }
   return _wanderer;

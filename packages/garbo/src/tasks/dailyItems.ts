@@ -24,6 +24,7 @@ import {
   sellsItem,
   toItem,
   use,
+  useFamiliar,
   useSkill,
   visitUrl,
 } from "kolmafia";
@@ -34,6 +35,7 @@ import {
   $location,
   $skill,
   $skills,
+  AprilingBandHelmet,
   BurningLeaves,
   ChateauMantegna,
   ClosedCircuitPayphone,
@@ -56,7 +58,10 @@ import {
   augustSummonTasks,
   candyMapDailyTasks,
   doingGregFight,
+  getBestAprilInstruments,
 } from "../resources";
+import { meatFamiliar } from "../familiar";
+import getExperienceFamiliars from "../familiar/experienceFamiliars";
 
 const SummonTomes = $skills`Summon Snowcones, Summon Stickers, Summon Sugar Sheets, Summon Rad Libs, Summon Smithsness`;
 const Wads = $items`twinkly wad, cold wad, stench wad, hot wad, sleaze wad, spooky wad`;
@@ -130,6 +135,16 @@ function pickCargoPocket(): void {
     cliExecute(`cargo ${Math.trunc(maxBy(pockets, 1)[0])}`);
   }
 }
+
+const chooseAprilFamiliar = () => {
+  const experienceFamiliars = getExperienceFamiliars().filter(
+    ({ familiar }) => familiar.experience <= 360,
+  );
+  if (experienceFamiliars.length) {
+    return maxBy(experienceFamiliars, "expectedValue").familiar;
+  }
+  return meatFamiliar().experience <= 360 ? meatFamiliar() : null;
+};
 
 const SummonTasks: GarboTask[] = [
   ...SummonTomes.map(
@@ -438,14 +453,6 @@ const DailyItemTasks: GarboTask[] = [
     spendsTurn: false,
   },
   {
-    name: "Wardrobe-o-Matic",
-    ready: () => have($item`wardrobe-o-matic`),
-    completed: () => have($item`futuristic shirt`),
-    do: () => use($item`wardrobe-o-matic`),
-    limit: { skip: 1 },
-    spendsTurn: false,
-  },
-  {
     name: "Candy cane sword cane Shrine Meat",
     ready: () =>
       have($item`candy cane sword cane`) &&
@@ -574,6 +581,32 @@ const DailyItemTasks: GarboTask[] = [
   },
   ...augustSummonTasks(),
   ...candyMapDailyTasks(),
+  {
+    name: "Get April Instruments",
+    completed: () => !AprilingBandHelmet.canJoinSection(),
+    do: () =>
+      getBestAprilInstruments().forEach((instrument) =>
+        AprilingBandHelmet.joinSection(instrument),
+      ),
+    spendsTurn: false,
+  },
+  {
+    name: "Play the April piccolo",
+    ready: () => have($item`Apriling band piccolo`),
+    do: () => {
+      let familiar = chooseAprilFamiliar();
+      while (
+        familiar &&
+        AprilingBandHelmet.canPlay($item`Apriling band piccolo`)
+      ) {
+        useFamiliar(familiar);
+        AprilingBandHelmet.play($item`Apriling band piccolo`);
+        familiar = chooseAprilFamiliar();
+      }
+    },
+    completed: () => !AprilingBandHelmet.canPlay($item`Apriling band piccolo`),
+    spendsTurn: false,
+  },
 ];
 
 export const DailyItemsQuest: Quest<GarboTask> = {

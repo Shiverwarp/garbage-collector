@@ -78,6 +78,7 @@ import {
   $stat,
   $thrall,
   ActionSource,
+  AprilingBandHelmet,
   AsdonMartin,
   CinchoDeMayo,
   clamp,
@@ -814,6 +815,42 @@ function molemanReady() {
 
 const freeFightSources = [
   new FreeFight(
+    () =>
+      have($item`Apriling band quad tom`)
+        ? $item`Apriling band quad tom`.dailyusesleft
+        : 0,
+    () => {
+      ensureBeachAccess();
+      AprilingBandHelmet.play("Apriling band quad tom");
+      visitUrl("main.php");
+      runCombat();
+    },
+    true,
+    {
+      effects: () =>
+        have($skill`Steely-Eyed Squint`) && !get("_steelyEyedSquintUsed")
+          ? $effects`Steely-Eyed Squint`
+          : [],
+      spec: () => {
+        if (
+          have($item`January's Garbage Tote`) &&
+          !have($item`broken champagne bottle`) &&
+          get("garbageChampagneCharge") > 0
+        ) {
+          cliExecute("fold broken champagne bottle");
+        }
+
+        if (
+          have($item`broken champagne bottle`) &&
+          get("garbageChampagneCharge") > 0
+        ) {
+          return { weapon: $item`broken champagne bottle` };
+        }
+        return {};
+      },
+    },
+  ),
+  new FreeFight(
     () => (wantPills() ? 5 - get("_saberForceUses") : 0),
     () => {
       if (have($familiar`Red-Nosed Snapper`)) {
@@ -1423,11 +1460,9 @@ function latteFight(
       !Latte.ingredientsUnlocked().includes(ingredient) &&
       canAdventure(Latte.locationOf(ingredient)),
     (runSource: ActionSource) => {
-      const location = Latte.locationOf(ingredient);
-      propertyManager.setChoices(
-        wanderer().unsupportedChoices.get(location) ?? {},
-      );
-      garboAdventure(location, runSource.macro);
+      const targetLocation = Latte.locationOf(ingredient);
+      propertyManager.setChoices(wanderer().getChoices(targetLocation));
+      garboAdventure(targetLocation, runSource.macro);
     },
     {
       spec: { equip: $items`latte lovers member's mug` },
@@ -1990,8 +2025,8 @@ const freeRunFightSources = [
       get("_hipsterAdv") < 7 &&
       (have($familiar`Mini-Hipster`) || have($familiar`Artistic Goth Kid`)),
     (runSource: ActionSource) => {
-      propertyManager.setChoices(wanderer().getChoices("backup"));
       const targetLocation = wanderer().getTarget("backup");
+      propertyManager.setChoices(wanderer().getChoices(targetLocation));
       garboAdventure(
         targetLocation,
         Macro.if_(
@@ -2470,7 +2505,8 @@ export function doSausage(): void {
   freeFightOutfit({ equip: $items`Kramco Sausage-o-Matic™` }).dress();
   const currentSausages = get("_sausageFights");
   do {
-    propertyManager.setChoices(wanderer().getChoices("wanderer"));
+    const targetLocation = wanderer().getTarget("wanderer");
+    propertyManager.setChoices(wanderer().getChoices(targetLocation));
     const goblin = $monster`sausage goblin`;
     setLocation(wanderer().getTarget("wanderer"));
     freeFightOutfit(
@@ -2480,7 +2516,7 @@ export function doSausage(): void {
       { wanderOptions: "wanderer" },
     ).dress();
     garboAdventureAuto(
-      wanderer().getTarget("wanderer"),
+      targetLocation,
       Macro.if_(goblin, Macro.basicCombat())
         .ifHolidayWanderer(Macro.basicCombat())
         .abortWithMsg(`Expected ${goblin} but got something else.`),
@@ -2714,8 +2750,9 @@ function voidMonster(): void {
     },
     { wanderOptions: "wanderer" },
   ).dress();
-  propertyManager.setChoices(wanderer().getChoices("wanderer"));
-  garboAdventure(wanderer().getTarget("wanderer"), Macro.basicCombat());
+  const targetLocation = wanderer().getTarget("wanderer");
+  propertyManager.setChoices(wanderer().getChoices(targetLocation));
+  garboAdventure(targetLocation, Macro.basicCombat());
   postCombatActions();
 }
 

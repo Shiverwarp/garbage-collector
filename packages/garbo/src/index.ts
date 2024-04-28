@@ -431,6 +431,7 @@ export function main(argString = ""): void {
       suppressMallPriceCacheMessages: true,
       maximizerCombinationLimit: maximizerCombinationLimit,
       allowNegativeTally: true,
+      spadingScript: "excavator.js",
     });
     let bestHalloweiner = 0;
     if (haveInCampground($item`haunted doghouse`)) {
@@ -586,6 +587,7 @@ export function main(argString = ""): void {
       });
     });
   } finally {
+    cliExecute("spade autoconfirm");
     propertyManager.resetAll();
     set(
       "garboStashItems",
