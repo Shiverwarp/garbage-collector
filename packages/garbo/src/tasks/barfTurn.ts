@@ -24,6 +24,7 @@ import {
   $location,
   $monster,
   $skill,
+  AprilingBandHelmet,
   clamp,
   Counter,
   Delayed,
@@ -46,6 +47,7 @@ import { globalOptions } from "../config";
 import { wanderer } from "../garboWanderer";
 import {
   EMBEZZLER_MULTIPLIER,
+  getBestLuckyAdventure,
   howManySausagesCouldIEat,
   kramcoGuaranteed,
   romanticMonsterImpossible,
@@ -320,6 +322,27 @@ const NonBarfTurnTasks: AlternateTask[] = [
     turns: () => (canGetFusedFuse() ? 1 : 0),
     spendsTurn: true,
     choices: { 1091: 7 },
+  },
+  {
+    name: "Saxophone Lucky",
+    completed: () => !AprilingBandHelmet.canPlay("Apriling band saxophone"),
+    ready: () =>
+      have($item`Apriling band saxophone`) &&
+      getBestLuckyAdventure().location ===
+        $location`The Castle in the Clouds in the Sky (Top Floor)` &&
+      getBestLuckyAdventure().value > get("valueOfAdventure"),
+    do: $location`The Castle in the Clouds in the Sky (Top Floor)`,
+    prepare: () => {
+      if (!have($effect`Lucky!`)) {
+        AprilingBandHelmet.play($item`Apriling band saxophone`);
+      }
+    },
+    outfit: () => (sober() ? {} : { offhand: $item`Drunkula's wineglass` }),
+    combat: new GarboStrategy(() =>
+      Macro.abortWithMsg("Hit unexpected combat!"),
+    ),
+    turns: () => 1,
+    spendsTurn: true,
   },
   {
     name: "Map for Pills",
