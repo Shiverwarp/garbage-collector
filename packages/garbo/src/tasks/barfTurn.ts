@@ -68,6 +68,7 @@ import {
   tryFillLatte,
 } from "../resources";
 import { acquire } from "../acquire";
+import { bestYachtzeeFamiliar } from "../yachtzee/familiar";
 
 const canDuplicate = () =>
   SourceTerminal.have() && SourceTerminal.duplicateUsesRemaining() > 0;
@@ -341,7 +342,40 @@ const NonBarfTurnTasks: AlternateTask[] = [
     combat: new GarboStrategy(() =>
       Macro.abortWithMsg("Hit unexpected combat!"),
     ),
-    turns: () => 1,
+    turns: () =>
+      have($item`Apriling band saxophone`)
+        ? $item`Apriling band saxophone`.dailyusesleft
+        : 0,
+    spendsTurn: true,
+  },
+  {
+    name: "Apriling Yachtzee",
+    completed: () => !AprilingBandHelmet.canPlay("Apriling band tuba"),
+    ready: () => have($item`Apriling band tuba`),
+    do: $location`The Sunken Party Yacht`,
+    prepare: () => {
+      if (!get("noncombatForcerActive")) {
+        AprilingBandHelmet.play($item`Apriling band tuba`);
+      }
+    },
+    outfit: () => {
+      const spec: OutfitSpec = {
+        modifier: ["meat"],
+        familiar: bestYachtzeeFamiliar(),
+        avoid: $items`anemoney clip, cursed magnifying glass, Kramco Sausage-o-Matic™, cheap sunglasses, over-the-shoulder Folder Holder`,
+      };
+      if (!sober()) {
+        spec.equip = $items`Drunkula's wineglass`;
+      }
+      return spec;
+    },
+    combat: new GarboStrategy(() =>
+      Macro.abortWithMsg("Hit unexpected combat!"),
+    ),
+    turns: () =>
+      have($item`Apriling band tuba`)
+        ? $item`Apriling band tuba`.dailyusesleft
+        : 0,
     spendsTurn: true,
   },
   {
