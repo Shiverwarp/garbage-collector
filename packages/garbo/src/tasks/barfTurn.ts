@@ -787,7 +787,7 @@ export const BarfTurnQuest: Quest<GarboTask> = {
           Macro.if_(
             $monster`sea cowboy`,
             Macro.skill($skill`Spring Kick`).trySkill($skill`Spring Away`),
-          ).meatKill(),
+          ).kill(),
         () =>
           Macro.if_(
             `(monsterid ${globalOptions.target.id}) && !gotjump && !(pastround 2)`,
