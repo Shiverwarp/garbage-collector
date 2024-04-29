@@ -328,9 +328,10 @@ const NonBarfTurnTasks: AlternateTask[] = [
     choices: { 1091: 7 },
   },
   {
-    name: "Saxophone Lucky",
+    name: "Apriling Saxophone Lucky (drunk)",
     completed: () => !AprilingBandHelmet.canPlay("Apriling band saxophone"),
     ready: () =>
+      globalOptions.ascend &&
       have($item`Apriling band saxophone`) &&
       getBestLuckyAdventure().location ===
         $location`The Castle in the Clouds in the Sky (Top Floor)` &&
@@ -349,12 +350,39 @@ const NonBarfTurnTasks: AlternateTask[] = [
       have($item`Apriling band saxophone`)
         ? $item`Apriling band saxophone`.dailyusesleft
         : 0,
+    sobriety: "drunk",
     spendsTurn: true,
   },
   {
-    name: "Apriling Yachtzee",
+    name: "Apriling Saxophone Lucky (sober)",
+    completed: () => !AprilingBandHelmet.canPlay("Apriling band saxophone"),
+    ready: () =>
+      !globalOptions.ascend &&
+      have($item`Apriling band saxophone`) &&
+      getBestLuckyAdventure().location ===
+        $location`The Castle in the Clouds in the Sky (Top Floor)` &&
+      getBestLuckyAdventure().value() > get("valueOfAdventure"),
+    do: $location`The Castle in the Clouds in the Sky (Top Floor)`,
+    prepare: () => {
+      if (!have($effect`Lucky!`)) {
+        AprilingBandHelmet.play($item`Apriling band saxophone`);
+      }
+    },
+    outfit: () => (sober() ? {} : { offhand: $item`Drunkula's wineglass` }),
+    combat: new GarboStrategy(() =>
+      Macro.abortWithMsg("Hit unexpected combat!"),
+    ),
+    turns: () =>
+      have($item`Apriling band saxophone`)
+        ? $item`Apriling band saxophone`.dailyusesleft
+        : 0,
+    sobriety: "sober",
+    spendsTurn: true,
+  },
+  {
+    name: "Apriling Yachtzee (drunk)",
     completed: () => !AprilingBandHelmet.canPlay("Apriling band tuba"),
-    ready: () => have($item`Apriling band tuba`),
+    ready: () => have($item`Apriling band tuba`) && globalOptions.ascend,
     choices: { 918: 2 },
     do: $location`The Sunken Party Yacht`,
     prepare: () => {
@@ -380,6 +408,36 @@ const NonBarfTurnTasks: AlternateTask[] = [
       have($item`Apriling band tuba`)
         ? $item`Apriling band tuba`.dailyusesleft
         : 0,
+    sobriety: "drunk",
+    spendsTurn: true,
+  },
+  {
+    name: "Apriling Yachtzee (sober)",
+    completed: () => !AprilingBandHelmet.canPlay("Apriling band tuba"),
+    ready: () => have($item`Apriling band tuba`) && !globalOptions.ascend,
+    choices: { 918: 2 },
+    do: $location`The Sunken Party Yacht`,
+    prepare: () => {
+      if (!get("noncombatForcerActive")) {
+        AprilingBandHelmet.play($item`Apriling band tuba`);
+      }
+    },
+    outfit: () => {
+      const spec: OutfitSpec = {
+        modifier: ["meat"],
+        familiar: bestYachtzeeFamiliar(),
+        avoid: $items`anemoney clip, cursed magnifying glass, Kramco Sausage-o-Matic™, cheap sunglasses, over-the-shoulder Folder Holder`,
+      };
+      return spec;
+    },
+    combat: new GarboStrategy(() =>
+      Macro.abortWithMsg("Hit unexpected combat!"),
+    ),
+    turns: () =>
+      have($item`Apriling band tuba`)
+        ? $item`Apriling band tuba`.dailyusesleft
+        : 0,
+    sobriety: "sober",
     spendsTurn: true,
   },
   {
