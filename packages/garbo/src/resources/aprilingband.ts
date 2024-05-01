@@ -12,16 +12,17 @@ const instruments: {
   {
     instrument: "Apriling band quad tom",
     value: () =>
-      globalOptions.prefs.valueOfFreeFight +
-      0.02 * garboValue($item`spice melange`),
+      (globalOptions.prefs.valueOfFreeFight +
+        0.02 * garboValue($item`spice melange`)) *
+      3,
   },
   {
     instrument: "Apriling band saxophone",
-    value: () => getBestLuckyAdventure().value(),
+    value: () => getBestLuckyAdventure().value() * 3,
   },
   {
     instrument: "Apriling band tuba",
-    value: () => 20000 - get("valueOfAdventure"),
+    value: () => (20000 - get("valueOfAdventure")) * 3,
   },
   {
     instrument: "Apriling band piccolo",
