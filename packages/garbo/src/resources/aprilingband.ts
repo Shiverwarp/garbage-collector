@@ -12,17 +12,16 @@ const instruments: {
   {
     instrument: "Apriling band quad tom",
     value: () =>
-      (globalOptions.prefs.valueOfFreeFight +
-        0.02 * garboValue($item`spice melange`)) *
-      3,
+      globalOptions.prefs.valueOfFreeFight +
+      0.02 * garboValue($item`spice melange`),
   },
   {
     instrument: "Apriling band saxophone",
-    value: () => getBestLuckyAdventure().value() * 3,
+    value: () => getBestLuckyAdventure().value(),
   },
   {
     instrument: "Apriling band tuba",
-    value: () => (20000 - get("valueOfAdventure")) * 3,
+    value: () => 20000 - get("valueOfAdventure"),
   },
   {
     instrument: "Apriling band piccolo",
@@ -32,9 +31,7 @@ const instruments: {
         ...getExperienceFamiliars().map(
           ({ expectedValue }) => expectedValue / 12,
         ),
-      ) *
-      20 *
-      3,
+      ) * 40,
   },
 ];
 
