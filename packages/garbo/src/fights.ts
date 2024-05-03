@@ -2286,6 +2286,31 @@ const freeKillSources = [
           : [],
     },
   ),
+
+  new FreeFight(
+    () =>
+      mallPrice($item`drum machine`) + mallPrice($item`shadow brick`) <
+      0.02 * mallPrice($item`spice melange`)
+        ? clamp(13 - get("_shadowBricksUsed"), 0, 13)
+        : 0,
+    () => {
+      ensureBeachAccess();
+      withMacro(
+        Macro.trySingAlong()
+          .tryHaveSkill($skill`Otoscope`)
+          .item($item`shadow brick`),
+        () => use($item`drum machine`),
+      );
+    },
+    true,
+    {
+      spec: sandwormSpec,
+      effects: () =>
+        have($skill`Emotionally Chipped`) && get("_feelLostUsed") < 3
+          ? $effects`Feeling Lost`
+          : [],
+    },
+  ),
 ];
 
 function embezzlersInProgress(): boolean {
