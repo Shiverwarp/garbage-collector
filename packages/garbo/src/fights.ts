@@ -2299,6 +2299,11 @@ const freeKillSources = [
         : 0,
     () => {
       ensureBeachAccess();
+      const maxBrickPrice = Math.max(
+        0,
+        0.02 * mallPrice($item`spice melange`) - mallPrice($item`drum machine`),
+      );
+      acquire(1, $item`shadow brick`, maxBrickPrice, true);
       withMacro(
         Macro.trySingAlong()
           .tryHaveSkill($skill`Otoscope`)
