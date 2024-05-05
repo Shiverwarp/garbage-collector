@@ -102,6 +102,7 @@ import {
 import { acquire } from "./acquire";
 import { globalOptions } from "./config";
 import { garboAverageValue, garboValue } from "./garboValue";
+import { Outfit } from "grimoire-kolmafia";
 
 export const eventLog: {
   initialCopyTargetsFought: number;
@@ -1064,12 +1065,18 @@ export function aprilFoolsRufus() {
 
 type LuckyAdventure = {
   location: Location;
+  phase: "embezzler" | "yachtzee" | "barf";
   value: () => number;
+  outfit?: () => Outfit;
+  choices?: () => {
+    [choice: number]: string | number;
+  };
 };
 
 const luckyAdventures = [
   {
     location: $location`Cobb's Knob Treasury`,
+    phase: "embezzler",
     value: () =>
       canAdventure($location`Cobb's Knob Treasury`)
         ? EMBEZZLER_MULTIPLIER() * get("valueOfAdventure")
@@ -1077,6 +1084,7 @@ const luckyAdventures = [
   },
   {
     location: $location`The Castle in the Clouds in the Sky (Top Floor)`,
+    phase: "barf",
     value: () =>
       canAdventure($location`The Castle in the Clouds in the Sky (Top Floor)`)
         ? garboValue($item`Mick's IcyVapoHotness Inhaler`)
