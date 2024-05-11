@@ -21,6 +21,10 @@ const instruments: {
     value: () => getBestLuckyAdventure().value() * 3,
   },
   {
+    instrument: "Apriling band tuba",
+    value: () => 20000 - get("valueOfAdventure"),
+  },
+  {
     instrument: "Apriling band piccolo",
     value: () =>
       Math.max(
