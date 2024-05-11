@@ -17,7 +17,6 @@ import {
 } from "kolmafia";
 import {
   $effect,
-  $familiar,
   $item,
   $items,
   $location,
@@ -49,7 +48,6 @@ import {
 } from "../lib";
 import { embezzlerOutfit, fishyPrepOutfit, freeFightOutfit } from "../outfit";
 import { digitizedMonstersRemaining } from "../turns";
-import { deliverThesisIfAble } from "../fights";
 import { computeDiet, countCopies } from "../diet";
 
 import { GarboTask } from "./engine";
@@ -66,8 +64,6 @@ const steveAdventures: Map<Location, number[]> = new Map([
   [$location`The Haunted Laboratory`, [1, 1, 3, 1, 1]],
 ]);
 
-const canDuplicate = () =>
-  SourceTerminal.have() && SourceTerminal.duplicateUsesRemaining() > 0;
 const digitizedEmbezzler = () =>
   SourceTerminal.have() &&
   SourceTerminal.getDigitizeMonster() === globalOptions.target;
@@ -211,17 +207,6 @@ const fishyPrepTasks: GarboTask[] = [
     },
   ),
   {
-    name: "Thesis",
-    ready: () =>
-      have($familiar`Pocket Professor`) &&
-      myAdventures() === 1 + globalOptions.saveTurns &&
-      $familiar`Pocket Professor`.experience >= 400,
-    completed: () => get("_thesisDelivered"),
-    do: () => deliverThesisIfAble(),
-    sobriety: "sober",
-    spendsTurn: true,
-  },
-  {
     name: "Sausage",
     ready: () => myAdventures() <= 1 + globalOptions.saveTurns,
     completed: () => howManySausagesCouldIEat() === 0,
@@ -299,84 +284,6 @@ const fishyPrepTasks: GarboTask[] = [
       ready: () =>
         have($item`cursed magnifying glass`) && get("_voidFreeFights") < 5,
       completed: () => get("cursedMagnifyingGlassCount") !== 13,
-    },
-  ),
-  {
-    name: "Envyfish Egg",
-    ready: () =>
-      have($item`envyfish egg`) &&
-      get("envyfishMonster") === globalOptions.target,
-    completed: () => get("_envyfishEggUsed"),
-    do: () => use($item`envyfish egg`),
-    spendsTurn: true,
-    outfit: embezzlerOutfit,
-    combat: new GarboStrategy(() => Macro.embezzler("envyfish egg")),
-  },
-  wanderTask(
-    "yellow ray",
-    {},
-    {
-      name: "Cheese Wizard Fondeluge",
-      ready: () => have($skill`Fondeluge`) && romanticMonsterImpossible(),
-      completed: () => have($effect`Everything Looks Yellow`),
-      combat: new GarboStrategy(() =>
-        Macro.if_(globalOptions.target, Macro.meatKill())
-          .familiarActions()
-          .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
-          .skill($skill`Fondeluge`),
-      ),
-      duplicate: true,
-      sobriety: "sober",
-    },
-  ),
-  wanderTask(
-    "yellow ray",
-    { shirt: $items`Jurassic Parka`, modes: { parka: "dilophosaur" } },
-    {
-      name: "Spit Acid",
-      ready: () => have($item`Jurassic Parka`) && romanticMonsterImpossible(),
-      completed: () => have($effect`Everything Looks Yellow`),
-      combat: new GarboStrategy(() =>
-        Macro.if_(globalOptions.target, Macro.meatKill())
-          .familiarActions()
-          .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
-          .skill($skill`Spit jurassic acid`),
-      ),
-      sobriety: "sober",
-      duplicate: true,
-    },
-  ),
-  wanderTask(
-    "freefight",
-    {},
-    {
-      name: "Pig Skinner Free-For-All",
-      ready: () => have($skill`Free-For-All`) && romanticMonsterImpossible(),
-      completed: () => have($effect`Everything Looks Red`),
-      combat: new GarboStrategy(() =>
-        Macro.if_(globalOptions.target, Macro.meatKill())
-          .familiarActions()
-          .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
-          .skill($skill`Free-For-All`),
-      ),
-      duplicate: true,
-    },
-  ),
-  wanderTask(
-    "yellow ray",
-    {},
-    {
-      name: "Shocking Lick",
-      ready: () => romanticMonsterImpossible(),
-      completed: () => get("shockingLickCharges") === 0,
-      combat: new GarboStrategy(() =>
-        Macro.if_(globalOptions.target, Macro.meatKill())
-          .familiarActions()
-          .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
-          .skill($skill`Shocking Lick`),
-      ),
-      duplicate: true,
-      sobriety: "sober",
     },
   ),
   {
