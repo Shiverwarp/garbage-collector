@@ -28,7 +28,13 @@ import {
 } from "libram";
 import { NumericModifier } from "libram/dist/modifierTypes";
 import { bonusGear } from "../outfit";
-import { baseMeat, BonusEquipMode, HIGHLIGHT, withLocation } from "../lib";
+import {
+  baseMeat,
+  BonusEquipMode,
+  EMBEZZLER_MULTIPLIER,
+  HIGHLIGHT,
+  withLocation,
+} from "../lib";
 import { computeBarfOutfit } from "../outfit/barf";
 import { estimatedGarboTurns } from "../turns";
 import { getAllDrops } from "./dropFamiliars";
@@ -45,13 +51,14 @@ type CachedOutfit = {
   weight: number;
   meat: number;
   item: number;
+  famexp: number;
   bonus: number;
 };
 
 const outfitCache = new Map<number | Familiar, CachedOutfit>();
 const outfitSlots = $slots`hat, back, shirt, weapon, off-hand, pants, acc1, acc2, acc3, familiar`;
 
-const SPECIAL_FAMILIARS_FOR_CACHING = $familiars`Jill-of-All-Trades`;
+const SPECIAL_FAMILIARS_FOR_CACHING = $familiars`Jill-of-All-Trades, Chest Mimic`;
 const outfitCacheKey = (f: Familiar) =>
   SPECIAL_FAMILIARS_FOR_CACHING.includes(f) ? f : findLeprechaunMultiplier(f);
 
@@ -85,6 +92,7 @@ function getCachedOutfitValues(fam: Familiar) {
       ),
       meat: sum(outfit, (eq: Item) => getModifier("Meat Drop", eq)),
       item: sum(outfit, (eq: Item) => getModifier("Item Drop", eq)),
+      famexp: sum(outfit, (eq: Item) => getModifier("Familiar Experience", eq)),
       bonus: sum(outfit, (eq: Item) => bonuses.get(eq) ?? 0),
     };
     outfitCache.set(outfitCacheKey(fam), values);
@@ -175,11 +183,16 @@ function turnsNeededFromBaseline(
 }
 
 function calculateOutfitValue(f: GeneralFamiliar): MarginalFamiliar {
+  const mimicFamExpValue =
+    (EMBEZZLER_MULTIPLIER() * get("valueOfAdventure")) / 50;
   const outfit = getCachedOutfitValues(f.familiar);
   const outfitValue =
     outfit.bonus +
     outfit.meat * MEAT_DROP_VALUE +
-    outfit.item * ITEM_DROP_VALUE;
+    outfit.item * ITEM_DROP_VALUE +
+    (f.familiar === $familiar`Chest Mimic`
+      ? outfit.famexp * mimicFamExpValue
+      : 0);
   const outfitWeight = outfit.weight;
 
   return { ...f, outfitValue, outfitWeight };
