@@ -215,7 +215,8 @@ export function barfFamiliar(): { familiar: Familiar; extraValue: number } {
   const fullMenu = menu({
     canChooseMacro: true,
     location: $location`The Coral Corral`,
-    includeExperienceFamiliars: false,
+    includeExperienceFamiliars: true,
+    mode: "barf",
   }).map(calculateOutfitValue);
 
   const meatFamiliarEntry = fullMenu.find(({ familiar }) => familiar === meat);

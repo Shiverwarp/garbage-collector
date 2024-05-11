@@ -80,6 +80,7 @@ import {
   ActionSource,
   AprilingBandHelmet,
   AsdonMartin,
+  ChestMimic,
   CinchoDeMayo,
   clamp,
   ClosedCircuitPayphone,
@@ -103,6 +104,7 @@ import {
   Requirement,
   Robortender,
   set,
+  SongBoom,
   SourceTerminal,
   sum,
   undelay,
@@ -237,7 +239,19 @@ function embezzlerSetup() {
   setLocation($location`Friar Ceremony Location`);
   potionSetup(false);
   maximize("MP", false);
-  meatMood("Replacer", 700 + baseMeat).execute(copyTargetCount());
+  meatMood(
+    "Replacer",
+    true,
+    globalOptions.target === $monster`Knob Goblin Embezzler`
+      ? 750 + baseMeat
+      : (globalOptions.target.minMeat + globalOptions.target.maxMeat) / 2 +
+          (SongBoom.have() &&
+          (SongBoom.songChangesLeft() > 0 ||
+            (SongBoom.song() === "Total Eclipse of Your Meat" &&
+              myInebriety() <= inebrietyLimit()))
+            ? 25
+            : 0),
+  ).execute(copyTargetCount());
   safeRestore();
   freeFightMood().execute(50);
   useBuffExtenders();
@@ -412,6 +426,37 @@ function pygmyOptions(equip: Item[] = []): FreeFightOptions {
   };
 }
 
+function familiarSpec(underwater: boolean, fight: string): OutfitSpec {
+  if (!underwater) {
+    if (
+      ChestMimic.have() &&
+      $familiar`Chest Mimic`.experience >= 50 &&
+      get("_mimicEggsObtained") < 11 &&
+      // Backup doesn't apply ML, meaning we die too quickly to get multiple eggs in
+      fight !== "Backup"
+    ) {
+      return { familiar: $familiar`Chest Mimic` };
+    }
+    if (get("_badlyRomanticArrows") === 0) {
+      if (
+        have($familiar`Obtuse Angel`) &&
+        (familiarEquippedEquipment($familiar`Obtuse Angel`) ===
+          $item`quake of arrows` ||
+          retrieveItem($item`quake of arrows`))
+      ) {
+        return {
+          familiar: $familiar`Obtuse Angel`,
+          famequip: $item`quake of arrows`,
+        };
+      }
+      if (have($familiar`Reanimated Reanimator`)) {
+        return { familiar: $familiar`Reanimated Reanimator` };
+      }
+    }
+  }
+  return { familiar: meatFamiliar() };
+}
+
 export function dailyFights(): void {
   if (myInebriety() > inebrietyLimit()) return;
 
@@ -538,26 +583,8 @@ export function dailyFights(): void {
 
         const location = new EmbezzlerFightRunOptions(nextFight).location;
         const underwater = location.environment === "underwater";
-        const shouldCopy = get("_badlyRomanticArrows") === 0 && !underwater;
 
-        // use obtuse angel if have + have quake of arrows, otherwise reanimator
-        // quake of arrows is PvP-stealable and costs ~50k, so don't assume we have it
-        let bestCopier: Familiar | undefined;
-        if (
-          have($familiar`Obtuse Angel`) &&
-          (familiarEquippedEquipment($familiar`Obtuse Angel`) ===
-            $item`quake of arrows` ||
-            retrieveItem($item`quake of arrows`))
-        ) {
-          bestCopier = $familiar`Obtuse Angel`;
-        } else if (have($familiar`Reanimated Reanimator`)) {
-          bestCopier = $familiar`Reanimated Reanimator`;
-        }
-        const familiar = shouldCopy && bestCopier ? bestCopier : meatFamiliar();
-        const famSpec: OutfitSpec = { familiar };
-        if (familiar === $familiar`Obtuse Angel`) {
-          famSpec.famequip = $item`quake of arrows`;
-        }
+        const famSpec = familiarSpec(underwater, nextFight.name);
 
         setLocation(location);
         embezzlerOutfit({ ...nextFight.spec, ...famSpec }, location).dress();

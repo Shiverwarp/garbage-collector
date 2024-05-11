@@ -45,6 +45,7 @@ Mood.setDefaultOptions({
 
 export function meatMood(
   moodType: "Yachtzee" | "Greg" | "Replacer" | "Barf",
+  urKels = false,
   meat = baseMeat,
 ): Mood {
   // Reserve the amount of MP we try to restore before each fight.
@@ -120,7 +121,11 @@ export function meatMood(
     !have($effect`Chorale of Companionship`) ||
     !have($effect`The Ballad of Richie Thingfinder`)
   ) {
-    mood.skill($skill`Fat Leon's Phat Loot Lyric`);
+    mood.skill(
+      urKels
+        ? $skill`Ur-Kel's Aria of Annoyance`
+        : $skill`Fat Leon's Phat Loot Lyric`,
+    );
   }
 
   mood.skill($skill`The Polka of Plenty`);

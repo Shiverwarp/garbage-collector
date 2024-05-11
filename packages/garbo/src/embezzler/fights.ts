@@ -33,6 +33,8 @@ import {
   $skill,
   AprilingBandHelmet,
   ChateauMantegna,
+  ChestMimic,
+  clamp,
   CombatLoversLocket,
   Counter,
   CrystalBall,
@@ -243,7 +245,7 @@ export const chainStarters = [
   new CopyTargetFight(
     "Saxophone semirare",
     () =>
-      getBestLuckyAdventure().location === $location`Cobb's Knob Treasury` &&
+      getBestLuckyAdventure().phase === "embezzler" &&
       getBestLuckyAdventure().value() > 0 &&
       canAdventure($location`Cobb's Knob Treasury`) &&
       AprilingBandHelmet.canPlay($item`Apriling band saxophone`),
@@ -289,6 +291,24 @@ export const chainStarters = [
         $location`Cobb's Knob Treasury`,
         options.macro,
         options.macro,
+      );
+    },
+  ),
+  new CopyTargetFight(
+    "Mimic Eggs",
+    () => ChestMimic.differentiableQuantity(globalOptions.target) >= 1,
+    () =>
+      ChestMimic.differentiableQuantity(globalOptions.target) +
+      clamp(
+        Math.floor($familiar`Chest Mimic`.experience / 50),
+        0,
+        11 - get("_mimicEggsObtained"),
+      ),
+    (options: RunOptions) => {
+      withMacro(
+        options.macro,
+        () => ChestMimic.differentiate(globalOptions.target),
+        options.useAuto,
       );
     },
   ),
