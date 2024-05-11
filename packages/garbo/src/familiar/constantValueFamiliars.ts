@@ -45,7 +45,8 @@ const standardFamiliars: ConstantValueFamiliar[] = [
   {
     familiar: $familiar`Robortender`,
     value: () =>
-      garboValue($item`elemental sugarcube`) / 5 +
+      // Clam juice
+      5700 / 5 +
       (Robortender.currentDrinks().includes($item`Feliz Navidad`)
         ? felizValue() * 0.25
         : 0) +
