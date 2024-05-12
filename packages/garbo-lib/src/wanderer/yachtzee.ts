@@ -20,8 +20,6 @@ export function yachtzeeFactory(
     ) &&
     !locationSkiplist.includes($location`The Sunken Party Yacht`)
   ) {
-    // If we aren't ascending, the fewer turns we have left the less likely we are to reach another Yachtzee.
-    // Reduce the expected value the lower our turns get (This is just a shitty equation I came up with randomly)
     const canFinishDelay =
       wandererTurnsAvailableToday(
         options,
