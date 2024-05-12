@@ -65,14 +65,6 @@ const standardFamiliars: ConstantValueFamiliar[] = [
     value: () => 75,
   },
   {
-    familiar: $familiar`Trick-or-Treating Tot`,
-    // This is the value of getting a pirate costume over getting an amulet coin or whatever
-    value: () =>
-      have($item`li'l pirate costume`)
-        ? (baseMeat * (300 - bestAlternative)) / 100
-        : 0,
-  },
-  {
     familiar: $familiar`Rockin' Robin`,
     value: () =>
       garboValue($item`robin's egg`) /
