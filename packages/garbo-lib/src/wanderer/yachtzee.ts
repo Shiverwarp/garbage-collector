@@ -1,6 +1,11 @@
 import { Location } from "kolmafia";
-import { $location, clamp, get, realmAvailable } from "libram";
-import { DraggableFight, WandererFactoryOptions, WandererTarget } from "./lib";
+import { $location, get, realmAvailable } from "libram";
+import {
+  DraggableFight,
+  WandererFactoryOptions,
+  WandererTarget,
+  wandererTurnsAvailableToday,
+} from "./lib";
 
 export function yachtzeeFactory(
   type: DraggableFight,
@@ -17,19 +22,19 @@ export function yachtzeeFactory(
   ) {
     // If we aren't ascending, the fewer turns we have left the less likely we are to reach another Yachtzee.
     // Reduce the expected value the lower our turns get (This is just a shitty equation I came up with randomly)
-    const percentageReduction = clamp(
-      options.ascend
-        ? (190 * clamp(options.estimatedTurns(), 50, 200)) /
-            (get("encountersUntilYachtzeeChoice") * 2000)
-        : 1,
-      0.25,
-      1,
-    );
+    const canFinishDelay =
+      wandererTurnsAvailableToday(
+        options,
+        $location`The Sunken Party Yacht`,
+        false,
+      ) > get("encountersUntilYachtzeeChoice");
     return [
       new WandererTarget(
         "Yachtzee Countdown",
         $location`The Sunken Party Yacht`,
-        ((20000 - get("valueOfAdventure")) / 19) * percentageReduction,
+        options.ascend && !canFinishDelay // If we're ascending and don't have wanderer turns to finish delay, just use fallback value
+          ? 20
+          : (20000 - get("valueOfAdventure")) / 19,
       ),
     ];
   }
