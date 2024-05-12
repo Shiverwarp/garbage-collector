@@ -45,8 +45,6 @@ const standardFamiliars: ConstantValueFamiliar[] = [
   {
     familiar: $familiar`Robortender`,
     value: () =>
-      // Clam juice
-      5700 / 5 +
       (Robortender.currentDrinks().includes($item`Feliz Navidad`)
         ? felizValue() * 0.25
         : 0) +
@@ -111,12 +109,16 @@ const standardFamiliars: ConstantValueFamiliar[] = [
   },
 ];
 
-export default function getConstantValueFamiliars(): GeneralFamiliar[] {
+export default function getConstantValueFamiliars(
+  mode: "barf" | "free" | undefined,
+): GeneralFamiliar[] {
   return standardFamiliars
     .filter(({ familiar }) => have(familiar))
     .map(({ familiar, value }) => ({
       familiar,
-      expectedValue: value(),
+      expectedValue:
+        value() +
+        (familiar === $familiar`Robortender` && mode === "barf" ? 5700 / 5 : 0),
       leprechaunMultiplier: findLeprechaunMultiplier(familiar),
       limit: "none",
     }));
