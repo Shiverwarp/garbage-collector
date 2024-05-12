@@ -1,4 +1,4 @@
-import { Quest } from "grimoire-kolmafia";
+import { OutfitSpec, Quest } from "grimoire-kolmafia";
 import {
   availableAmount,
   canadiaAvailable,
@@ -44,6 +44,7 @@ import {
   Delayed,
   ensureEffect,
   get,
+  getModifier,
   have,
   maxBy,
   sum,
@@ -296,15 +297,20 @@ const FreeFightTasks: GarboFreeFightTask[] = [
         .skill($skill`Blow a Robo-Kiss`)
         .repeat(),
     ),
-    outfit: () =>
-      freeFightOutfit(
-        {
-          back: $items`unwrapped knock-off retro superhero cape`,
-          modes: { retrocape: ["robot", "kiss"] },
-          avoid: $items`mutant crown, mutant arm, mutant legs, shield of the Skeleton Lord`,
-        },
-        { canChooseMacro: false },
-      ),
+    outfit: () => {
+      const spec: OutfitSpec = {
+        back: $items`unwrapped knock-off retro superhero cape`,
+        modes: { retrocape: ["robot", "kiss"] },
+        avoid: $items`mutant crown, mutant arm, mutant legs, shield of the Skeleton Lord`,
+      };
+
+      // This will sometimes hit false positives, but better safe than sorry
+      if (getModifier("Monster Level") >= 50) {
+        spec.modifier = [`-7 Monster Level`];
+      }
+
+      return freeFightOutfit(spec, { canChooseMacro: false });
+    },
     prepare: () => {
       restoreHp(myMaxhp());
       if (have($skill`Ruthless Efficiency`)) {
