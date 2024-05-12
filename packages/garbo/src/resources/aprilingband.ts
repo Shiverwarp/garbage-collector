@@ -1,6 +1,6 @@
-import { $item, AprilingBandHelmet, clamp, get, have } from "libram";
+import { $item, $items, AprilingBandHelmet, clamp, get, have } from "libram";
 import { globalOptions } from "../config";
-import { garboValue } from "../garboValue";
+import { garboAverageValue, garboValue } from "../garboValue";
 import { getBestLuckyAdventure } from "../lib";
 import getExperienceFamiliars from "../familiar/experienceFamiliars";
 import { toItem } from "kolmafia";
@@ -30,12 +30,21 @@ const instruments: {
       Math.max(
         0,
         ...getExperienceFamiliars("free").map(({ familiar, expectedValue }) => {
+          const baseLineExpectedValue = // This is the value per turn of cookbookbat
+            (3 *
+              garboAverageValue(
+                ...$items`Vegetable of Jarlsberg, Yeast of Boris, St. Sneaky Pete's Whey`,
+              )) /
+            11;
+
           const usesAllowed = clamp(
             Math.floor((400 - familiar.experience) / 40),
             0,
             3,
           );
-          return (expectedValue / 12) * 40 * usesAllowed;
+          return (
+            (expectedValue / 12 - baseLineExpectedValue) * 40 * usesAllowed
+          );
         }),
       ),
   },
