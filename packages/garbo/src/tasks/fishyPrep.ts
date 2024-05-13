@@ -94,8 +94,12 @@ function wanderTask(
 
 let requiredFishyTurns: number;
 export function getRequiredFishyTurns(): number {
+  const unrealizedMimicEggFights = 11 - get("_mimicEggsObtained");
   return (requiredFishyTurns ??=
-    countCopies(computeDiet().diet()) + copyTargetCount() + 10); // Extra buffer of 10 turns just in case weirdness
+    countCopies(computeDiet().diet()) +
+    copyTargetCount() +
+    unrealizedMimicEggFights + // We gain extra embezzler fights post-free-fights from mimic experience
+    10); // Extra buffer of 10 turns just in case weirdness
 }
 
 function shouldGoUnderwater(): boolean {
