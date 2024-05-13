@@ -22,7 +22,7 @@ const instruments: {
   },
   {
     instrument: "Apriling band tuba",
-    value: () => 20000 - get("valueOfAdventure") * 3,
+    value: () => (20000 - get("valueOfAdventure")) * 3,
   },
   {
     instrument: "Apriling band piccolo",
