@@ -59,6 +59,7 @@ import {
   Pantogram,
   questStep,
   realmAvailable,
+  set,
   SongBoom,
   SourceTerminal,
   uneffect,
@@ -308,6 +309,12 @@ export function configureSnojo(): void {
   }
 }
 
+const latteMalformed = () =>
+  (["carrot", "pumpkin", "cinnamon"] as const).some(
+    (defaultIngredient) =>
+      !Latte.ingredientsUnlocked().includes(defaultIngredient),
+  );
+
 const DailyTasks: GarboTask[] = [
   {
     name: "Chibi Buddy",
@@ -320,18 +327,17 @@ const DailyTasks: GarboTask[] = [
   {
     name: "Refresh Latte",
     ready: () => have($item`latte lovers member's mug`),
-    completed: () => {
-      return (
-        latteRefreshed &&
-        // Occasionally visiting this page will break the preference, check for it being malformed
-        (["carrot", "pumpkin", "cinnamon"] as const).every(
-          (defaultIngredient) =>
-            Latte.ingredientsUnlocked().includes(defaultIngredient),
-        )
-      );
-    },
+    completed: () => latteRefreshed,
     do: (): void => {
       visitUrl("main.php?latte=1", false);
+
+      if (latteMalformed()) visitUrl("main.php?latte=1", false);
+      if (latteMalformed()) {
+        print("Can't access Latte Lover's Mug shop, disabling it");
+        set("_latteBanishUsed", true);
+        set("_latteCopyUsed", true);
+        set("_latteRefillsUsed", 3);
+      }
       latteRefreshed = true;
     },
     spendsTurn: false,
