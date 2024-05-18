@@ -53,13 +53,12 @@ import {
   findLeprechaunMultiplier,
   get,
   getModifier,
+  getTodaysHolidayWanderers,
   have,
-  Latte,
   maxBy,
   Pantogram,
   questStep,
   realmAvailable,
-  set,
   SongBoom,
   SourceTerminal,
   uneffect,
@@ -78,9 +77,11 @@ import { GarboTask } from "./engine";
 import { AcquireItem, Quest } from "grimoire-kolmafia";
 import {
   attemptCompletingBarfQuest,
+  checkAndCorrectLatteMalformation,
   checkBarfQuest,
   checkVolcanoQuest,
 } from "../resources";
+import { GarboStrategy, Macro } from "../combat";
 
 const closetItems = $items`4-d camera, sand dollar, unfinished ice sculpture`;
 const retrieveItems = $items`Half a Purse, seal tooth, The Jokester's gun`;
@@ -309,12 +310,6 @@ export function configureSnojo(): void {
   }
 }
 
-const latteMalformed = () =>
-  (["carrot", "pumpkin", "cinnamon"] as const).some(
-    (defaultIngredient) =>
-      !Latte.ingredientsUnlocked().includes(defaultIngredient),
-  );
-
 const DailyTasks: GarboTask[] = [
   {
     name: "Chibi Buddy",
@@ -330,14 +325,7 @@ const DailyTasks: GarboTask[] = [
     completed: () => latteRefreshed,
     do: (): void => {
       visitUrl("main.php?latte=1", false);
-
-      if (latteMalformed()) visitUrl("main.php?latte=1", false);
-      if (latteMalformed()) {
-        print("Can't access Latte Lover's Mug shop, disabling it");
-        set("_latteBanishUsed", true);
-        set("_latteCopyUsed", true);
-        set("_latteRefillsUsed", 3);
-      }
+      checkAndCorrectLatteMalformation();
       latteRefreshed = true;
     },
     spendsTurn: false,
@@ -707,10 +695,25 @@ const DailyTasks: GarboTask[] = [
         ? {
             offhand: $item`Drunkula's wineglass`,
             acc1: $item`water wings`,
-            avoid: $items`June cleaver`,
+            avoid: $items`June cleaver, cursed magnifying glass, Kramco Sausage-o-Matic™`,
           }
-        : { acc1: $item`water wings`, avoid: $items`June cleaver` },
+        : {
+            acc1: $item`water wings`,
+            avoid: $items`June cleaver, cursed magnifying glass, Kramco Sausage-o-Matic™`,
+          },
     spendsTurn: false,
+    combat: new GarboStrategy(() =>
+      Macro.if_(
+        [
+          $monster`giant rubber spider`,
+          $monster`time-spinner prank`,
+          ...getTodaysHolidayWanderers(),
+        ],
+        Macro.basicCombat(),
+      ).abortWithMsg(
+        "Unexpected combat encounter while attempting to get Eldritch Attunment from Generic Summer Holiday",
+      ),
+    ),
   },
   {
     name: "Check Neverending Party Quest",
