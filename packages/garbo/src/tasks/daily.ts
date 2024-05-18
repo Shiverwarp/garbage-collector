@@ -54,6 +54,7 @@ import {
   get,
   getModifier,
   have,
+  Latte,
   maxBy,
   Pantogram,
   questStep,
@@ -319,7 +320,16 @@ const DailyTasks: GarboTask[] = [
   {
     name: "Refresh Latte",
     ready: () => have($item`latte lovers member's mug`),
-    completed: () => latteRefreshed,
+    completed: () => {
+      return (
+        latteRefreshed &&
+        // Occasionally visiting this page will break the preference, check for it being malformed
+        (["carrot", "pumpkin", "cinnamon"] as const).every(
+          (defaultIngredient) =>
+            Latte.ingredientsUnlocked().includes(defaultIngredient),
+        )
+      );
+    },
     do: (): void => {
       visitUrl("main.php?latte=1", false);
       latteRefreshed = true;
