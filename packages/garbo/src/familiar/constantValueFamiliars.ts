@@ -45,7 +45,7 @@ const standardFamiliars: ConstantValueFamiliar[] = [
   {
     familiar: $familiar`Robortender`,
     value: (mode) =>
-      (mode === "barf" ? 5700 / 5 : 0) + // Price of clam juice
+      (mode === "barf" ? garboValue($item`yam`) / 5 : 0) + // Price of clam juice is equivalent to yams for their martini product
       (Robortender.currentDrinks().includes($item`Feliz Navidad`)
         ? felizValue() * 0.25
         : 0) +
