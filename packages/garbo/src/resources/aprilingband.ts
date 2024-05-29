@@ -43,7 +43,7 @@ const instruments: {
             3,
           );
           return (
-            (expectedValue / 12 - baseLineExpectedValue) * 40 * usesAllowed
+            ((expectedValue - baseLineExpectedValue) / 12) * 40 * usesAllowed
           );
         }),
       ),
