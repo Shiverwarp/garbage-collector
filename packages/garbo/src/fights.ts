@@ -2035,8 +2035,7 @@ const freeRunFightSources = [
         // Base drop is 30%, so 1% pickpocket gives .003
         const pickPocketValue = 0.003 * garboValue($item`GOTO`);
         const spec: OutfitSpec = {
-          equip: $items`mayfly bait necklace`,
-          bonuses: new Map([[$item`carnivorous potted plant`, 1000]]),
+          equip: $items`mayfly bait necklace, carnivorous potted plant, June cleaver`,
           familiar: freeFightFamiliar({ allowAttackFamiliars: false }),
         };
         if (!canPickPocket && bestPickpocketItem) {
@@ -2125,8 +2124,7 @@ const freeRunFightSources = [
     },
     {
       spec: {
-        equip: $items`mayfly bait necklace`,
-        bonuses: new Map([[$item`carnivorous potted plant`, 1000]]),
+        equip: $items`mayfly bait necklace, carnivorous potted plant, June cleaver`,
       },
     },
   ),
