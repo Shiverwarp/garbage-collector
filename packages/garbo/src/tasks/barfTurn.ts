@@ -212,10 +212,12 @@ function dailyDungeon(additionalReady: () => boolean) {
 function lavaDogs(additionalReady: () => boolean) {
   return {
     completed: () =>
+      get("hallowienerVolcoino") ||
       $location`The Bubblin' Caldera`.turnsSpent >= 7 ||
       $location`The Bubblin' Caldera`.noncombatQueue.includes("Lava Dogs"),
     ready: () =>
       additionalReady() &&
+      globalOptions.ascend &&
       haveInCampground($item`haunted doghouse`) &&
       !get("doghouseBoarded") &&
       realmAvailable("hot") &&
@@ -395,6 +397,22 @@ const NonBarfTurnTasks: AlternateTask[] = [
     spendsTurn: true,
   },
   {
+    name: "Lava Dogs (drunk)",
+    ...lavaDogs(() => willDrunkAdventure()),
+    outfit: () =>
+      freeFightOutfit({
+        modifier: "Muscle",
+        offhand: $item`Drunkula's wineglass`,
+      }),
+    sobriety: "drunk",
+  },
+  {
+    name: "Lava Dogs (sober)",
+    ...lavaDogs(() => !willDrunkAdventure()),
+    outfit: () => freeFightOutfit({ modifier: "Muscle" }),
+    sobriety: "sober",
+  },
+  {
     name: "Daily Dungeon (drunk)",
     ...dailyDungeon(() => willDrunkAdventure()),
     outfit: () =>
@@ -474,22 +492,6 @@ const NonBarfTurnTasks: AlternateTask[] = [
   {
     name: "Apriling Yachtzee (sober)",
     ...aprilingYachtzee(() => !willDrunkAdventure()),
-    sobriety: "sober",
-  },
-  {
-    name: "Lava Dogs (drunk)",
-    ...lavaDogs(() => willDrunkAdventure()),
-    outfit: () =>
-      freeFightOutfit({
-        modifier: "Muscle",
-        offhand: $item`Drunkula's wineglass`,
-      }),
-    sobriety: "drunk",
-  },
-  {
-    name: "Lava Dogs (sober)",
-    ...lavaDogs(() => !willDrunkAdventure()),
-    outfit: () => freeFightOutfit({ modifier: "Muscle" }),
     sobriety: "sober",
   },
   {
