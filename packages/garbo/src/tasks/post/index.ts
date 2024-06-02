@@ -34,9 +34,7 @@ import {
   get,
   getRemainingStomach,
   have,
-  haveInCampground,
   JuneCleaver,
-  realmAvailable,
   set,
   undelay,
   uneffect,
@@ -62,6 +60,7 @@ import { GarboPostTask } from "./lib";
 import { GarboTask } from "../engine";
 import { hotTubAvailable } from "../../resources/clanVIP";
 import { getRequiredFishyTurns } from "../fishyPrep";
+import { lavaDogsAccessible, lavaDogsComplete } from "../../resources/doghouse";
 
 const STUFF_TO_CLOSET = $items`bowling ball, funky junk key`;
 function closetStuff(): GarboPostTask {
@@ -332,14 +331,8 @@ function wardrobeOMatic(): GarboPostTask {
 function handleDrenchedInLava(): GarboPostTask {
   return {
     name: "Drenched In Lava Removal",
-    available: () =>
-      haveInCampground($item`haunted doghouse`) &&
-      !get("doghouseBoarded") &&
-      realmAvailable("hot"),
-    ready: () =>
-      get("hallowienerVolcoino") ||
-      $location`The Bubblin' Caldera`.turnsSpent >= 7 ||
-      $location`The Bubblin' Caldera`.noncombatQueue.includes("Lava Dogs"),
+    available: () => lavaDogsAccessible(),
+    ready: () => lavaDogsComplete(),
     completed: () => !have($effect`Drenched in Lava`),
     do: () => {
       if (hotTubAvailable()) {
