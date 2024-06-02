@@ -231,7 +231,7 @@ function lavaDogs(additionalReady: () => boolean) {
     do: $location`The Bubblin' Caldera`,
     combat: new GarboStrategy(() => Macro.kill()),
     turns: () =>
-      !lavaDogsComplete && shouldLavaDogs()
+      !lavaDogsComplete() && shouldLavaDogs()
         ? clamp(7 - $location`The Bubblin' Caldera`.turnsSpent, 0, 7)
         : 0,
     spendsTurn: true,
