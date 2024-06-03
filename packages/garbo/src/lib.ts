@@ -462,7 +462,7 @@ export function safeRestore(): void {
   if (
     myHp() <
     Math.min(
-      myMaxhp() * (myInebriety() > inebrietyLimit() ? 0.9 : 0.5),
+      myMaxhp() * (myInebriety() > inebrietyLimit() ? 0.9 : 0.6),
       get("garbo_restoreHpTarget", 2000),
     )
   ) {
