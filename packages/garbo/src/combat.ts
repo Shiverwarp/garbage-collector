@@ -431,8 +431,7 @@ export class Macro extends StrictMacro {
       .tryHaveSkill($skill`Curse of Weaksauce`)
       .if_(
         $monster`sea cowboy`,
-        Macro.skill($skill`Curse of Weaksauce`)
-          .skill($skill`Micrometeorite`)
+        Macro.skill($skill`Micrometeorite`)
           .trySkill($skill`Pocket Crumbs`)
           .item([$item`train whistle`, $item`HOA citation pad`])
           .skill($skill`Entangling Noodles`),
