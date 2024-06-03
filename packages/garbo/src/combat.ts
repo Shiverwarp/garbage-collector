@@ -429,6 +429,14 @@ export class Macro extends StrictMacro {
   startCombat(): Macro {
     return this.trySingAlong()
       .tryHaveSkill($skill`Curse of Weaksauce`)
+      .if_(
+        $monster`sea cowboy`,
+        Macro.skill($skill`Curse of Weaksauce`)
+          .skill($skill`Micrometeorite`)
+          .trySkill($skill`Pocket Crumbs`)
+          .item([$item`train whistle`, $item`HOA citation pad`])
+          .skill($skill`Entangling Noodles`),
+      )
       .familiarActions()
       .externalIf(
         get("cosmicBowlingBallReturnCombats") < 1,
