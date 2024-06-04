@@ -514,7 +514,7 @@ export function main(argString = ""): void {
     withStash(stashItems, () => {
       withVIPClan(() => {
         // Banish and Fishy prep
-        runGarboQuests([fishyPrepQuest]);
+        runGarboQuests([PostQuest(), fishyPrepQuest]);
 
         // 0. diet stuff.
         if (
