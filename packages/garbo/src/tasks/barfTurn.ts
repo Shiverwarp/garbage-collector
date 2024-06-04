@@ -290,10 +290,7 @@ function aprilingYachtzee(additionalReady: () => boolean) {
     combat: new GarboStrategy(() =>
       Macro.abortWithMsg("Hit unexpected combat while trying to Yachtzee!"),
     ),
-    turns: () =>
-      have($item`Apriling band tuba`)
-        ? $item`Apriling band tuba`.dailyusesleft
-        : 0,
+    turns: () => $item`Apriling band tuba`.dailyusesleft,
     spendsTurn: true,
   };
 }
@@ -318,7 +315,7 @@ function vampOut(additionalReady: () => boolean) {
         equip: $items`plastic vampire fangs`,
       }),
     spendsTurn: true,
-    turns: () => (!get("_interviewMasquerade") ? 1 : 0),
+    turns: () => 1,
   };
 }
 
@@ -434,7 +431,7 @@ const NonBarfTurnTasks: AlternateTask[] = [
     combat: new GarboStrategy(() =>
       Macro.abortWithMsg("Hit unexpected combat!"),
     ),
-    turns: () => (canGetFusedFuse() ? 1 : 0),
+    turns: () => 1,
     spendsTurn: true,
     choices: { 1091: 7 },
   },
