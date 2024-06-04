@@ -76,26 +76,48 @@ const BARF_PLANTS = [
   FloristFriar.Snori,
   FloristFriar.ElectricEelgrass,
 ];
-function floristFriars(): GarboPostTask {
-  return {
-    name: "Florist Plants",
-    completed: () => FloristFriar.isFull($location`The Coral Corral`),
-    ready: () =>
-      get("lastAdventure") === $location`The Coral Corral` &&
-      FloristFriar.have() &&
-      BARF_PLANTS.some((flower) =>
-        flower.available($location`The Coral Corral`),
-      ),
-    do: () =>
-      BARF_PLANTS.filter((flower) =>
-        flower.available($location`The Coral Corral`),
-      ).forEach((flower) => flower.plant()),
-    available: () =>
-      FloristFriar.have() &&
-      BARF_PLANTS.some((flower) =>
-        flower.available($location`The Coral Corral`),
-      ),
-  };
+function floristFriars(): GarboPostTask[] {
+  return [
+    {
+      name: "Florist Plants Corral",
+      completed: () => FloristFriar.isFull($location`The Coral Corral`),
+      ready: () =>
+        get("lastAdventure") === $location`The Coral Corral` &&
+        FloristFriar.have() &&
+        BARF_PLANTS.some((flower) =>
+          flower.available($location`The Coral Corral`),
+        ),
+      do: () =>
+        BARF_PLANTS.filter((flower) =>
+          flower.available($location`The Coral Corral`),
+        ).forEach((flower) => flower.plant()),
+      available: () =>
+        FloristFriar.have() &&
+        BARF_PLANTS.some((flower) =>
+          flower.available($location`The Coral Corral`),
+        ),
+    },
+    {
+      name: "Florist Plants Yacht",
+      completed: () => FloristFriar.isFull($location`The Sunken Party Yacht`),
+      ready: () =>
+        FloristFriar.isFull($location`The Coral Corral`) &&
+        get("lastAdventure") === $location`The Sunken Party Yacht` &&
+        FloristFriar.have() &&
+        BARF_PLANTS.some((flower) =>
+          flower.available($location`The Sunken Party Yacht`),
+        ),
+      do: () =>
+        BARF_PLANTS.filter((flower) =>
+          flower.available($location`The Sunken Party Yacht`),
+        ).forEach((flower) => flower.plant()),
+      available: () =>
+        FloristFriar.have() &&
+        BARF_PLANTS.some((flower) =>
+          flower.available($location`The Sunken Party Yacht`),
+        ),
+    },
+  ];
 }
 
 function fillPantsgivingFullness(): GarboPostTask {
@@ -354,7 +376,7 @@ export function PostQuest(completed?: () => boolean): Quest<GarboTask> {
       handleDrenchedInLava(),
       fallbot(),
       closetStuff(),
-      floristFriars(),
+      ...floristFriars(),
       numberology(),
       juneCleaver(),
       fillPantsgivingFullness(),
