@@ -356,15 +356,12 @@ const NonBarfTurnTasks: AlternateTask[] = [
     outfit: () => embezzlerOutfit({ familiar: $familiar`Chest Mimic` }),
     combat: new GarboStrategy(() => Macro.meatKill()),
     turns: () =>
-      get("_mimicEggsObtained") < 11 &&
-      $familiar`Chest Mimic`.experience > minimumMimicExperience()
-        ? globalOptions.ascend
-          ? clamp(
-              Math.floor($familiar`Chest Mimic`.experience / 50) - 1,
-              1,
-              11 - get("_mimicEggsObtained"),
-            )
-          : 0
+      globalOptions.ascend
+        ? clamp(
+            Math.floor($familiar`Chest Mimic`.experience / 50) - 1,
+            1,
+            11 - get("_mimicEggsObtained"),
+          )
         : 0,
     spendsTurn: true,
   },
