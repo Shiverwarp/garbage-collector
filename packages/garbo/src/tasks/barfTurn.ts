@@ -218,7 +218,7 @@ function lavaDogs(additionalReady: () => boolean) {
       globalOptions.ascend &&
       lavaDogsAccessible() &&
       garboValue($item`Volcoino`) >
-        7 * get("valueOfAdventure") +
+        5 * get("valueOfAdventure") +
           (hotTubAvailable()
             ? 0
             : mallPrice($item`soft green echo eyedrop antidote`)),
@@ -238,7 +238,7 @@ function lavaDogs(additionalReady: () => boolean) {
     },
     do: $location`The Bubblin' Caldera`,
     combat: new GarboStrategy(() => Macro.kill()),
-    turns: () => clamp(7 - $location`The Bubblin' Caldera`.turnsSpent, 0, 7),
+    turns: () => clamp(6 - $location`The Bubblin' Caldera`.turnsSpent, 0, 6),
     spendsTurn: true,
   };
 }
@@ -371,6 +371,7 @@ const NonBarfTurnTasks: AlternateTask[] = [
     outfit: () =>
       freeFightOutfit({
         modifier: "Muscle",
+        avoid: $items`carnivorous potted plant`,
         offhand: $item`Drunkula's wineglass`,
       }),
     sobriety: "drunk",
@@ -378,7 +379,11 @@ const NonBarfTurnTasks: AlternateTask[] = [
   {
     name: "Lava Dogs (sober)",
     ...lavaDogs(() => !willDrunkAdventure()),
-    outfit: () => freeFightOutfit({ modifier: "Muscle" }),
+    outfit: () =>
+      freeFightOutfit({
+        modifier: "Muscle",
+        avoid: $items`carnivorous potted plant`,
+      }),
     sobriety: "sober",
   },
   {
