@@ -85,6 +85,7 @@ import {
   SetupEmbezzlerQuest,
 } from "./tasks";
 import { fishyPrepQuest } from "./tasks/fishyPrep";
+import { PostFishyQuest } from "./tasks/post";
 
 // Max price for tickets. You should rethink whether Barf is the best place if they're this expensive.
 const TICKET_MAX_PRICE = 500000;
@@ -514,7 +515,7 @@ export function main(argString = ""): void {
     withStash(stashItems, () => {
       withVIPClan(() => {
         // Banish and Fishy prep
-        runGarboQuests([PostQuest(), fishyPrepQuest]);
+        runGarboQuests([PostFishyQuest(), fishyPrepQuest]);
 
         // 0. diet stuff.
         if (

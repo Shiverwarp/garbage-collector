@@ -392,3 +392,24 @@ export function PostQuest(completed?: () => boolean): Quest<GarboTask> {
       .map((task) => ({ ...task, spendsTurn: false })),
   };
 }
+
+export function PostFishyQuest(completed?: () => boolean): Quest<GarboTask> {
+  return {
+    name: "Postcombat Fishy Prep",
+    completed,
+    tasks: [
+      handleDrenchedInLava(),
+      fallbot(),
+      closetStuff(),
+      ...floristFriars(),
+      numberology(),
+      juneCleaver(),
+      setFishyPrepPref(),
+      refillCinch(),
+      leafResin(),
+      wardrobeOMatic(),
+    ]
+      .filter(({ available }) => undelay(available ?? true))
+      .map((task) => ({ ...task, spendsTurn: false })),
+  };
+}
