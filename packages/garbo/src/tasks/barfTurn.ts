@@ -480,6 +480,19 @@ const NonBarfTurnTasks: AlternateTask[] = [
     turns: () => availableAmount($item`Map to Safety Shelter Grimace Prime`),
   },
   {
+    name: "Acquire Shore Inc. Ship Trip Scrip",
+    completed: () => have($item`Shore Inc. Ship Trip Scrip`),
+    do: $location`The Shore, Inc. Travel Agency`,
+    outfit: () => ({ offhand: $item`Drunkula's wineglass` }),
+    combat: new GarboStrategy(() =>
+      Macro.abortWithMsg("Hit unexpected combat!"),
+    ),
+    turns: () => 3,
+    spendsTurn: true,
+    sobriety: "drunk",
+    choices: { 793: 1 },
+  },
+  {
     name: "Use Day Shorteners (drunk)",
     ready: () =>
       globalOptions.ascend &&
