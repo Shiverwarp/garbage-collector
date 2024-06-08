@@ -767,7 +767,7 @@ const pygmyBanishHandlers = [
     skill: undefined,
     check: undefined,
     limit: 0,
-    item: $item`tennis ball`,
+    item: $item`stuffed yam stinkbomb`,
   },
 ] as const;
 
@@ -974,7 +974,7 @@ const freeFightSources = [
         $item`Bowl of Scorpions`,
       );
       retrieveItem($item`Louder Than Bomb`);
-      retrieveItem($item`tennis ball`);
+      retrieveItem($item`stuffed yam stinkbomb`);
       retrieveItem($item`divine champagne popper`);
       garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro);
     },
