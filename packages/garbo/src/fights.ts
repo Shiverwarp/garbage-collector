@@ -266,7 +266,7 @@ function embezzlerSetup() {
     setChoice(582, 1);
     setChoice(579, 3);
     while (get("lastTempleAdventures") < myAscensions()) {
-      const run = tryFindFreeRunOrBanish(freeRunConstraints(false)) ?? ltbRun();
+      const run = tryFindFreeRunOrBanish(freeRunConstraints()) ?? ltbRun();
       if (!run) break;
       run.constraints.preparation?.();
       setLocation($location`The Hidden Temple`);
@@ -397,7 +397,7 @@ function startWandererCounter() {
         );
       } else {
         print("You do not have gregs active, so this is a regular free run.");
-        run = tryFindFreeRunOrBanish(freeRunConstraints(false)) ?? ltbRun();
+        run = tryFindFreeRunOrBanish(freeRunConstraints()) ?? ltbRun();
         run.constraints.preparation?.();
         setLocation($location`The Haunted Kitchen`);
         freeFightOutfit(toSpec(run)).dress();
@@ -720,7 +720,7 @@ class FreeRunFight extends FreeFight {
     while (this.isAvailable()) {
       const initialSpec = undelay(this.options.spec ?? {});
       const constraints = {
-        ...freeRunConstraints(false),
+        ...freeRunConstraints(initialSpec),
         noFamiliar: () => "familiar" in initialSpec,
         ...this.constraints,
       };
@@ -1494,7 +1494,7 @@ function latteFight(
     {
       spec: { equip: $items`latte lovers member's mug` },
     },
-    freeRunConstraints(true),
+    freeRunConstraints({ equip: $items`latte lovers member's mug` }),
   );
 }
 
