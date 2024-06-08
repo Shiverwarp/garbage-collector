@@ -4,6 +4,7 @@ import { garboAverageValue, garboValue } from "../garboValue";
 import { getBestLuckyAdventure } from "../lib";
 import getExperienceFamiliars from "../familiar/experienceFamiliars";
 import { toItem } from "kolmafia";
+import { estimatedBarfExperience } from "../familiar";
 
 const instruments: {
   instrument: AprilingBandHelmet.Instrument;
@@ -29,7 +30,7 @@ const instruments: {
     value: () =>
       Math.max(
         0,
-        ...getExperienceFamiliars("free").map(({ familiar, expectedValue }) => {
+        ...getExperienceFamiliars("barf").map(({ familiar, expectedValue }) => {
           const baseLineExpectedValue = // This is the value per turn of cookbookbat
             (3 *
               garboAverageValue(
@@ -43,7 +44,10 @@ const instruments: {
             3,
           );
           return (
-            ((expectedValue - baseLineExpectedValue) / 12) * 40 * usesAllowed
+            ((expectedValue - baseLineExpectedValue) /
+              estimatedBarfExperience()) *
+            40 *
+            usesAllowed
           );
         }),
       ),
