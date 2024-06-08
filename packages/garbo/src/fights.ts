@@ -2950,7 +2950,7 @@ function getBofaWishes() {
     return;
   }
 
-  let bofaFreeRun = tryFindFreeRunOrBanish(freeRunConstraints(false));
+  let bofaFreeRun = tryFindFreeRunOrBanish(freeRunConstraints());
   while (
     bofaFreeRun &&
     get("_shadowBricksUsed") < 13 &&
@@ -2981,7 +2981,7 @@ function getBofaWishes() {
           "Encountered an unknown monster while getting bofa wishes",
         ),
     );
-    bofaFreeRun = tryFindFreeRunOrBanish(freeRunConstraints(false));
+    bofaFreeRun = tryFindFreeRunOrBanish(freeRunConstraints());
   }
 }
 
