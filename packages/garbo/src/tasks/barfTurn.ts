@@ -371,7 +371,7 @@ const NonBarfTurnTasks: AlternateTask[] = [
     outfit: () =>
       freeFightOutfit({
         modifier: "Muscle",
-        avoid: $items`carnivorous potted plant`,
+        avoid: $items`carnivorous potted plant, mutant crown, mutant arm, mutant legs, shield of the Skeleton Lord`,
         offhand: $item`Drunkula's wineglass`,
       }),
     sobriety: "drunk",
@@ -382,7 +382,7 @@ const NonBarfTurnTasks: AlternateTask[] = [
     outfit: () =>
       freeFightOutfit({
         modifier: "Muscle",
-        avoid: $items`carnivorous potted plant`,
+        avoid: $items`carnivorous potted plant, mutant crown, mutant arm, mutant legs, shield of the Skeleton Lord`,
       }),
     sobriety: "sober",
   },
