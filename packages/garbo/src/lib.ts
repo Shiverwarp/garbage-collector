@@ -566,6 +566,8 @@ export function userConfirmDialog(
 }
 
 function determineFreeBunnyBanish(): boolean {
+  if (have($item`spring shoes`)) return false;
+
   const extraOrbFights = have($item`miniature crystal ball`) ? 1 : 0;
   const possibleGregsFromSpleen =
     Math.floor((spleenLimit() - mySpleenUse()) / 2) * (3 + extraOrbFights);
