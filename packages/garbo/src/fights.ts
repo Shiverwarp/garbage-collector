@@ -2037,7 +2037,6 @@ const freeRunFightSources = [
         const spec: OutfitSpec = {
           equip: $items`mayfly bait necklace, June cleaver`,
           bonuses: new Map([[$item`carnivorous potted plant`, 7000]]),
-          familiar: freeFightFamiliar({ allowAttackFamiliars: false }),
         };
         if (!canPickPocket && bestPickpocketItem) {
           spec.equip?.push(bestPickpocketItem);
