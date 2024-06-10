@@ -2086,25 +2086,6 @@ const freeRunFightSources = [
       wandererOptions: "backup",
     },
   ),
-  // Try to accelerate the shadow nc, if you're able to do a quest
-  new FreeRunFight(
-    () =>
-      have($item`closed-circuit pay phone`) &&
-      get("rufusQuestType") !== "items" &&
-      !have($effect`Shadow Affinity`) &&
-      get("encountersUntilSRChoice") > 0,
-    (runSource: ActionSource) =>
-      garboAdventure(bestShadowRift(), runSource.macro),
-    {
-      spec: () => {
-        const spec: OutfitSpec =
-          bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
-            ? { equip: $items`continuum transfunctioner` }
-            : {};
-        return spec;
-      },
-    },
-  ),
   // Try for an ultra-rare with mayfly runs if we didn't have a manuel ;)
   new FreeRunFight(
     () =>
