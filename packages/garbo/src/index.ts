@@ -107,7 +107,7 @@ function ensureBarfAccess() {
 }
 
 export function main(argString = ""): void {
-  sinceKolmafiaRevision(27924); // Law of Averages tracking
+  sinceKolmafiaRevision(27969); // Law of Averages tracking
   checkGithubVersion();
 
   Args.fill(globalOptions, argString);
@@ -499,7 +499,7 @@ export function main(argString = ""): void {
     ) {
       visitUrl("guild.php?action=buyskill&skillid=32", true);
     }
-    const stashItems = $items`repaid diaper, Buddy Bjorn, Crown of Thrones, Pantsgiving, mafia pointer finger ring`;
+    const stashItems = $items`repaid diaper, Buddy Bjorn, Crown of Thrones, Pantsgiving, mafia pointer finger ring, Mayflower bouquet`;
     if (
       myInebriety() <= inebrietyLimit() &&
       (myClass() !== $class`Seal Clubber` || !have($skill`Furious Wallop`)) &&
