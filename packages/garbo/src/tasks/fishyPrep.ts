@@ -331,8 +331,21 @@ const fishyPrepTasks: GarboTask[] = [
       () =>
         Macro.if_(
           $monster`sea cowboy`,
-          Macro.skill($skill`Spring Kick`).trySkill($skill`Spring Away`),
-        ).basicCombat(),
+          Macro.skill($skill`Spring Kick`)
+            .trySkill($skill`Spring Away`)
+            .basicCombat(),
+        )
+          .if_(
+            $monster`wild seahorse`,
+            Macro.item($item`sea cowbell`)
+              .item($item`sea cowbell`)
+              .item($item`sea cowbell`)
+              .item($item`sea lasso`)
+              .abortWithMsg(
+                "Wild seahorse should have been tamed, what happened?",
+              ),
+          )
+          .meatKill(),
       () =>
         Macro.if_(
           `(monsterid ${globalOptions.target.id}) && !gotjump && !(pastround 2)`,
