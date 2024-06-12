@@ -224,7 +224,7 @@ export function main(argString = ""): void {
   if (
     !get("kingLiberated") ||
     myLevel() < 13 ||
-    Stat.all().some((s) => myBasestat(s) < 75)
+    Stat.all().some((s) => myBasestat(s) < 60)
   ) {
     if (globalOptions.prefs.skipAscensionCheck) {
       logprint(
