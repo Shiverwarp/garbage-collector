@@ -317,8 +317,8 @@ function freddiesProfitable(): boolean {
   const valuesWithFreddy = luckyGoldRingDropValues(false, true);
 
   return (
-    sumNumbers(valuesWithFreddy) / valuesWithFreddy.length / 10 >
-    sumNumbers(valuesWithoutFreddy) / valuesWithoutFreddy.length / 10
+    sumNumbers(valuesWithFreddy) / valuesWithFreddy.length >
+    sumNumbers(valuesWithoutFreddy) / valuesWithoutFreddy.length
   );
 }
 
@@ -773,7 +773,8 @@ const DailyTasks: GarboTask[] = [
   },
   {
     name: "Closet Freddies",
-    completed: () => freddiesProfitable(),
+    ready: () => !freddiesProfitable(),
+    completed: () => itemAmount($item`Freddy Kruegerand`) === 0,
     do: () =>
       putCloset(itemAmount($item`Freddy Kruegerand`), $item`Freddy Kruegerand`),
     spendsTurn: false,
