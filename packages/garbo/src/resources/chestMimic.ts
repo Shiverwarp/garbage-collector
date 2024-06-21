@@ -9,7 +9,7 @@ export const mimicExperienceNeeded = (needKickstarterEgg: boolean) =>
       get("_mimicEggsObtained") < 11
       ? 50
       : 0
-    : 250); // Max is 550, reduced to 250 because I have lots of fam exp granters and free fights
+    : 0); // Max is 550, reduced to 250 because I have lots of fam exp granters and free fights
 
 export function shouldChargeMimic(needKickstarterEgg: boolean): boolean {
   /* If we can't make any more eggs tomorrow, don't charge the mimic more */
