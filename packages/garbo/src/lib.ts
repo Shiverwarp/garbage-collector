@@ -60,6 +60,7 @@ import {
   userConfirm,
   useSkill,
   visitUrl,
+  weightAdjustment,
   xpath,
 } from "kolmafia";
 import {
@@ -974,7 +975,7 @@ function maxFamiliarDamage(familiar: Familiar): number {
     case $familiar`Frumious Bandersnatch`:
       return 0;
     case $familiar`Left-Hand Man`:
-      return Math.floor(familiarWeight(familiar) + 3);
+      return Math.floor(familiarWeight(familiar) + weightAdjustment() + 3);
   }
 
   // Unknown damage formula, assume 2x Cocoabo to be safe
