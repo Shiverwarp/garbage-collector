@@ -681,8 +681,8 @@ class FreeFight {
       withMacro(Macro.basicCombat(), this.run);
       if (myTurncount() > curTurncount) consecutiveNonFreeFights++;
       else consecutiveNonFreeFights = 0;
-      if (consecutiveNonFreeFights >= 5) {
-        throw new Error("The last 5 FreeRunFights were not free!");
+      if (consecutiveNonFreeFights >= 2) {
+        throw new Error("The last 2 FreeRunFights were not free!");
       }
       postCombatActions();
       // Slot in our Professor Thesis if it's become available
@@ -739,8 +739,8 @@ class FreeRunFight extends FreeFight {
       withMacro(Macro.step(runSource.macro), () => this.freeRun(runSource));
       if (myTurncount() > curTurncount) consecutiveNonFreeFights++;
       else consecutiveNonFreeFights = 0;
-      if (consecutiveNonFreeFights >= 5) {
-        throw new Error("The last 5 FreeRunFights were not free!");
+      if (consecutiveNonFreeFights >= 2) {
+        throw new Error("The last 2 FreeRunFights were not free!");
       }
       postCombatActions();
     }
