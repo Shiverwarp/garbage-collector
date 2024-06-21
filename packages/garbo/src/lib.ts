@@ -971,6 +971,10 @@ function maxFamiliarDamage(familiar: Familiar): number {
       return Math.floor((familiarWeight(familiar) + 3) * 1.5);
     case $familiar`Jill-of-All-Trades`:
       return familiarWeight(familiar);
+    case $familiar`Frumious Bandersnatch`:
+      return 0;
+    case $familiar`Left-Hand Man`:
+      return Math.floor(familiarWeight(familiar) + 3);
   }
 
   // Unknown damage formula, assume 2x Cocoabo to be safe

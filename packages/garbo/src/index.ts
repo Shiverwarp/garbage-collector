@@ -29,6 +29,7 @@ import {
   Stat,
   toInt,
   use,
+  useSkill,
   visitUrl,
 } from "kolmafia";
 import {
@@ -44,6 +45,7 @@ import {
   Clan,
   examine,
   get,
+  getActiveSongs,
   getFoldGroup,
   have,
   haveInCampground,
@@ -556,6 +558,11 @@ export function main(argString = ""): void {
         // 2. do some embezzler stuff
         potionSetup(true);
         useBuffExtenders(); // Buff and use extenders pre free fights primarily to extend buffs like Shadow Affinity
+        if (getActiveSongs().length >= 4 && !have($effect`Ode to Booze`)) {
+          // Ensure we have Ode for our free runs
+          cliExecute(`shrug ${$effect`Polka of Plenty`}`);
+          useSkill($skill`The Ode to Booze`);
+        }
         freeFights();
         runGarboQuests([SetupEmbezzlerQuest]);
         yachtzeeChain();
