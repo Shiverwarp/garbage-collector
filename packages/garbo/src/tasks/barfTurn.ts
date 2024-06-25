@@ -722,28 +722,6 @@ const BarfTurnTasks: GarboTask[] = [
     combat: new GarboStrategy(() => Macro.embezzler("envyfish egg")),
   },
   wanderTask(
-    "freerun",
-    {
-      equip: $items`spring shoes, carnivorous potted plant`,
-    },
-    {
-      name: "Spring Shoes Freerun",
-      ready: () =>
-        have($item`spring shoes`) &&
-        romanticMonsterImpossible() &&
-        isBanished($monster`sea cowboy`) &&
-        (getWorkshed() !== $item`model train set` ||
-          TrainSet.next() !== TrainSet.Station.GAIN_MEAT),
-      completed: () => have($effect`Everything Looks Green`),
-      combat: new GarboStrategy(() =>
-        Macro.if_(globalOptions.target, Macro.meatKill())
-          .familiarActions()
-          .skill($skill`Spring Away`),
-      ),
-      sobriety: "sober",
-    },
-  ),
-  wanderTask(
     "yellow ray",
     {},
     {
@@ -822,6 +800,7 @@ const BarfTurnTasks: GarboTask[] = [
       ready: () =>
         have($item`spring shoes`) &&
         romanticMonsterImpossible() &&
+        isBanished($monster`sea cowboy`) &&
         (getWorkshed() !== $item`model train set` ||
           TrainSet.next() !== TrainSet.Station.GAIN_MEAT),
       completed: () => have($effect`Everything Looks Green`),
@@ -831,7 +810,7 @@ const BarfTurnTasks: GarboTask[] = [
             .familiarActions()
             .skill($skill`Spring Away`),
         undefined,
-        !have($item`carnivorous potted plant`), // Do not use autoattack with carn plant, it will cancel the swallow
+        () => !have($item`carnivorous potted plant`), // Do not use autoattack with carn plant, it will cancel the swallow
       ),
       sobriety: "sober",
     },
