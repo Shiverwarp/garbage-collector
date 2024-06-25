@@ -753,21 +753,24 @@ const pygmyBanishHandlers = [
     skill: $skill`Snokebomb`,
     check: "_snokebombUsed",
     limit: 3,
-    item: $item`Louder Than Bomb`,
+    item: $item`divine champagne popper`,
   },
   {
     pygmy: $monster`pygmy orderlies`,
     skill: $skill`Feel Hatred`,
     check: "_feelHatredUsed",
     limit: getUsingFreeBunnyBanish() ? 1 : 3,
-    item: $item`divine champagne popper`,
+    item: $item`Louder Than Bomb`,
   },
   {
     pygmy: $monster`pygmy janitor`,
     skill: undefined,
     check: undefined,
     limit: 0,
-    item: $item`stuffed yam stinkbomb`,
+    item:
+      mallPrice($item`stuffed yam stinkbomb`) < mallPrice($item`tennis ball`)
+        ? $item`stuffed yam stinkbomb`
+        : $item`tennis ball`,
   },
 ] as const;
 
