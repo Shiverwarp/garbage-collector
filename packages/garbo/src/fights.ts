@@ -109,6 +109,7 @@ import {
   sum,
   undelay,
   withChoice,
+  withProperties,
 } from "libram";
 import { MonsterProperty } from "libram/dist/propertyTypes";
 import { WanderDetails } from "garbo-lib";
@@ -1246,7 +1247,9 @@ const freeFightSources = [
       get("encountersUntilNEPChoice") === 0 &&
       get("_questPartyFair") === "started",
     () => {
-      cliExecute("duffo go");
+      withProperties({ recoveryScript: "", autoSatisfyWithMall: false }, () =>
+        cliExecute("duffo go"),
+      );
     },
     false,
     {
