@@ -20,6 +20,7 @@ import {
   Item,
   itemAmount,
   itemDropsArray,
+  lastMonster,
   Location,
   mallPrices,
   meatDropModifier,
@@ -439,7 +440,7 @@ export function safeRestoreMpTarget(): number {
 export function safeRestore(): void {
   if (
     get("_lastCombatLost") &&
-    get("lastEncounter") !== "Sssshhsssblllrrggghsssssggggrrgglsssshhssslblgl"
+    lastMonster() !== $monster`Sssshhsssblllrrggghsssssggggrrgglsssshhssslblgl`
   ) {
     set("_lastCombatLost", "false");
     throw new Error(
@@ -448,7 +449,8 @@ export function safeRestore(): void {
   }
   if (have($effect`Beaten Up`)) {
     if (
-      get("lastEncounter") === "Sssshhsssblllrrggghsssssggggrrgglsssshhssslblgl"
+      lastMonster() ===
+      $monster`Sssshhsssblllrrggghsssssggggrrgglsssshhssslblgl`
     ) {
       uneffect($effect`Beaten Up`);
     } else {

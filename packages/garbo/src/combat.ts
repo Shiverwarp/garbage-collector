@@ -211,6 +211,9 @@ export class Macro extends StrictMacro {
       get("retroCapeWashingInstructions") === "kill" &&
       itemType(equippedItem($slot`weapon`)) === "pistol";
     const pigSkinnerSetup = have($skill`Head in the Game`);
+    const bearArmsSetup =
+      equippedAmount($item`right bear arm`) > 0 &&
+      equippedAmount($item`left bear arm`) > 0;
 
     const willCrit =
       (equippedAmount($item`mafia pointer finger ring`) > 0 ||
@@ -219,7 +222,8 @@ export class Macro extends StrictMacro {
         opsSetup ||
         katanaSetup ||
         capeSetup ||
-        pigSkinnerSetup);
+        pigSkinnerSetup ||
+        bearArmsSetup);
 
     return this.externalIf(
       shouldRedigitize(),
@@ -247,6 +251,13 @@ export class Macro extends StrictMacro {
           .item([$item`train whistle`, $item`HOA citation pad`])
           .skill($skill`Entangling Noodles`)
           .tryHaveItem($item`Rain-Doh indigo cup`),
+      )
+      .externalIf(
+        have($skill`Blow the Purple Candle!`),
+        Macro.if_(
+          globalOptions.target,
+          Macro.trySkill($skill`Blow the Purple Candle!`),
+        ),
       )
       .trySingAlong()
       .familiarActions()
@@ -283,6 +294,7 @@ export class Macro extends StrictMacro {
       .externalIf(opsSetup, Macro.attack())
       .externalIf(katanaSetup, Macro.trySkill($skill`Summer Siesta`))
       .externalIf(capeSetup, Macro.trySkill($skill`Precision Shot`))
+      .externalIf(bearArmsSetup, Macro.trySkill($skill`Kodiak Moment`))
       .externalIf(pigSkinnerSetup, Macro.attack())
       .externalIf(
         myClass() === $class`Disco Bandit`,

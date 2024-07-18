@@ -210,7 +210,7 @@ function dailyDungeon(additionalReady: () => boolean) {
   };
 }
 
-function lavaDogs(additionalReady: () => boolean) {
+function lavaDogs(additionalReady: () => boolean, baseSpec: OutfitSpec) {
   return {
     completed: () => lavaDogsComplete(),
     ready: () =>
@@ -221,7 +221,10 @@ function lavaDogs(additionalReady: () => boolean) {
         6 * get("valueOfAdventure") +
           (hotTubAvailable()
             ? 0
-            : mallPrice($item`soft green echo eyedrop antidote`)),
+            : mallPrice($item`soft green echo eyedrop antidote`)) &&
+      $items`June cleaver, Space Trip safety headphones`.some(
+        (i) => have(i) && canEquip(i),
+      ),
     prepare: () => {
       const metalValue = get("_volcanoSuperduperheatedMetal")
         ? garboValue($item`superheated metal`)
@@ -237,6 +240,15 @@ function lavaDogs(additionalReady: () => boolean) {
       }
     },
     do: $location`The Bubblin' Caldera`,
+    outfit: () => {
+      const avoid = $items`carnivorous potted plant, mutant crown, mutant arm, mutant legs, shield of the Skeleton Lord`;
+      if (!have($effect`Drenched in Lava`)) return baseSpec;
+      const weapon = have($item`June cleaver`) ? $item`June cleaver` : [];
+      const modifier = ["Muscle"];
+      if (!have($item`June cleaver`)) modifier.push(`-7 Monster Level`);
+
+      return freeFightOutfit({ ...baseSpec, modifier, weapon, avoid });
+    },
     combat: new GarboStrategy(() => Macro.kill()),
     turns: () => clamp(7 - $location`The Bubblin' Caldera`.turnsSpent, 0, 7),
     spendsTurn: true,
@@ -367,27 +379,14 @@ const NonBarfTurnTasks: AlternateTask[] = [
   },
   {
     name: "Lava Dogs (drunk)",
-    ...lavaDogs(() => willDrunkAdventure()),
-    outfit: () =>
-      have($effect`Drenched in Lava`)
-        ? freeFightOutfit({
-            modifier: "Muscle",
-            avoid: $items`carnivorous potted plant, mutant crown, mutant arm, mutant legs, shield of the Skeleton Lord`,
-            offhand: $item`Drunkula's wineglass`,
-          })
-        : freeFightOutfit({ offhand: $item`Drunkula's wineglass` }),
+    ...lavaDogs(() => willDrunkAdventure(), {
+      offhand: $item`Drunkula's wineglass`,
+    }),
     sobriety: "drunk",
   },
   {
     name: "Lava Dogs (sober)",
-    ...lavaDogs(() => !willDrunkAdventure()),
-    outfit: () =>
-      have($effect`Drenched in Lava`)
-        ? freeFightOutfit({
-            modifier: "Muscle",
-            avoid: $items`carnivorous potted plant, mutant crown, mutant arm, mutant legs, shield of the Skeleton Lord`,
-          })
-        : freeFightOutfit(),
+    ...lavaDogs(() => !willDrunkAdventure(), {}),
     sobriety: "sober",
   },
   {
