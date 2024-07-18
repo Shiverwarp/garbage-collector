@@ -2031,7 +2031,14 @@ const freeRunFightSources = [
           spec.equip?.push(bestPickpocketItem);
         }
         if (canPickPocket || bestPickpocketItem) {
-          spec.modifier = [`${pickPocketValue} Pickpocket Chance`];
+          if (bestPickpocketItem === $item`mime army infiltration glove`) {
+            spec.modifier = [
+              `${pickPocketValue} Pickpocket Chance`,
+              `100 initiative 150 max`,
+            ];
+          } else {
+            spec.modifier = [`${pickPocketValue} Pickpocket Chance`];
+          }
         }
 
         return spec;
