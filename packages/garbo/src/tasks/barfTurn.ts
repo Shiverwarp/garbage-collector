@@ -1,6 +1,7 @@
 import {
   availableAmount,
   canAdventure,
+  canEquip,
   eat,
   getWorkshed,
   isBanished,
