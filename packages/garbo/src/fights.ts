@@ -993,8 +993,12 @@ const freeFightSources = [
           )
           .map(({ item }) => item);
         return (
-          retrievePrice($item`Bowl of Scorpions`) +
-          sum(banishers, mallPrice) / 11
+          Math.max(
+            0,
+            retrievePrice($item`Bowl of Scorpions`) +
+              sum(banishers, mallPrice) -
+              (myClass() === $class`Turtle Tamer` ? 50000 : 0),
+          ) / 11
         );
       },
     },
