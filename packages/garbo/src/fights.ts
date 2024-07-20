@@ -997,7 +997,7 @@ const freeFightSources = [
             0,
             retrievePrice($item`Bowl of Scorpions`) +
               sum(banishers, mallPrice) -
-              (myClass() === $class`Turtle Tamer` ? 50000 : 0),
+              (myClass() === $class`Pastamancer` ? 50000 : 0),
           ) / 11
         );
       },
