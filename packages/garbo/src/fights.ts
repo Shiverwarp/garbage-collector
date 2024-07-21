@@ -2030,7 +2030,7 @@ const freeRunFightSources = [
         const pickPocketValue = 0.003 * garboValue($item`GOTO`);
         const spec: OutfitSpec = {
           equip: $items`mayfly bait necklace, June cleaver`,
-          bonuses: new Map([[$item`carnivorous potted plant`, 7000]]),
+          bonuses: new Map([[$item`carnivorous potted plant`, 9000]]),
         };
         if (!canPickPocket && bestPickpocketItem) {
           spec.equip?.push(bestPickpocketItem);
