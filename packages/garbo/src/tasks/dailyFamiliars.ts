@@ -1,5 +1,6 @@
 import {
   abort,
+  autosellPrice,
   cliExecute,
   closetAmount,
   equip,
@@ -7,10 +8,8 @@ import {
   hippyStoneBroken,
   itemAmount,
   myPrimestat,
-  mySpleenUse,
   retrieveItem,
   retrievePrice,
-  spleenLimit,
   takeCloset,
   toItem,
   use,
@@ -21,7 +20,6 @@ import {
   $familiars,
   $item,
   $items,
-  clamp,
   CrimboShrub,
   get,
   have,
@@ -42,7 +40,6 @@ import {
 import { estimatedGarboTurns } from "../turns";
 import { GarboTask } from "./engine";
 import { Quest } from "grimoire-kolmafia";
-import { garboValue } from "../garboValue";
 import { acquire } from "../acquire";
 
 function drivebyValue(): number {
@@ -60,15 +57,6 @@ function drivebyValue(): number {
 
 function bloodyNoraValue(): number {
   const embezzlers = copyTargetCount();
-  const extraOrbFights = have($item`miniature crystal ball`) ? 1 : 0;
-  const possibleGregsFromSpleen =
-    Math.floor((spleenLimit() - mySpleenUse()) / 2) * (3 + extraOrbFights);
-  const currentAvailableGregs =
-    Math.max(0, get("beGregariousCharges")) * (3 + extraOrbFights);
-  const habitatFights =
-    (3 - clamp(get("_monsterHabitatsRecalled"), 0, 3)) * (5 + extraOrbFights);
-  const gregLikeFightCount =
-    possibleGregsFromSpleen + currentAvailableGregs + habitatFights;
   const robortMultiplier = 2;
   const bloodyNoraWeight = 10;
   const cows = estimatedGarboTurns() - embezzlers;
@@ -78,14 +66,8 @@ function bloodyNoraValue(): number {
   const marginalValue =
     2 * robortMultiplier +
     Math.sqrt(220 * robortMultiplier) / (2 * Math.sqrt(assumedBaseWeight));
-  // We fight embezzlers underwater while doing gregs
-  return (
-    bloodyNoraWeight * (marginalValue / 100) * baseMeat * cows +
-    bloodyNoraWeight *
-      (marginalValue / 100) *
-      (baseMeat + 700) *
-      gregLikeFightCount
-  );
+
+  return bloodyNoraWeight * (marginalValue / 100) * baseMeat * cows;
 }
 
 function entendreValue(): number {
@@ -95,10 +77,11 @@ function entendreValue(): number {
     Math.sqrt(55 * marginalRoboWeight) + marginalRoboWeight - 3;
   const leatherDropRate = 0.2;
   const cowbellDropRate = 0.1;
+  // Only value at autosell
   return (
     (itemPercent / 100) *
-    (leatherDropRate * cows * garboValue($item`sea leather`) +
-      cowbellDropRate * cows * garboValue($item`sea cowbell`))
+    (leatherDropRate * cows * autosellPrice($item`sea leather`) +
+      cowbellDropRate * cows * autosellPrice($item`sea cowbell`))
   );
 }
 
