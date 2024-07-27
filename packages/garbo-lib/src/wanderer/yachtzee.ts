@@ -1,5 +1,5 @@
 import { Location } from "kolmafia";
-import { $location, get, realmAvailable } from "libram";
+import { $effect, $location, get, have, realmAvailable } from "libram";
 import {
   DraggableFight,
   WandererFactoryOptions,
@@ -14,6 +14,7 @@ export function yachtzeeFactory(
 ): WandererTarget[] {
   if (
     realmAvailable("sleaze") &&
+    have($effect`Fishy`) &&
     get("encountersUntilYachtzeeChoice") !== 0 &&
     ["backup", "wanderer", "yellow ray", "freefight", "freerun"].includes(
       type,
