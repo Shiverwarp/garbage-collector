@@ -449,6 +449,19 @@ export class Macro extends StrictMacro {
           .item([$item`train whistle`, $item`HOA citation pad`])
           .skill($skill`Entangling Noodles`),
       )
+      .externalIf(
+        !get("seahorseName"),
+        Macro.if_(
+          $monster`wild seahorse`,
+          Macro.item($item`sea cowbell`)
+            .item($item`sea cowbell`)
+            .item($item`sea cowbell`)
+            .item($item`sea lasso`)
+            .abortWithMsg(
+              "Wild seahorse should have been tamed, what happened?",
+            ),
+        ),
+      )
       .familiarActions()
       .externalIf(
         get("cosmicBowlingBallReturnCombats") < 1,
