@@ -69,6 +69,7 @@ import {
   $familiar,
   $item,
   $location,
+  $monster,
   $skill,
   $thralls,
   ActionSource,
