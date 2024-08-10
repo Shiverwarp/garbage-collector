@@ -1,5 +1,4 @@
 import {
-  canAdventure,
   canEquip,
   Item,
   myLevel,
@@ -14,7 +13,6 @@ import {
   $familiar,
   $item,
   $items,
-  $location,
   $skill,
   $slot,
   AugustScepter,
@@ -26,7 +24,7 @@ import {
 import { globalOptions } from "../config";
 import { copyTargetCount } from "../embezzler";
 import { garboAverageValue, garboValue } from "../garboValue";
-import { EMBEZZLER_MULTIPLIER } from "../lib";
+import { getBestLuckyAdventure } from "../lib";
 import { Potion } from "../potions";
 import { GarboTask } from "../tasks/engine";
 
@@ -39,10 +37,7 @@ const SKILL_OPTIONS: ScepterSkill[] = [
   // August 1 deliberately omitted; does not trigger on monster replacers
   {
     skill: $skill`Aug. 2nd: Find an Eleven-Leaf Clover Day`,
-    value: () =>
-      canAdventure($location`Cobb's Knob Treasury`)
-        ? EMBEZZLER_MULTIPLIER() * get("valueOfAdventure")
-        : 0,
+    value: () => getBestLuckyAdventure().value(),
     type: "special",
   },
   {

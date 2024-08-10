@@ -478,6 +478,7 @@ export function dailyFights(): void {
       if (have($familiar`Pocket Professor`)) {
         const potentialPocketProfessorLectures = [
           {
+            shouldDo: globalOptions.target === $monster`Knob Goblin Embezzler`,
             property: "_garbo_meatChain",
             macro: firstChainMacro,
             goalMaximize: withLocation(
@@ -486,6 +487,7 @@ export function dailyFights(): void {
             ),
           },
           {
+            shouldDo: true,
             property: "_garbo_weightChain",
             macro: secondChainMacro,
             goalMaximize: (spec: OutfitSpec) =>
@@ -499,7 +501,8 @@ export function dailyFights(): void {
         ];
 
         for (const potentialLecture of potentialPocketProfessorLectures) {
-          const { property, macro, goalMaximize } = potentialLecture;
+          const { property, macro, goalMaximize, shouldDo } = potentialLecture;
+          if (!shouldDo) continue;
           const fightSource = getNextCopyTargetFight();
           if (!fightSource) return;
           if (get(property, false)) continue;
@@ -801,7 +804,7 @@ const pygmyMacro = Macro.step(
   ),
 )
   .if_($monster`drunk pygmy`, Macro.trySkill($skill`Extract`).trySingAlong())
-  .ifHolidayWanderer(Macro.basicCombat())
+  .ifInnateWanderer(Macro.basicCombat())
   .abort();
 
 function getStenchLocation() {
@@ -2552,7 +2555,7 @@ export function doSausage(): void {
     garboAdventureAuto(
       targetLocation,
       Macro.if_(goblin, Macro.basicCombat())
-        .ifHolidayWanderer(Macro.basicCombat())
+        .ifInnateWanderer(Macro.basicCombat())
         .abortWithMsg(`Expected ${goblin} but got something else.`),
     );
   } while (get("_sausageFights") === currentSausages); // Try again if we hit an NC that didn't take a turn

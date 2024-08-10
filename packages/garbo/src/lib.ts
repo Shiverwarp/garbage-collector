@@ -62,7 +62,6 @@ import {
   useSkill,
   visitUrl,
   weightAdjustment,
-  xpath,
 } from "kolmafia";
 import {
   $effect,
@@ -1053,32 +1052,6 @@ export function allMallPrices() {
   }
 }
 
-export function getCombatFlags(
-  ...flags: string[]
-): { flag: string; value: boolean }[] {
-  return flags.map((flag) => ({
-    flag,
-    value:
-      xpath(
-        visitUrl("account.php?tab=combat"),
-        `//*[@id="opt_flag_${flag}"]/label/input[@type='checkbox']@checked`,
-      )[0] === "checked",
-  }));
-}
-
-export function setCombatFlags(...flags: { flag: string; value: boolean }[]) {
-  return visitUrl(
-    `account.php?${
-      ([
-        ...flags.map(({ flag }) => `actions[]=flag_${flag}`),
-        ...flags.map(({ flag, value }) => `flag_${flag}=${Number(value)}`),
-        "action=Update",
-      ].join("&"),
-      true)
-    }`,
-  );
-}
-
 export function aprilFoolsRufus() {
   if (holiday().includes("April Fool's Day")) {
     visitUrl("questlog.php?which=7");
@@ -1095,12 +1068,13 @@ type LuckyAdventure = {
   };
 };
 
-const luckyAdventures = [
+const luckyAdventures: LuckyAdventure[] = [
   {
     location: $location`Cobb's Knob Treasury`,
     phase: "embezzler",
     value: () =>
-      canAdventure($location`Cobb's Knob Treasury`)
+      canAdventure($location`Cobb's Knob Treasury`) &&
+      globalOptions.target === $monster`Knob Goblin Embezzler`
         ? EMBEZZLER_MULTIPLIER() * get("valueOfAdventure")
         : 0,
   },
@@ -1113,7 +1087,7 @@ const luckyAdventures = [
           get("valueOfAdventure")
         : 0,
   },
-] as LuckyAdventure[];
+];
 
 function determineBestLuckyAdventure(): LuckyAdventure {
   return maxBy(luckyAdventures, ({ value }) => value());
@@ -1121,8 +1095,5 @@ function determineBestLuckyAdventure(): LuckyAdventure {
 
 let bestLuckyAdventure: LuckyAdventure;
 export function getBestLuckyAdventure(): LuckyAdventure {
-  if (bestLuckyAdventure === undefined) {
-    bestLuckyAdventure = determineBestLuckyAdventure();
-  }
-  return bestLuckyAdventure;
+  return (bestLuckyAdventure ??= determineBestLuckyAdventure());
 }
