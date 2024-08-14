@@ -248,6 +248,19 @@ export class Macro extends StrictMacro {
       shouldRedigitize(),
       Macro.if_(globalOptions.target, Macro.trySkill($skill`Digitize`)),
     )
+      .externalIf(
+        globalOptions.target === $monster`cheerless mime executive`,
+        Macro.if_(
+          $monster`cheerless mime executive`,
+          Macro.trySkill($skill`Curse of Weaksauce`)
+            .trySkill($skill`Micrometeorite`)
+            .trySkill($skill`Pocket Crumbs`)
+            .tryHaveItem($item`train whistle`)
+            .tryHaveItem($item`HOA citation pad`)
+            .trySkill($skill`Entangling Noodles`)
+            .tryHaveItem($item`Rain-Doh indigo cup`),
+        ),
+      )
       .if_(
         $monsters`sea cowboy, Mer-kin rustler`,
         Macro.abortWithMsg(
