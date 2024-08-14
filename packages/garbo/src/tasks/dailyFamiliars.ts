@@ -34,6 +34,7 @@ import {
   baseMeat,
   felizValue,
   newarkValue,
+  targetMeat,
   tryFeast,
   userConfirmDialog,
 } from "../lib";
@@ -51,7 +52,7 @@ function drivebyValue(): number {
     Math.sqrt(220 * 2 * marginalRoboWeight) +
     2 * marginalRoboWeight;
   return (
-    (meatPercentDelta / 100) * ((700 + baseMeat) * embezzlers + baseMeat * cows)
+    (meatPercentDelta / 100) * (targetMeat() * embezzlers + baseMeat() * cows)
   );
 }
 
@@ -67,7 +68,7 @@ function bloodyNoraValue(): number {
     2 * robortMultiplier +
     Math.sqrt(220 * robortMultiplier) / (2 * Math.sqrt(assumedBaseWeight));
 
-  return bloodyNoraWeight * (marginalValue / 100) * baseMeat * cows;
+  return bloodyNoraWeight * (marginalValue / 100) * baseMeat() * cows;
 }
 
 function entendreValue(): number {

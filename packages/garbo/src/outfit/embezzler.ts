@@ -6,7 +6,7 @@ import {
   $item,
   $items,
   $location,
-  $monster,
+  Environment,
   Guzzlr,
   have,
 } from "libram";
@@ -20,7 +20,7 @@ import {
   validateGarbageFoldable,
 } from "./lib";
 import { BonusEquipMode, modeValueOfMeat } from "../lib";
-import { globalOptions } from "../config";
+import { globalOptions, targettingMeat } from "../config";
 
 export function embezzlerOutfit(
   spec: OutfitSpec = {},
@@ -33,7 +33,7 @@ export function embezzlerOutfit(
     new Error(`Failed to construct outfit from spec ${toJson(spec)}`),
   );
 
-  if (globalOptions.target === $monster`Knob Goblin Embezzler`) {
+  if (targettingMeat()) {
     outfit.modifier.push(
       `${modeValueOfMeat(BonusEquipMode.EMBEZZLER)} Meat Drop`,
       "-tie",
@@ -42,15 +42,10 @@ export function embezzlerOutfit(
     outfit.modifier.push("-tie");
   }
   outfit.avoid.push($item`cheap sunglasses`); // Even if we're adventuring in Barf Mountain itself, these are bad
-  outfit.familiar ??=
-    globalOptions.target === $monster`Knob Goblin Embezzler`
-      ? meatFamiliar()
-      : freeFightFamiliar();
+  outfit.familiar ??= targettingMeat() ? meatFamiliar() : freeFightFamiliar();
 
   const bjornChoice = chooseBjorn(
-    globalOptions.target === $monster`Knob Goblin Embezzler`
-      ? BonusEquipMode.EMBEZZLER
-      : BonusEquipMode.FREE,
+    targettingMeat() ? BonusEquipMode.EMBEZZLER : BonusEquipMode.FREE,
     outfit.familiar,
   );
 
@@ -62,9 +57,7 @@ export function embezzlerOutfit(
   useUPCsIfNeeded(outfit);
 
   outfit.bonuses = bonusGear(
-    globalOptions.target === $monster`Knob Goblin Embezzler`
-      ? BonusEquipMode.EMBEZZLER
-      : BonusEquipMode.FREE,
+    targettingMeat() ? BonusEquipMode.EMBEZZLER : BonusEquipMode.FREE,
   );
   const bjornalike = bestBjornalike(outfit);
 
@@ -102,7 +95,10 @@ export function embezzlerOutfit(
     edpiece: "fish",
   });
 
-  if (!have($effect`Everything Looks Purple`)) {
+  if (
+    !have($effect`Everything Looks Purple`) &&
+    target.environment !== Environment.Underwater
+  ) {
     outfit.equip($item`Roman Candelabra`);
   }
 

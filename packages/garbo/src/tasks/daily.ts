@@ -71,7 +71,7 @@ import { globalOptions } from "../config";
 import { copyTargetCount } from "../embezzler";
 import { meatFamiliar } from "../familiar";
 import { estimatedTentacles } from "../fights";
-import { baseMeat, HIGHLIGHT } from "../lib";
+import { baseMeat, HIGHLIGHT, targetMeat } from "../lib";
 import { garboValue } from "../garboValue";
 import { digitizedMonstersRemaining, estimatedGarboTurns } from "../turns";
 import { GarboTask } from "./engine";
@@ -111,8 +111,8 @@ function voterSetup(): void {
     [
       "Meat Drop: +30",
       0.3 *
-        ((baseMeat + 700) * copyTargetCount() +
-          baseMeat * (estimatedGarboTurns() - copyTargetCount())),
+        (targetMeat() * copyTargetCount() +
+          baseMeat() * (estimatedGarboTurns() - copyTargetCount())),
     ],
     [
       "Item Drop: +15",
@@ -227,7 +227,7 @@ function pantogram(): void {
     const bestPantsValue = Math.max(0, ...alternativePants);
 
     pantogramValue =
-      (100 + 0.6 * baseMeat - (bestPantsValue * baseMeat) / 100) *
+      (100 + 0.6 * baseMeat() - (bestPantsValue * baseMeat()) / 100) *
       estimatedGarboTurns();
   }
   const cloverPrice = Math.min(

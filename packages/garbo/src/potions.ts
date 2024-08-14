@@ -36,7 +36,6 @@ import {
   $item,
   $items,
   $location,
-  $monster,
   $slot,
   clamp,
   ClosedCircuitPayphone,
@@ -60,12 +59,14 @@ import {
   bestShadowRift,
   HIGHLIGHT,
   pillkeeperOpportunityCost,
+  targetMeat,
+  targetMeatDifferential,
   withLocation,
 } from "./lib";
 import { copyTargetCount } from "./embezzler";
 import { usingPurse } from "./outfit";
 import { estimatedGarboTurns } from "./turns";
-import { globalOptions } from "./config";
+import { globalOptions, targettingMeat } from "./config";
 import { castAugustScepterBuffs } from "./resources";
 
 export type PotionTier = "embezzler" | "overlap" | "barf" | "ascending";
@@ -290,7 +291,10 @@ export class Potion {
       0,
     );
 
-    return (bonusMeat / 100) * (baseMeat * duration + 700 * embezzlersApplied);
+    return (
+      (bonusMeat / 100) *
+      (baseMeat() * duration + targetMeatDifferential() * embezzlersApplied)
+    );
   }
 
   static gross(item: Item, embezzlers: number): number {
@@ -710,10 +714,7 @@ export function potionSetup(embezzlersOnly: boolean): void {
   // TODO: Count PYEC.
   // TODO: Count free fights (25 meat each for most).
   withLocation($location.none, () => {
-    const embezzlers =
-      globalOptions.target === $monster`Knob Goblin Embezzler`
-        ? copyTargetCount()
-        : 0;
+    const embezzlers = targettingMeat() ? copyTargetCount() : 0;
 
     if (
       have($item`Eight Days a Week Pill Keeper`) &&
@@ -810,13 +811,13 @@ export function bathroomFinance(embezzlers: number): void {
   if (have($effect`Buy!  Sell!  Buy!  Sell!`)) return;
 
   // Average meat % for embezzlers is sum of arithmetic series, 2 * sum(1 -> embezzlers)
-  const averageEmbezzlerGross =
-    ((baseMeat + 700) * 2 * (embezzlers + 1)) / 2 / 100;
+  const averageEmbezzlerGross = (targetMeat() * 2 * (embezzlers + 1)) / 2 / 100;
   const embezzlerGross = averageEmbezzlerGross * embezzlers;
   const tourists = 100 - embezzlers;
 
   // Average meat % for tourists is sum of arithmetic series, 2 * sum(embezzlers + 1 -> 100)
-  const averageTouristGross = (baseMeat * 2 * (100 + embezzlers + 1)) / 2 / 100;
+  const averageTouristGross =
+    (baseMeat() * 2 * (100 + embezzlers + 1)) / 2 / 100;
   const touristGross = averageTouristGross * tourists;
 
   const greenspan = $item`Uncle Greenspan's Bathroom Finance Guide`;
@@ -936,8 +937,8 @@ class VariableMeatPotion {
     barfTurns: number,
   ): number {
     const yachtzeeValue = 2000;
-    const embezzlerValue = baseMeat + 700;
-    const barfValue = baseMeat;
+    const embezzlerValue = targetMeat();
+    const barfValue = baseMeat();
 
     const totalCosts = retrievePrice(this.potion, n);
     const totalDuration = n * this.duration;
