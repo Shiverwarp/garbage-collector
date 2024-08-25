@@ -1,7 +1,7 @@
-import "core-js/features/array/flat";
 import {
   adv1,
   choiceFollowsFight,
+  currentHitStat,
   equippedAmount,
   equippedItem,
   getAutoAttack,
@@ -16,6 +16,7 @@ import {
   Location,
   mpCost,
   myAdventures,
+  myBuffedstat,
   myClass,
   myFamiliar,
   myFury,
@@ -44,6 +45,7 @@ import {
   $monsters,
   $skill,
   $slot,
+  $stat,
   CinchoDeMayo,
   get,
   getTodaysHolidayWanderers,
@@ -56,7 +58,11 @@ import {
 import { globalOptions, isQuickCombat } from "./config";
 import { canOpenRedPresent, meatFamiliar, timeToMeatify } from "./familiar";
 import { digitizedMonstersRemaining } from "./turns";
-import { maxPassiveDamage, monsterManuelAvailable } from "./lib";
+import {
+  isStrongScaler,
+  maxPassiveDamage,
+  monsterManuelAvailable,
+} from "./lib";
 import { CombatStrategy } from "grimoire-kolmafia";
 
 export function shouldRedigitize(): boolean {
@@ -220,7 +226,24 @@ export class Macro extends StrictMacro {
     return new Macro().tryCopier(itemOrSkill);
   }
 
-  meatKill(): Macro {
+  delevel(): Macro {
+    return this.tryHaveSkill($skill`Curse of Weaksauce`)
+      .externalIf(
+        have($skill`Meteor Lore`),
+        Macro.trySkill($skill`Micrometeorite`),
+      )
+      .tryHaveSkill($skill`Pocket Crumbs`)
+      .tryHaveItem($item`train whistle`)
+      .tryHaveSkill($skill`Entangling Noodles`)
+      .tryHaveItem($item`Rain-Doh indigo cup`)
+      .tryHaveItem($item`Rain-Doh blue balls`);
+  }
+
+  static delevel(): Macro {
+    return new Macro().delevel();
+  }
+
+  meatKill(delevel = isStrongScaler(globalOptions.target)): Macro {
     const sealClubberSetup =
       myClass() === $class`Seal Clubber` && have($skill`Furious Wallop`);
     const opsSetup = equippedAmount($item`Operation Patriot Shield`) > 0;
@@ -249,20 +272,8 @@ export class Macro extends StrictMacro {
       Macro.if_(globalOptions.target, Macro.trySkill($skill`Digitize`)),
     )
       .externalIf(
-        globalOptions.target === $monster`cheerless mime executive`,
-        Macro.if_(
-          $monster`cheerless mime executive`,
-          Macro.tryHaveSkill($skill`Curse of Weaksauce`)
-            .externalIf(
-              have($skill`Meteor Lore`),
-              Macro.trySkill($skill`Micrometeorite`),
-            )
-            .tryHaveSkill($skill`Pocket Crumbs`)
-            .tryHaveItem($item`train whistle`)
-            .tryHaveSkill($skill`Entangling Noodles`)
-            .tryHaveItem($item`Rain-Doh indigo cup`)
-            .tryHaveItem($item`Rain-Doh blue balls`),
-        ),
+        delevel,
+        Macro.if_($monster`cheerless mime executive`, Macro.delevel()),
       )
       .if_(
         $monsters`sea cowboy, Mer-kin rustler`,
@@ -583,14 +594,28 @@ export class Macro extends StrictMacro {
           Macro.attack(),
         ),
       )
-      .trySkillRepeat(
-        $skill`Saucegeyser`,
-        $skill`Weapon of the Pastalord`,
-        $skill`Cannelloni Cannon`,
-        $skill`Wave of Sauce`,
-        $skill`Saucestorm`,
-        $skill`Northern Explosion`,
-        $skill`Lunging Thrust-Smack`,
+      .externalIf(
+        myBuffedstat($stat`Muscle`) > myBuffedstat($stat`Mysticality`) &&
+          (currentHitStat() === $stat`Muscle` ||
+            itemType(equippedItem($slot`weapon`)) === "knife"),
+        Macro.trySkillRepeat(
+          $skill`Northern Explosion`,
+          $skill`Lunging Thrust-Smack`,
+          $skill`Saucegeyser`,
+          $skill`Weapon of the Pastalord`,
+          $skill`Cannelloni Cannon`,
+          $skill`Wave of Sauce`,
+          $skill`Saucestorm`,
+        ),
+        Macro.trySkillRepeat(
+          $skill`Saucegeyser`,
+          $skill`Weapon of the Pastalord`,
+          $skill`Cannelloni Cannon`,
+          $skill`Wave of Sauce`,
+          $skill`Saucestorm`,
+          $skill`Northern Explosion`,
+          $skill`Lunging Thrust-Smack`,
+        ),
       )
       .attack()
       .repeat();
@@ -719,17 +744,18 @@ export class Macro extends StrictMacro {
     return new Macro().tryEgg();
   }
 
-  embezzler(action: string): Macro {
+  target(action: string): Macro {
     const doneHabitat =
       !have($skill`Just the Facts`) ||
       (get("_monsterHabitatsRecalled") === 3 &&
         get("_monsterHabitatsFightsLeft") <= 1);
     return this.if_(
       globalOptions.target,
-      Macro.if_(
-        $location`The Briny Deeps`,
-        Macro.tryCopier($item`pulled green taffy`),
-      )
+      Macro.externalIf(isStrongScaler(globalOptions.target), Macro.delevel())
+        .if_(
+          $location`The Briny Deeps`,
+          Macro.tryCopier($item`pulled green taffy`),
+        )
         .externalIf(
           myFamiliar() === $familiar`Reanimated Reanimator`,
           Macro.trySkill($skill`Wink at`),
@@ -775,14 +801,14 @@ export class Macro extends StrictMacro {
           get("_enamorangs") === 0,
           Macro.tryCopier($item`LOV Enamorang`),
         )
-        .meatKill(),
+        .meatKill(false),
     ).abortWithMsg(
       `Macro for ${action} expected ${globalOptions.target} but encountered something else.`,
     );
   }
 
-  static embezzler(action: string): Macro {
-    return new Macro().embezzler(action);
+  static target(action: string): Macro {
+    return new Macro().target(action);
   }
 }
 

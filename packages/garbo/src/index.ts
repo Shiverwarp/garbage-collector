@@ -84,7 +84,7 @@ import {
   BarfTurnQuests,
   PostQuest,
   runGarboQuests,
-  SetupEmbezzlerQuest,
+  SetupTargetCopyQuest,
 } from "./tasks";
 import { fishyPrepQuest } from "./tasks/fishyPrep";
 import { PostFishyQuest } from "./tasks/post";
@@ -396,9 +396,9 @@ export function main(argString = ""): void {
           "libram_savedMacro",
           "maximizerMRUList",
           "testudinalTeachings",
-          "garboEmbezzlerDate",
-          "garboEmbezzlerCount",
-          "garboEmbezzlerSources",
+          "garboTargetDate",
+          "garboTargetCount",
+          "garboTargetSources",
           "spadingData",
         ]),
       ]
@@ -556,7 +556,7 @@ export function main(argString = ""): void {
           forceUpdate: true,
         });
 
-        // 2. do some embezzler stuff
+        // 2. do some target copy stuff
         potionSetup(true);
         useBuffExtenders(); // Buff and use extenders pre free fights primarily to extend buffs like Shadow Affinity
         if (getActiveSongs().length >= 4 && !have($effect`Ode to Booze`)) {
@@ -565,7 +565,7 @@ export function main(argString = ""): void {
           useSkill($skill`The Ode to Booze`);
         }
         freeFights();
-        runGarboQuests([SetupEmbezzlerQuest]);
+        runGarboQuests([SetupTargetCopyQuest]);
         yachtzeeChain();
         dailyFights();
 

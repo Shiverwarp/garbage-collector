@@ -28,7 +28,7 @@ import {
 } from "libram";
 import { withStash } from "../clan";
 import { globalOptions } from "../config";
-import { copyTargetCount } from "../embezzler";
+import { copyTargetCount } from "../target";
 import { meatFamiliar, setBestLeprechaunAsMeatFamiliar } from "../familiar";
 import {
   baseMeat,
@@ -44,23 +44,23 @@ import { Quest } from "grimoire-kolmafia";
 import { acquire } from "../acquire";
 
 function drivebyValue(): number {
-  const embezzlers = copyTargetCount();
-  const cows = estimatedGarboTurns() - embezzlers;
+  const targets = copyTargetCount();
+  const cows = estimatedGarboTurns() - targets;
   const marginalRoboWeight = 50;
   const meatPercentDelta =
     Math.sqrt(220 * 2 * marginalRoboWeight) -
     Math.sqrt(220 * 2 * marginalRoboWeight) +
     2 * marginalRoboWeight;
   return (
-    (meatPercentDelta / 100) * (targetMeat() * embezzlers + baseMeat() * cows)
+    (meatPercentDelta / 100) * (targetMeat() * targets + baseMeat() * cows)
   );
 }
 
 function bloodyNoraValue(): number {
-  const embezzlers = copyTargetCount();
+  const targets = copyTargetCount();
   const robortMultiplier = 2;
   const bloodyNoraWeight = 10;
-  const cows = estimatedGarboTurns() - embezzlers;
+  const cows = estimatedGarboTurns() - targets;
   // Assume base weight of 100 pounds. This is off but close enough.
   const assumedBaseWeight = 100;
   // Marginal value of 1 familiar weight in % meat drop.

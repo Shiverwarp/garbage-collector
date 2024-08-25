@@ -39,20 +39,20 @@ import { GarboStrategy, Macro } from "../combat";
 import { globalOptions } from "../config";
 import { wanderer } from "../garboWanderer";
 import {
-  EMBEZZLER_MULTIPLIER,
   howManySausagesCouldIEat,
   kramcoGuaranteed,
+  MEAT_TARGET_MULTIPLIER,
   romanticMonsterImpossible,
   setChoice,
   sober,
 } from "../lib";
-import { embezzlerOutfit, fishyPrepOutfit, freeFightOutfit } from "../outfit";
+import { fishyPrepOutfit, freeFightOutfit, meatTargetOutfit } from "../outfit";
 import { digitizedMonstersRemaining } from "../turns";
 import { computeDiet, countCopies } from "../diet";
 
 import { GarboTask } from "./engine";
-import { copyTargetCount } from "../embezzler";
 import { shouldFillLatte, tryFillLatte } from "../resources";
+import { copyTargetCount } from "../target";
 
 const steveAdventures: Map<Location, number[]> = new Map([
   [$location`The Haunted Bedroom`, [1, 3, 1]],
@@ -121,7 +121,7 @@ function shouldGoUnderwater(): boolean {
   // TODO: if you didn't digitize an embezzler, this equation may not be right
   if (
     mallPrice($item`pulled green taffy`) <
-    EMBEZZLER_MULTIPLIER() * get("valueOfAdventure")
+    MEAT_TARGET_MULTIPLIER() * get("valueOfAdventure")
   ) {
     return false;
   }
@@ -161,7 +161,7 @@ const fishyPrepTasks: GarboTask[] = [
       }
     },
     outfit: () =>
-      embezzlerOutfit(sober() ? {} : { offhand: $item`Drunkula's wineglass` }),
+      meatTargetOutfit(sober() ? {} : { offhand: $item`Drunkula's wineglass` }),
     spendsTurn: isSteve,
     combat: new GarboStrategy(() =>
       Macro.if_(
@@ -228,7 +228,7 @@ const fishyPrepTasks: GarboTask[] = [
         : [],
     outfit: () =>
       digitizedEmbezzler()
-        ? embezzlerOutfit(
+        ? meatTargetOutfit(
             {},
             wanderer().getTarget({
               wanderer: "wanderer",
