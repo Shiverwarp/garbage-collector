@@ -21,7 +21,6 @@ import {
   isBanished,
   Item,
   itemAmount,
-  itemDropsArray,
   itemFact,
   Location,
   mallPrice,
@@ -153,6 +152,7 @@ import {
   freeRunConstraints,
   getUsingFreeBunnyBanish,
   HIGHLIGHT,
+  isFree,
   isStrongScaler,
   kramcoGuaranteed,
   lastAdventureWasWeird,
@@ -169,6 +169,7 @@ import {
   targetMeat,
   tryFindFreeRunOrBanish,
   userConfirmDialog,
+  valueDrops,
   withLocation,
 } from "./lib";
 import { freeFightMood, meatMood, useBuffExtenders } from "./mood";
@@ -2946,12 +2947,6 @@ function getBofaWishes() {
     bofaFreeRun = tryFindFreeRunOrBanish(freeRunConstraints());
   }
 }
-
-const isFree = (monster: Monster) => monster.attributes.includes("FREE");
-const valueDrops = (monster: Monster) =>
-  sum(itemDropsArray(monster), ({ drop, rate, type }) =>
-    !["c", "0", "p"].includes(type) ? (garboValue(drop) * rate) / 100 : 0,
-  );
 
 export function estimatedFreeFights(): number {
   return (

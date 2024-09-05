@@ -338,6 +338,8 @@ const stomachLiverCleaners = new Map([
   [$item`cuppa Sobrie tea`, [0, -1]],
   [$item`designer sweatpants`, [0, -1]],
   [$item`august scepter`, [-1, 0]],
+  [$item`Mr. Burnsger`, [4, -1]],
+  [$item`Doc Clock's thyme cocktail`, [-1, 4]],
 ]);
 
 function legendaryPizzaToMenu(

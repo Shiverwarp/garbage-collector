@@ -146,9 +146,9 @@ export class Macro extends StrictMacro {
         Macro.externalIf(
           get("_spaceJellyfishDrops") < 5,
           Macro.if_(
-            $locations`Barf Mountain, Pirates of the Garbage Barges, Uncle Gator's Country Fun-Time Liquid Waste Sluice, The Toxic Teacups`
-              .map((l) => getMonsters(l))
-              .flat(),
+            $locations`Barf Mountain, Pirates of the Garbage Barges, Uncle Gator's Country Fun-Time Liquid Waste Sluice, The Toxic Teacups`.flatMap(
+              (l) => getMonsters(l),
+            ),
             Macro.trySkill($skill`Extract Jelly`),
           ),
           Macro.trySkill($skill`Extract Jelly`),
@@ -235,8 +235,9 @@ export class Macro extends StrictMacro {
       .tryHaveSkill($skill`Pocket Crumbs`)
       .tryHaveItem($item`train whistle`)
       .tryHaveSkill($skill`Entangling Noodles`)
-      .tryHaveItem($item`Rain-Doh indigo cup`)
-      .tryHaveItem($item`Rain-Doh blue balls`);
+      .tryHaveItem($item`little red book`)
+      .tryHaveItem($item`Rain-Doh blue balls`)
+      .tryHaveItem($item`Rain-Doh indigo cup`);
   }
 
   static delevel(): Macro {
@@ -598,15 +599,18 @@ export class Macro extends StrictMacro {
         myBuffedstat($stat`Muscle`) > myBuffedstat($stat`Mysticality`) &&
           (currentHitStat() === $stat`Muscle` ||
             itemType(equippedItem($slot`weapon`)) === "knife"),
-        Macro.trySkillRepeat(
-          $skill`Northern Explosion`,
-          $skill`Lunging Thrust-Smack`,
-          $skill`Saucegeyser`,
-          $skill`Weapon of the Pastalord`,
-          $skill`Cannelloni Cannon`,
-          $skill`Wave of Sauce`,
-          $skill`Saucestorm`,
-        ),
+        Macro.trySkillRepeat($skill`Northern Explosion`)
+          .ifNot(
+            $monster`cheerless mime executive`,
+            Macro.trySkillRepeat($skill`Lunging Thrust-Smack`),
+          )
+          .trySkillRepeat(
+            $skill`Saucegeyser`,
+            $skill`Weapon of the Pastalord`,
+            $skill`Cannelloni Cannon`,
+            $skill`Wave of Sauce`,
+            $skill`Saucestorm`,
+          ),
         Macro.trySkillRepeat(
           $skill`Saucegeyser`,
           $skill`Weapon of the Pastalord`,

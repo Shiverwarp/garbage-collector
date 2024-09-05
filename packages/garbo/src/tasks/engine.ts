@@ -52,6 +52,7 @@ function logTargetFight(encounterType: string) {
  */
 export class BaseGarboEngine extends Engine<never, GarboTask> {
   available(task: GarboTask): boolean {
+    safeInterrupt();
     const taskSober = undelay(task.sobriety);
     if (taskSober) {
       return (
@@ -85,7 +86,6 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
   }
 
   execute(task: GarboTask): void {
-    safeInterrupt();
     const spentTurns = totalTurnsPlayed();
     const duplicate = undelay(task.duplicate);
     const before = SourceTerminal.getSkills();

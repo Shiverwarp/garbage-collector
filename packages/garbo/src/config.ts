@@ -1,5 +1,5 @@
 import { Args } from "grimoire-kolmafia";
-import { Item, itemDropsArray, Monster, print } from "kolmafia";
+import { Item, print } from "kolmafia";
 import {
   $item,
   $items,
@@ -11,16 +11,8 @@ import {
   get,
   have,
   maxBy,
-  sum,
 } from "libram";
-import { garboValue } from "./garboValue";
-
-export const isFreeAndCopyable = (monster: Monster) =>
-  monster.copyable && monster.attributes.includes("FREE");
-export const valueDrops = (monster: Monster) =>
-  sum(itemDropsArray(monster), ({ drop, rate, type }) =>
-    !["c", "0", "p"].includes(type) ? (garboValue(drop) * rate) / 100 : 0,
-  );
+import { isFreeAndCopyable, valueDrops } from "./lib";
 
 const workshedAliases = [
   { item: $item`model train set`, aliases: ["trainrealm"] },
@@ -87,19 +79,16 @@ function defaultTarget() {
   if ($skills`Curse of Weaksauce, Saucegeyser`.every((s) => have(s))) {
     if (
       ChestMimic.have() ||
-      have($item`Clan VIP Lounge key`) ||
-      (CombatLoversLocket.have() &&
-        CombatLoversLocket.unlockedLocketMonsters().includes(
-          $monster`cheerless mime executive`,
-        ))
+      (have($item`Clan VIP Lounge key`) && !get("_photocopyUsed")) ||
+      CombatLoversLocket.availableLocketMonsters().includes(
+        $monster`cheerless mime executive`,
+      )
     ) {
       return $monster`cheerless mime executive`;
     } else {
-      return (
-        maxBy(
-          $monsters.all().filter((m) => m.wishable && isFreeAndCopyable(m)),
-          valueDrops,
-        ) || $monster`Witchess Knight`
+      return maxBy(
+        $monsters.all().filter((m) => m.wishable && isFreeAndCopyable(m)),
+        valueDrops,
       );
     }
   }
