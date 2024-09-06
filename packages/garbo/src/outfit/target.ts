@@ -19,8 +19,8 @@ import {
   useUPCsIfNeeded,
   validateGarbageFoldable,
 } from "./lib";
-import { BonusEquipMode, modeValueOfMeat } from "../lib";
-import { globalOptions, targettingMeat } from "../config";
+import { BonusEquipMode, modeValueOfMeat, targettingMeat } from "../lib";
+import { globalOptions } from "../config";
 
 export function meatTargetOutfit(
   spec: OutfitSpec = {},

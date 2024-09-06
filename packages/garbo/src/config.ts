@@ -6,8 +6,6 @@ import {
   $monster,
   $monsters,
   $skills,
-  ChestMimic,
-  CombatLoversLocket,
   get,
   have,
   maxBy,
@@ -77,26 +75,13 @@ function stringToWorkshedItem(s: string): Item | null {
 
 function defaultTarget() {
   if ($skills`Curse of Weaksauce, Saucegeyser`.every((s) => have(s))) {
-    if (
-      ChestMimic.have() ||
-      (have($item`Clan VIP Lounge key`) && !get("_photocopyUsed")) ||
-      CombatLoversLocket.availableLocketMonsters().includes(
-        $monster`cheerless mime executive`,
-      )
-    ) {
-      return $monster`cheerless mime executive`;
-    } else {
-      return maxBy(
-        $monsters.all().filter((m) => m.wishable && isFreeAndCopyable(m)),
-        valueDrops,
-      );
-    }
+    return maxBy(
+      $monsters.all().filter((m) => m.wishable && isFreeAndCopyable(m)),
+      valueDrops,
+    );
   }
   return $monster`Knob Goblin Elite Guard Captain`;
 }
-
-export const targettingMeat = () =>
-  $monsters`cheerless mime executive`.includes(globalOptions.target);
 
 export const globalOptions = Args.create(
   "garbo",
