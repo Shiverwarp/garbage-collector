@@ -193,7 +193,9 @@ export const targetMeatDifferential = () => {
 };
 
 export const targettingMeat = () =>
-  $monsters`Knob Goblin Elite Guard Captain`.includes(globalOptions.target);
+  $monsters`cockroach, Knob Goblin Elite Guard Captain`.includes(
+    globalOptions.target,
+  );
 
 export const targettingItems = () =>
   valueDrops(globalOptions.target) > meatDrop(globalOptions.target);

@@ -74,6 +74,9 @@ function stringToWorkshedItem(s: string): Item | null {
 }
 
 function defaultTarget() {
+  if (get(`_lastPirateRealmIsland`) === "Trash Island") {
+    return $monster`cockroach`;
+  }
   if ($skills`Curse of Weaksauce, Saucegeyser`.every((s) => have(s))) {
     return maxBy(
       $monsters.all().filter((m) => m.wishable && isFreeAndCopyable(m)),
