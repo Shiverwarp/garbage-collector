@@ -20,8 +20,6 @@ import {
   myClass,
   myFamiliar,
   myFury,
-  myHp,
-  myMaxhp,
   myMp,
   myPath,
   mySoulsauce,
@@ -67,6 +65,7 @@ import {
   monsterManuelAvailable,
 } from "./lib";
 import { CombatStrategy } from "grimoire-kolmafia";
+import { copyTargetCount } from "./target";
 
 export function shouldRedigitize(): boolean {
   const digitizesLeft = SourceTerminal.getDigitizeUsesRemaining();
@@ -229,17 +228,6 @@ export class Macro extends StrictMacro {
     return new Macro().tryCopier(itemOrSkill);
   }
 
-  tryNewAgeHeal(): Macro {
-    return this.externalIf(
-      myHp() < Math.min(myMaxhp() * 0.3, get("garbo_restoreHpTarget", 2000)),
-      Macro.tryHaveItem($item`New Age healing crystal`),
-    );
-  }
-
-  static tryNewAgeHeal(): Macro {
-    return new Macro().tryNewAgeHeal();
-  }
-
   delevel(): Macro {
     return this.tryHaveSkill($skill`Curse of Weaksauce`)
       .externalIf(
@@ -286,10 +274,7 @@ export class Macro extends StrictMacro {
       shouldRedigitize(),
       Macro.if_(globalOptions.target, Macro.trySkill($skill`Digitize`)),
     )
-      .externalIf(
-        delevel,
-        Macro.if_($monster`cheerless mime executive`, Macro.delevel()),
-      )
+      .externalIf(delevel, Macro.if_(globalOptions.target, Macro.delevel()))
       .if_(
         $monsters`sea cowboy, Mer-kin rustler`,
         Macro.abortWithMsg(
@@ -614,18 +599,16 @@ export class Macro extends StrictMacro {
         myBuffedstat($stat`Muscle`) > myBuffedstat($stat`Mysticality`) &&
           (currentHitStat() === $stat`Muscle` ||
             itemType(equippedItem($slot`weapon`)) === "knife"),
-        Macro.trySkillRepeat($skill`Northern Explosion`)
-          .ifNot(
-            $monster`cheerless mime executive`,
-            Macro.trySkillRepeat($skill`Lunging Thrust-Smack`),
-          )
-          .trySkillRepeat(
-            $skill`Saucegeyser`,
-            $skill`Weapon of the Pastalord`,
-            $skill`Cannelloni Cannon`,
-            $skill`Wave of Sauce`,
-            $skill`Saucestorm`,
-          ),
+
+        Macro.trySkillRepeat(
+          $skill`Northern Explosion`,
+          $skill`Lunging Thrust-Smack`,
+          $skill`Saucegeyser`,
+          $skill`Weapon of the Pastalord`,
+          $skill`Cannelloni Cannon`,
+          $skill`Wave of Sauce`,
+          $skill`Saucestorm`,
+        ),
         Macro.trySkillRepeat(
           $skill`Saucegeyser`,
           $skill`Weapon of the Pastalord`,
@@ -750,7 +733,7 @@ export class Macro extends StrictMacro {
 
   tryDrone(): Macro {
     return this.externalIf(
-      gooseDroneEligible(),
+      gooseDroneEligible() && get("gooseDronesRemaining") < copyTargetCount(),
       Macro.if_(
         globalOptions.target,
         Macro.trySkill($skill`Emit Matter Duplicating Drones`),
