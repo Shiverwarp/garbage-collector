@@ -84,8 +84,6 @@ import { lavaDogsAccessible, lavaDogsComplete } from "../resources/doghouse";
 import { hotTubAvailable } from "../resources/clanVIP";
 import { meatMood } from "../mood";
 
-const canDuplicate = () =>
-  SourceTerminal.have() && SourceTerminal.duplicateUsesRemaining() > 0;
 const digitizedTarget = () =>
   SourceTerminal.have() &&
   SourceTerminal.getDigitizeMonster() === globalOptions.target;
@@ -739,7 +737,7 @@ const BarfTurnTasks: GarboTask[] = [
       combat: new GarboStrategy(() =>
         Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
-          .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
+          .duplicate()
           .skill($skill`Fondeluge`),
       ),
       duplicate: true,
@@ -756,7 +754,7 @@ const BarfTurnTasks: GarboTask[] = [
       combat: new GarboStrategy(() =>
         Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
-          .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
+          .duplicate()
           .skill($skill`Spit jurassic acid`),
       ),
       sobriety: "sober",
@@ -773,7 +771,7 @@ const BarfTurnTasks: GarboTask[] = [
       combat: new GarboStrategy(() =>
         Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
-          .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
+          .duplicate()
           .skill($skill`Free-For-All`),
       ),
       duplicate: true,
@@ -789,7 +787,7 @@ const BarfTurnTasks: GarboTask[] = [
       combat: new GarboStrategy(() =>
         Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
-          .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
+          .duplicate()
           .skill($skill`Lightning Strike`),
       ),
       duplicate: true,
@@ -805,7 +803,7 @@ const BarfTurnTasks: GarboTask[] = [
       combat: new GarboStrategy(() =>
         Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
-          .externalIf(canDuplicate(), Macro.trySkill($skill`Duplicate`))
+          .duplicate()
           .skill($skill`Shocking Lick`),
       ),
       duplicate: true,
