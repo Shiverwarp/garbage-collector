@@ -600,8 +600,10 @@ export class Macro extends StrictMacro {
           (currentHitStat() === $stat`Muscle` ||
             itemType(equippedItem($slot`weapon`)) === "knife"),
 
-        Macro.trySkillRepeat(
-          $skill`Northern Explosion`,
+        Macro.ifNot(
+          $monster`X-32-F Combat Training Snowman`,
+          Macro.trySkillRepeat($skill`Northern Explosion`),
+        ).trySkillRepeat(
           $skill`Lunging Thrust-Smack`,
           $skill`Saucegeyser`,
           $skill`Weapon of the Pastalord`,
@@ -615,9 +617,12 @@ export class Macro extends StrictMacro {
           $skill`Cannelloni Cannon`,
           $skill`Wave of Sauce`,
           $skill`Saucestorm`,
-          $skill`Northern Explosion`,
-          $skill`Lunging Thrust-Smack`,
-        ),
+        )
+          .ifNot(
+            $monster`X-32-F Combat Training Snowman`,
+            Macro.trySkillRepeat($skill`Northern Explosion`),
+          )
+          .trySkillRepeat($skill`Lunging Thrust-Smack`),
       )
       .attack()
       .repeat();
