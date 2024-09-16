@@ -964,7 +964,6 @@ export const emergencyChainStarters = [
   new CopyTargetFight(
     "Mimic Egg (from clinic)",
     () =>
-      monsterInEggnet &&
       ChestMimic.have() &&
       $familiar`Chest Mimic`.experience >= 100 &&
       mosterIsInEggnet() &&
