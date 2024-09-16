@@ -59,12 +59,17 @@ function checkAndFixOvercapStats(): void {
   }
 }
 
+function dessertIslandWorthIt(): boolean {
+  // guesstimating value of giant crab at 3*VOA
+  if (garboValue($item`cocoa of youth`) > 3 * get("valueOfAdventure")) {
+    return true;
+  }
+  return false;
+}
+
 function crewRoleValue(crewmate: string): number {
   // Cuisinier is highest value if cocoa of youth is more meat than expected from giant crab
-  if (
-    garboValue($item`cocoa of youth`) > 2 * get("valueOfAdventure") &&
-    crewmate.includes("Cuisinier")
-  ) {
+  if (dessertIslandWorthIt() && crewmate.includes("Cuisinier")) {
     return 50;
   }
   // Coxswain helps save turns if we run from storms
@@ -137,7 +142,7 @@ export const CockroachSetup: Quest<GarboTask> = {
       outfit: { equip: $items`PirateRealm eyepatch` },
       choices: () => ({
         1352:
-          garboValue($item`cocoa of youth`) > 2 * get("valueOfAdventure") &&
+          dessertIslandWorthIt() &&
           get("_pirateRealmCrewmate").includes("Cuisinier")
             ? 6
             : 1,
