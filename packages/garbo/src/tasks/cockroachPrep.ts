@@ -135,13 +135,13 @@ export const CockroachSetup: Quest<GarboTask> = {
       prepare: () => checkAndFixOvercapStats(),
       do: () => adv1($location`Sailing the PirateRealm Seas`),
       outfit: { equip: $items`PirateRealm eyepatch` },
-      choices: {
+      choices: () => ({
         1352:
           garboValue($item`cocoa of youth`) > 2 * get("valueOfAdventure") &&
           get("_pirateRealmCrewmate").includes("Cuisinier")
             ? 6
             : 1,
-      },
+      }),
       limit: { tries: 1 },
       spendsTurn: false,
     },
