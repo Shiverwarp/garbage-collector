@@ -5,6 +5,7 @@ import {
   $items,
   $monster,
   $monsters,
+  $skill,
   $skills,
   get,
   have,
@@ -74,7 +75,13 @@ function stringToWorkshedItem(s: string): Item | null {
 }
 
 function defaultTarget() {
-  if (get(`_lastPirateRealmIsland`) === "Trash Island") {
+  // Can we account for re-entry if we only have certain amounts of copiers left in each of these?
+  if (
+    have($skill`Just the Facts`) &&
+    have($skill`Meteor Lore`) &&
+    have($item`Powerful Glove`) &&
+    (get("_prToday") || get("prAlways"))
+  ) {
     return $monster`cockroach`;
   }
   if ($skills`Curse of Weaksauce, Saucegeyser`.every((s) => have(s))) {

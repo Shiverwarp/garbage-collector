@@ -40,6 +40,7 @@ import {
   $item,
   $items,
   $location,
+  $monster,
   $skill,
   $slots,
   Clan,
@@ -88,6 +89,7 @@ import {
 } from "./tasks";
 import { fishyPrepQuest } from "./tasks/fishyPrep";
 import { PostFishyQuest } from "./tasks/post";
+import { CockroachSetup } from "./tasks/cockroachPrep";
 
 // Max price for tickets. You should rethink whether Barf is the best place if they're this expensive.
 const TICKET_MAX_PRICE = 500000;
@@ -517,6 +519,12 @@ export function main(argString = ""): void {
     // FIXME: Dynamically figure out pointer ring approach.
     withStash(stashItems, () => {
       withVIPClan(() => {
+        // Prepare pirate realm if our copy target is cockroach
+        // How do we handle if garbo was started without enough turns left without dieting to prep?
+        if (globalOptions.target === $monster`cockroach`) {
+          runGarboQuests([CockroachSetup]);
+        }
+
         // Banish and Fishy prep
         runGarboQuests([PostFishyQuest(), fishyPrepQuest]);
 
