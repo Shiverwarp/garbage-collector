@@ -20,6 +20,7 @@ import {
   mallPrice,
   myBuffedstat,
   runChoice,
+  toLocation,
   visitUrl,
 } from "kolmafia";
 import { garboValue } from "../garboValue";
@@ -101,9 +102,9 @@ function chooseCrew(): void {
 }
 
 export const CockroachSetup: Quest<GarboTask> = {
-  name: "Setup Cockroach Target in PirateRealm",
+  name: "Setup Cockroach Target",
   completed: () =>
-    get("_lastPirateRealmIsland", $location`none`) === $location`Trash Island`,
+    toLocation(get("_lastPirateRealmIsland")) === $location`Trash Island`,
   tasks: [
     // Tasks to progress pirate realm up to selecting Trash Island go here
     // We'll have to be careful about things like max stats becoming too high (bofa is annoying for this!)
@@ -154,7 +155,7 @@ export const CockroachSetup: Quest<GarboTask> = {
       name: "Sail to first Island",
       ready: () =>
         firstIslands.some(
-          (island) => island === get("_lastPirateRealmIsland", $location`none`),
+          (island) => island === toLocation(get("_lastPirateRealmIsland")),
         ),
       completed: () =>
         get("_pirateRealmSailingTurns") >= get("_pirateRealmShipSpeed"),
@@ -186,7 +187,7 @@ export const CockroachSetup: Quest<GarboTask> = {
       name: "Land Ho (First Island)",
       ready: () =>
         firstIslands.some(
-          (island) => island === get("_lastPirateRealmIsland", $location`none`),
+          (island) => island === toLocation(get("_lastPirateRealmIsland")),
         ) && get("_pirateRealmSailingTurns") >= get("_pirateRealmShipSpeed"),
       completed: () => get("_shivFirstIslandLandHoCompleted", false),
       prepare: () => checkAndFixOvercapStats(),
@@ -209,7 +210,7 @@ export const CockroachSetup: Quest<GarboTask> = {
       name: "Standard Island Combats (Island 1)",
       ready: () =>
         firstIslands.some(
-          (island) => get("_lastPirateRealmIsland", $location`none`) === island,
+          (island) => toLocation(get("_lastPirateRealmIsland")) === island,
         ),
       completed: () => get("_pirateRealmIslandMonstersDefeated") >= 4,
       prepare: () => {
@@ -221,15 +222,13 @@ export const CockroachSetup: Quest<GarboTask> = {
           acquire(1, $item`windicle`, 3 * get("valueOfAdventure"), true);
         }
       },
-      do: () =>
-        adv1(get("_lastPirateRealmIsland", $location`none`) ?? $location`none`),
+      do: () => adv1(toLocation(get("_lastPirateRealmIsland"))),
       outfit: () =>
         freeFightOutfit({
           equip: $items`PirateRealm eyepatch, PirateRealm party hat, carnivorous potted plant, Red Roger's red left foot, Space Trip safety headphones`,
           familiar: freeFightFamiliar({
             canChooseMacro: false,
-            location:
-              get("_lastPirateRealmIsland", $location`none`) ?? $location`none`,
+            location: toLocation(get("_lastPirateRealmIsland")),
             allowAttackFamiliars: true,
             mode: "free",
           }),
@@ -249,7 +248,7 @@ export const CockroachSetup: Quest<GarboTask> = {
       name: "Final Island Encounter (Island 1)", // Ideally we delay this to do it before our copy target fights for meat but here for now
       ready: () =>
         firstIslands.some(
-          (island) => get("_lastPirateRealmIsland", $location`none`) === island,
+          (island) => toLocation(get("_lastPirateRealmIsland")) === island,
         ) && get("_pirateRealmIslandMonstersDefeated") === 4,
       completed: () =>
         get("_pirateRealmIslandMonstersDefeated") > 4 ||
@@ -257,15 +256,14 @@ export const CockroachSetup: Quest<GarboTask> = {
       prepare: () => {
         checkAndFixOvercapStats();
         if (
-          get("_lastPirateRealmIsland", $location`none`) ===
-          $location`Crab Island`
+          toLocation(get("_lastPirateRealmIsland")) === $location`Crab Island`
         ) {
           cliExecute("tcrsgain meat 5 eff"); // stopgap before we fix ordering and can properly do potions
         }
       },
       do: () => {
         if (
-          get("_lastPirateRealmIsland", $location`none`) ===
+          toLocation(get("_lastPirateRealmIsland")) ===
           $location`Dessert Island`
         ) {
           // Should give us cocoa of youth
@@ -285,8 +283,7 @@ export const CockroachSetup: Quest<GarboTask> = {
       },
       outfit: () => {
         if (
-          get("_lastPirateRealmIsland", $location`none`) ===
-          $location`Crab Island`
+          toLocation(get("_lastPirateRealmIsland")) === $location`Crab Island`
         ) {
           if (get("_saberMod") === 0) {
             cliExecute("saber familiar"); // Again we haven't done first time setup yet with current order, so bandaid
@@ -310,11 +307,10 @@ export const CockroachSetup: Quest<GarboTask> = {
       name: "Choose Trash Island",
       ready: () =>
         firstIslands.some(
-          (island) => get("_lastPirateRealmIsland", $location`none`) === island,
+          (island) => toLocation(get("_lastPirateRealmIsland")) === island,
         ) && get("_pirateRealmIslandMonstersDefeated") > 4,
       completed: () =>
-        get("_lastPirateRealmIsland", $location`none`) ===
-        $location`Trash Island`,
+        toLocation(get("_lastPirateRealmIsland")) === $location`Trash Island`,
       prepare: () => checkAndFixOvercapStats(),
       do: () => adv1($location`Sailing the PirateRealm Seas`),
       outfit: { equip: $items`PirateRealm eyepatch` },
