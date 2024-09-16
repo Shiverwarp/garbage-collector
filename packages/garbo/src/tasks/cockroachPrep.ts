@@ -246,7 +246,9 @@ export const CockroachSetup: Quest<GarboTask> = {
         firstIslands.some(
           (island) => get("_lastPirateRealmIsland", $location`none`) === island,
         ) && get("_pirateRealmIslandMonstersDefeated") === 4,
-      completed: () => get("_pirateRealmIslandMonstersDefeated") > 4, // This might not work for dessert island with current mafia
+      completed: () =>
+        get("_pirateRealmIslandMonstersDefeated") > 4 ||
+        get("_shivCocoaOfYouthGotten", false), // This might not work for dessert island with current mafia
       prepare: () => {
         checkAndFixOvercapStats();
         if (
@@ -256,8 +258,26 @@ export const CockroachSetup: Quest<GarboTask> = {
           cliExecute("tcrsgain meat 5 eff"); // stopgap before we fix ordering and can properly do potions
         }
       },
-      do: () =>
-        adv1(get("_lastPirateRealmIsland", $location`none`) ?? $location`none`),
+      do: () => {
+        if (
+          get("_lastPirateRealmIsland", $location`none`) ===
+          $location`Dessert Island`
+        ) {
+          // Should give us cocoa of youth
+          if (
+            visitUrl("adventure.php?snarfblat=531").includes(
+              "Chocolate Fountain of Youth",
+            )
+          ) {
+            runChoice(1);
+            set("_shivCocoaOfYouthGotten", true);
+          } else {
+            abort("Expected cocoa of youth but got something else!");
+          }
+        } else {
+          adv1($location`Crab Island`);
+        }
+      },
       outfit: () => {
         if (
           get("_lastPirateRealmIsland", $location`none`) ===
