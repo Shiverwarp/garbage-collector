@@ -934,7 +934,7 @@ const freeFightSources = [
         $item`Bowl of Scorpions`,
       );
       retrieveItem($item`Louder Than Bomb`);
-      retrieveItem($item`stuffed yam stinkbomb`);
+      acquire(1, $item`stuffed yam stinkbomb`, 20000, true);
       retrieveItem($item`divine champagne popper`);
       garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro);
     },
