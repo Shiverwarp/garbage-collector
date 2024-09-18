@@ -92,7 +92,7 @@ function crewAdjectiveValue(crewmate: string): number {
 
 function chooseCrew(): void {
   const bestChoice = maxBy([1, 2, 3], (choiceOption) => {
-    const crewmatePref = `pirateRealmCrewmate${choiceOption}`;
+    const crewmatePref = `_pirateRealmCrewmate${choiceOption}`;
     const crewmate = get(crewmatePref);
     const roleValue = crewRoleValue(crewmate);
     const adjectiveValue = crewAdjectiveValue(crewmate);
