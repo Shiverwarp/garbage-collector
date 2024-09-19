@@ -160,7 +160,7 @@ export const CockroachSetup: Quest<GarboTask> = {
       outfit: {
         equip: $items`PirateRealm eyepatch, PirateRealm party hat, Red Roger's red right foot`,
       },
-      choices: {
+      choices: () => ({
         1365: 1,
         1364: 2,
         1361: 1,
@@ -175,7 +175,7 @@ export const CockroachSetup: Quest<GarboTask> = {
         1359: 1, // Emergency grog adventure, choice one seems more consistent?
         1358: 1, // Emergency grub adventure, choice one seems more consistent?
         1367: 1, // Wrecked ship, this uses glue, need a pref for glue to make this not break if we don't have glue
-      },
+      }),
       limit: { tries: 8 },
       spendsTurn: true,
     },
