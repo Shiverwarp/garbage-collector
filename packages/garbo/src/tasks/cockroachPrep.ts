@@ -53,6 +53,13 @@ function checkAndFixOvercapStats(): void {
     myBuffedstat($stat`Mysticality`) >= 100 ||
     myBuffedstat($stat`Muscle`) >= 100
   ) {
+    uneffect($effect`Having a Ball!`);
+  }
+  if (
+    myBuffedstat($stat`Moxie`) >= 100 ||
+    myBuffedstat($stat`Mysticality`) >= 100 ||
+    myBuffedstat($stat`Muscle`) >= 100
+  ) {
     abort(
       "Buffed stats are too high for PirateRealm! Check for equipment or buffs that we can add to prevent in the script",
     );
