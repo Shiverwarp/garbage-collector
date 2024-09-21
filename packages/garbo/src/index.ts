@@ -41,7 +41,9 @@ import {
   $items,
   $location,
   $monster,
+  $monsters,
   $skill,
+  $skills,
   $slots,
   Clan,
   examine,
@@ -68,12 +70,14 @@ import {
   bestJuneCleaverOption,
   checkGithubVersion,
   HIGHLIGHT,
+  isFreeAndCopyable,
   printEventLog,
   printLog,
   propertyManager,
   questStep,
   safeRestore,
   userConfirmDialog,
+  valueDrops,
 } from "./lib";
 import { meatMood, useBuffExtenders } from "./mood";
 import { potionSetup } from "./potions";
@@ -110,17 +114,29 @@ function ensureBarfAccess() {
   }
 }
 
+function defaultTarget() {
+  // Can we account for re-entry if we only have certain amounts of copiers left in each of these?
+  if (
+    have($skill`Just the Facts`) &&
+    have($skill`Meteor Lore`) &&
+    have($item`Powerful Glove`) &&
+    (get("_prToday") || get("prAlways"))
+  ) {
+    return $monster`cockroach`;
+  }
+
+  if ($skills`Curse of Weaksauce, Saucegeyser`.every((s) => have(s))) {
+    return maxBy(
+      $monsters.all().filter((m) => m.wishable && isFreeAndCopyable(m)),
+      valueDrops,
+    );
+  }
+  return $monster`Knob Goblin Elite Guard Captain`;
+}
+
 export function main(argString = ""): void {
   sinceKolmafiaRevision(28054); // Mimic egg tracking
   checkGithubVersion();
-
-  Args.fill(globalOptions, argString);
-  globalOptions.prefs.yachtzeechain = false;
-  if (globalOptions.version) return; // Since we always print the version, all done!
-  if (globalOptions.help) {
-    Args.showHelp(globalOptions);
-    return;
-  }
 
   // Hit up main.php to get out of easily escapable choices
   visitUrl("main.php");
@@ -136,6 +152,18 @@ export function main(argString = ""): void {
   }
 
   allMallPrices();
+
+  Args.fill(globalOptions, argString);
+  if (globalOptions.target === $monster.none) {
+    globalOptions.target = defaultTarget();
+  }
+
+  globalOptions.prefs.yachtzeechain = false;
+  if (globalOptions.version) return; // Since we always print the version, all done!
+  if (globalOptions.help) {
+    Args.showHelp(globalOptions);
+    return;
+  }
 
   if (globalOptions.turns) {
     if (globalOptions.turns >= 0) {

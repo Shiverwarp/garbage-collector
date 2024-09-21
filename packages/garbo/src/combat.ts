@@ -431,7 +431,7 @@ export class Macro extends StrictMacro {
     // Ignore unexpected monsters, holiday scaling monsters seem to abort with monsterhpabove
     // Delevel the sausage goblins as otherwise they can kind of hurt
     return this.if_(
-      `monstername sea cow || monstername ${globalOptions.target} || monstername sausage goblin`,
+      [$monster`sea cow`, globalOptions.target, $monster`sausage goblin`],
       Macro.externalIf(
         have($item`Time-Spinner`),
         Macro.if_(
