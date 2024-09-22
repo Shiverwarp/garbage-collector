@@ -1,4 +1,5 @@
 import {
+  abort,
   autosellPrice,
   availableAmount,
   buy,
@@ -1294,6 +1295,9 @@ export function runDiet(): void {
       }
 
       consumeDiet(dietBuilder.diet(), "FULL");
+      if (myFullness() < fullnessLimit() || myInebriety() < inebrietyLimit()) {
+        abort("Diet didn't fill organs!");
+      }
 
       shrugBadEffects();
     }
