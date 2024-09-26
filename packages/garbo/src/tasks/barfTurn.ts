@@ -406,7 +406,8 @@ const NonBarfTurnTasks: AlternateTask[] = [
   {
     name: "Machine Elf Dupe",
     ready: () =>
-      ((willDrunkAdventure() && !sober()) || !willDrunkAdventure()) &&
+      have($familiar`Machine Elf`) &&
+      willDrunkAdventure() === !sober() &&
       get("encountersUntilDMTChoice") === 0 &&
       garboValue(getBestDupeItem()) > get("valueOfAdventure"),
     completed: () => get("lastDMTDuplication") === myAscensions(),
