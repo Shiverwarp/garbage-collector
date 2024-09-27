@@ -37,6 +37,7 @@ import { GarboTask } from "./engine";
 import { GarboFreeFightTask } from "./freeFight";
 import { bestFairy } from "../familiar";
 import { sober } from "../lib";
+import { acquire } from "../acquire";
 
 function sandwormSpec(spec: OutfitSpec = {}): OutfitSpec {
   const copy = { ...spec, equip: [...(spec.equip ?? [])] };
@@ -249,6 +250,25 @@ const SandwormTasks: GarboFreeFightTask[] = [
         ),
       combatCount: () => (!have($effect`Everything Looks Yellow`) ? 1 : 0),
     },
+    {
+      name: "Shadow Bricks",
+      ready: () =>
+        mallPrice($item`drum machine`) + mallPrice($item`shadow brick`) <
+        0.02 * mallPrice($item`spice melange`),
+      completed: () => get("_shadowBricksUsed") >= 13,
+      prepare: () => {
+        const maxBrickPrice = Math.max(
+          0,
+          0.02 * mallPrice($item`spice melange`) -
+            mallPrice($item`drum machine`),
+        );
+        acquire(1, $item`shadow brick`, maxBrickPrice, true);
+      },
+      combat: new GarboStrategy(() =>
+        sandwormMacro().item($item`shadow brick`),
+      ),
+      combatCount: () => clamp(13 - get("_shadowBricksUsed"), 0, 13),
+    },
   ].map(sandwormTask),
   ...[
     {
@@ -300,5 +320,5 @@ export const FreeGiantSandwormQuest: Quest<GarboTask> = {
   ready: () =>
     sober() &&
     hasWorms() &&
-    mallPrice($item`drum machine`) < 0.01 * mallPrice($item`spice melange`),
+    mallPrice($item`drum machine`) < 0.02 * mallPrice($item`spice melange`),
 };
