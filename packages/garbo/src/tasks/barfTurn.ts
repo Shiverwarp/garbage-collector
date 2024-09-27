@@ -827,7 +827,6 @@ const BarfTurnTasks: GarboTask[] = [
       combat: new GarboStrategy(() =>
         Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
-          .duplicate()
           .skill($skill`Free-For-All`),
       ),
       sobriety: "sober",
@@ -844,7 +843,6 @@ const BarfTurnTasks: GarboTask[] = [
       combat: new GarboStrategy(() =>
         Macro.if_(globalOptions.target, Macro.meatKill())
           .familiarActions()
-          .duplicate()
           .skill($skill`Lightning Strike`),
       ),
       duplicate: true,
