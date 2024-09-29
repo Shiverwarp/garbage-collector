@@ -320,5 +320,5 @@ export const FreeGiantSandwormQuest: Quest<GarboTask> = {
   ready: () =>
     sober() &&
     hasWorms() &&
-    mallPrice($item`drum machine`) < 0.02 * mallPrice($item`spice melange`),
+    mallPrice($item`drum machine`) < 0.02 * garboValue($item`spice melange`),
 };
