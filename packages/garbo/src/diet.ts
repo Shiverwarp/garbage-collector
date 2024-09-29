@@ -59,10 +59,10 @@ import {
   getRemainingLiver,
   have,
   Kmail,
+  MenuItem as LibramMenuItem,
   maxBy,
   maximizeCached,
   MayoClinic,
-  MenuItem,
   realmAvailable,
   set,
   sum,
@@ -85,6 +85,20 @@ import { shrugBadEffects } from "./mood";
 import { Potion, PotionTier } from "./potions";
 import { estimatedGarboTurns } from "./turns";
 import { garboValue } from "./garboValue";
+
+class MenuItem<T> extends LibramMenuItem<T> {
+  static defaultPriceFunction = (item: Item) => {
+    const prices = [
+      retrievePrice(item),
+      mallPrice(item),
+      npcPrice(item),
+    ].filter((p) => p > 0 && p < Number.MAX_SAFE_INTEGER);
+    if (prices.length > 0) {
+      return Math.min(...prices);
+    }
+    return !item.tradeable && have(item) ? 0 : Infinity;
+  };
+}
 
 const MPA = get("valueOfAdventure");
 print(`Using adventure value ${MPA}.`, HIGHLIGHT);
@@ -1276,18 +1290,6 @@ export function runDiet(): void {
     if (myFamiliar() === $familiar`Stooper`) {
       useFamiliar($familiar.none);
     }
-
-    MenuItem.defaultPriceFunction = (item: Item) => {
-      const prices = [
-        retrievePrice(item),
-        mallPrice(item),
-        npcPrice(item),
-      ].filter((p) => p > 0 && p < Number.MAX_SAFE_INTEGER);
-      if (prices.length > 0) {
-        return Math.min(...prices);
-      }
-      return !item.tradeable && have(item) ? 0 : Infinity;
-    };
 
     const dietBuilder = getMyDiet();
 
