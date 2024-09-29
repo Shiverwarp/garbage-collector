@@ -971,6 +971,9 @@ export function getMyDiet(): {
   sweatpants: () => Diet<Note>;
 } {
   if (myDiet === null) {
+    if (myFamiliar() === $familiar`Stooper`) {
+      useFamiliar($familiar.none);
+    }
     myDiet = computeDiet();
   }
   return myDiet;
