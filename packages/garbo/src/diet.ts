@@ -944,6 +944,24 @@ export function computeDiet(): {
   };
 }
 
+let myDiet: {
+  diet: () => Diet<Note>;
+  shotglass: () => Diet<Note>;
+  pantsgiving: () => Diet<Note>;
+  sweatpants: () => Diet<Note>;
+} | null = null;
+export function getMyDiet(): {
+  diet: () => Diet<Note>;
+  shotglass: () => Diet<Note>;
+  pantsgiving: () => Diet<Note>;
+  sweatpants: () => Diet<Note>;
+} {
+  if (myDiet === null) {
+    myDiet = computeDiet();
+  }
+  return myDiet;
+}
+
 type DietName =
   | "FULL"
   | "SHOTGLASS"
@@ -1271,7 +1289,7 @@ export function runDiet(): void {
       return !item.tradeable && have(item) ? 0 : Infinity;
     };
 
-    const dietBuilder = computeDiet();
+    const dietBuilder = getMyDiet();
 
     if (globalOptions.simdiet) {
       print("===== SIMULATED DIET =====");
