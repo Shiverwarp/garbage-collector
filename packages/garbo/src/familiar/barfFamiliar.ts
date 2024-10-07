@@ -31,8 +31,8 @@ import {
   baseMeat,
   BonusEquipMode,
   HIGHLIGHT,
-  withLocation,
   MEAT_TARGET_MULTIPLIER,
+  withLocation,
 } from "../lib";
 import { computeBarfOutfit } from "../outfit/barf";
 import { estimatedGarboTurns } from "../turns";
@@ -97,7 +97,7 @@ function getCachedOutfitValues(fam: Familiar) {
       computeBarfOutfit(
         {
           familiar: fam,
-          avoid: $items`Kramco Sausage-o-Matic™, cursed magnifying glass, protonic accelerator pack, "I Voted!" sticker, li'l pirate costume, bag of many confections`,
+          avoid: $items`Kramco Sausage-o-Matic™, cursed magnifying glass, protonic accelerator pack, "I Voted!" sticker, li'l pirate costume, bag of many confections, bat wings`,
         },
         true,
       ).dress(),

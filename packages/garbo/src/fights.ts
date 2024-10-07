@@ -97,6 +97,7 @@ import {
   Requirement,
   Robortender,
   set,
+  Snapper,
   SourceTerminal,
   sum,
   undelay,
@@ -189,6 +190,7 @@ import {
   FreeGiantSandwormQuest,
   possibleFreeGiantSandwormQuestTentacleFights,
 } from "./tasks/freeGiantSandworm";
+import { CopyTargetFight } from "./target/fights";
 
 const firstChainMacro = () =>
   Macro.if_(
@@ -375,13 +377,13 @@ function pygmyOptions(equip: Item[] = []): FreeFightOptions {
   };
 }
 
-function familiarSpec(underwater: boolean, fight: string): OutfitSpec {
+function familiarSpec(underwater: boolean, fight: CopyTargetFight): OutfitSpec {
   if (
     ChestMimic.have() &&
     $familiar`Chest Mimic`.experience >= 50 &&
     get("_mimicEggsObtained") < 11 &&
     // switchmonster doesn't apply ML, meaning the target monsters die too quickly to get multiple eggs in
-    !["Macrometeorite", "Powerful Glove", "Backup"].includes(fight)
+    !["Macrometeorite", "Powerful Glove", "Backup"].includes(fight.name)
   ) {
     return { familiar: $familiar`Chest Mimic` };
   }
@@ -405,6 +407,14 @@ function familiarSpec(underwater: boolean, fight: string): OutfitSpec {
   }
 
   if (isFreeAndCopyable(globalOptions.target)) {
+    if (fight.gregariousReplace) {
+      return {
+        familiar: freeFightFamiliar({
+          mode: "target",
+          excludeFamiliar: [$familiar`Red-Nosed Snapper`],
+        }),
+      };
+    }
     return { familiar: freeFightFamiliar({ mode: "target" }) };
   }
 
@@ -538,7 +548,14 @@ export function dailyFights(): void {
         const location = new TargetFightRunOptions(nextFight).location;
         const underwater = location.environment === "underwater";
 
-        const famSpec = familiarSpec(underwater, nextFight.name);
+        const famSpec = familiarSpec(underwater, nextFight);
+
+        if (
+          famSpec.familiar === $familiar`Red-Nosed Snapper` &&
+          Snapper.getTrackedPhylum() !== globalOptions.target.phylum
+        ) {
+          Snapper.trackPhylum(globalOptions.target.phylum);
+        }
 
         setLocation(location);
         meatTargetOutfit({ ...nextFight.spec, ...famSpec }, location).dress();
@@ -1347,6 +1364,7 @@ const freeRunFightSources = [
       ((have($item`industrial fire extinguisher`) &&
         get("_fireExtinguisherCharge") >= 10) ||
         (have($familiar`XO Skeleton`) && get("_xoHugsUsed") < 11) ||
+        (have($item`bat wings`) && get("_batWingsSwoopUsed") < 11) ||
         (have($skill`Perpetrate Mild Evil`) &&
           get("_mildEvilPerpetrated") < 3)) &&
       get("_VYKEACompanionLevel") === 0 && // don't attempt this in case you re-run garbo after making a vykea furniture
@@ -1381,6 +1399,7 @@ const freeRunFightSources = [
           .trySkillRepeat(
             $skill`Fire Extinguisher: Polar Vortex`,
             $skill`Perpetrate Mild Evil`,
+            $skill`Swoop like a Bat`,
           )
           .step(runSource.macro)
           .setAutoAttack();
@@ -1398,13 +1417,16 @@ const freeRunFightSources = [
         const zone = getBestItemStealZone();
         const spec: OutfitSpec =
           have($familiar`XO Skeleton`) && get("_xoHugsUsed") < 11
-            ? { familiar: $familiar`XO Skeleton` }
-            : {};
+            ? { familiar: $familiar`XO Skeleton`, equip: [] }
+            : { equip: [] };
         if (
           have($item`industrial fire extinguisher`) &&
           get("_fireExtinguisherCharge") >= 10
         ) {
-          spec.equip = $items`industrial fire extinguisher`;
+          spec.equip?.push($item`industrial fire extinguisher`);
+        }
+        if (have($item`bat wings`) && get("_batWingsSwoopUsed") < 11) {
+          spec.equip?.push($item`bat wings`);
         }
         spec.modifier = zone?.maximize ?? [];
         return spec;
@@ -2293,12 +2315,7 @@ function getBestItemStealZone(mappingMonster = false): ItemStealZone | null {
     (zone) =>
       zone.isOpen() &&
       (mappingMonster || !zone.requireMapTheMonsters) &&
-      asArray(zone.monster).some(
-        (m) =>
-          !isBanished(m) ||
-          get("olfactedMonster") === m ||
-          get("_gallapagosMonster") === m,
-      ),
+      asArray(zone.monster).some((m) => !isBanished(m)),
   );
   const vorticesAvail = have($item`industrial fire extinguisher`)
     ? Math.floor(get("_fireExtinguisherCharge") / 10)
