@@ -54,6 +54,7 @@ import {
   clamp,
   Diet,
   get,
+  getActiveSongs,
   getAverageAdventures,
   getModifier,
   getRemainingLiver,
@@ -136,6 +137,21 @@ function drinkSafe(qty: number, item: Item) {
     const odeTurns = qty * item.inebriety;
     const castTurns = odeTurns - haveEffect($effect`Ode to Booze`);
     if (castTurns > 0) {
+      if (getActiveSongs().length >= 4 && !have($effect`Ode to Booze`)) {
+        // Ensure we can cast Ode
+        if (haveEffect($effect`Fat Leon's Phat Loot Lyric`)) {
+          cliExecute(`shrug ${$effect`Fat Leon's Phat Loot Lyric`}`);
+        }
+        if (
+          getActiveSongs().length >= 4 &&
+          haveEffect($effect`Polka of Plenty`)
+        ) {
+          cliExecute(`shrug ${$effect`Polka of Plenty`}`);
+        }
+        if (getActiveSongs().length >= 4) {
+          throw new Error("Unable to make a song slot for Ode to Booze!");
+        }
+      }
       useSkill(
         $skill`The Ode to Booze`,
         Math.ceil(castTurns / turnsPerCast($skill`The Ode to Booze`)),
