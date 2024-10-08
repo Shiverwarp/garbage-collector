@@ -293,7 +293,7 @@ export const CockroachSetup: Quest<GarboTask> = {
         return { equip: $items`PirateRealm eyepatch` };
       },
       choices: { 1385: 1, 1368: 1 }, // Take cocoa of youth, fight crab
-      combat: new GarboStrategy(() => Macro.meatKill()),
+      combat: new GarboStrategy(() => Macro.delevel().meatKill()),
       limit: { tries: 1 },
       spendsTurn: true,
     },
