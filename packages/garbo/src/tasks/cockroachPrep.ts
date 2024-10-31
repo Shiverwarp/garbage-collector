@@ -60,6 +60,9 @@ function checkAndFixOvercapStats(): void {
   }
   if (myBuffedstat($stat`Moxie`) >= 100) {
     if (have($effect`Gummiskin`)) uneffect($effect`Gummiskin`);
+    if (have($effect`Quantum of Moxie`) && myBuffedstat($stat`Moxie`) >= 100) {
+      uneffect($effect`Quantum of Moxie`);
+    }
   }
   if (
     myBuffedstat($stat`Moxie`) >= 100 ||
