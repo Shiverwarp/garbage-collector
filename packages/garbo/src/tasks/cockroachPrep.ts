@@ -42,6 +42,12 @@ function checkAndFixOvercapStats(): void {
     if (have($effect`License to Punch`) && myBuffedstat($stat`Muscle`) >= 100) {
       uneffect($effect`License to Punch`);
     }
+    if (
+      have($effect`Angering Pizza Purists`) &&
+      myBuffedstat($stat`Muscle`) >= 100
+    ) {
+      uneffect($effect`Angering Pizza Purists`);
+    }
   }
   if (myBuffedstat($stat`Mysticality`) >= 100) {
     if (have($effect`Gummibrain`)) uneffect($effect`Gummibrain`);
