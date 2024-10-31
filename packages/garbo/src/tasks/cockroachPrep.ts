@@ -33,9 +33,24 @@ import { acquire } from "../acquire";
 function checkAndFixOvercapStats(): void {
   if (myBuffedstat($stat`Muscle`) >= 100) {
     if (have($effect`Gummiheart`)) uneffect($effect`Gummiheart`);
+    if (
+      have($effect`Punch Another Day`) &&
+      myBuffedstat($stat`Muscle`) >= 100
+    ) {
+      uneffect($effect`Punch Another Day`);
+    }
+    if (have($effect`License to Punch`) && myBuffedstat($stat`Muscle`) >= 100) {
+      uneffect($effect`License to Punch`);
+    }
   }
   if (myBuffedstat($stat`Mysticality`) >= 100) {
     if (have($effect`Gummibrain`)) uneffect($effect`Gummibrain`);
+    if (
+      have($effect`For Your Brain Only`) &&
+      myBuffedstat($stat`Mysticality`) >= 100
+    ) {
+      uneffect($effect`For Your Brain Only`);
+    }
   }
   if (myBuffedstat($stat`Moxie`) >= 100) {
     if (have($effect`Gummiskin`)) uneffect($effect`Gummiskin`);
