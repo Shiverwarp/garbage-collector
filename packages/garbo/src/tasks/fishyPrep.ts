@@ -48,7 +48,7 @@ import {
 } from "../lib";
 import { fishyPrepOutfit, freeFightOutfit, meatTargetOutfit } from "../outfit";
 import { digitizedMonstersRemaining } from "../turns";
-import { countCopies, getMyDiet } from "../diet";
+import { computeDiet, countCopies } from "../diet";
 
 import { GarboTask } from "./engine";
 import { shouldFillLatte, tryFillLatte } from "../resources";
@@ -96,7 +96,7 @@ let requiredFishyTurns: number;
 export function getRequiredFishyTurns(): number {
   const unrealizedMimicEggFights = 11 - get("_mimicEggsObtained");
   return (requiredFishyTurns ??=
-    countCopies(getMyDiet().diet()) +
+    countCopies(computeDiet().diet()) +
     copyTargetCount() +
     unrealizedMimicEggFights + // We gain extra embezzler fights post-free-fights from mimic experience
     10); // Extra buffer of 10 turns just in case weirdness

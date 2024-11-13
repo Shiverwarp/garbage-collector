@@ -974,27 +974,6 @@ export function computeDiet(): {
   };
 }
 
-let myDiet: {
-  diet: () => Diet<Note>;
-  shotglass: () => Diet<Note>;
-  pantsgiving: () => Diet<Note>;
-  sweatpants: () => Diet<Note>;
-} | null = null;
-export function getMyDiet(): {
-  diet: () => Diet<Note>;
-  shotglass: () => Diet<Note>;
-  pantsgiving: () => Diet<Note>;
-  sweatpants: () => Diet<Note>;
-} {
-  if (myDiet === null) {
-    if (myFamiliar() === $familiar`Stooper`) {
-      useFamiliar($familiar.none);
-    }
-    myDiet = computeDiet();
-  }
-  return myDiet;
-}
-
 type DietName =
   | "FULL"
   | "SHOTGLASS"
@@ -1310,7 +1289,7 @@ export function runDiet(): void {
       useFamiliar($familiar.none);
     }
 
-    const dietBuilder = getMyDiet();
+    const dietBuilder = computeDiet();
 
     if (globalOptions.simdiet) {
       print("===== SIMULATED DIET =====");
