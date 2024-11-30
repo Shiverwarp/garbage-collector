@@ -156,6 +156,11 @@ export function main(argString = ""): void {
   Args.fill(globalOptions, argString);
   if (globalOptions.target === $monster.none) {
     globalOptions.target = defaultTarget();
+    if (globalOptions.target !== $monster`cockroach`) {
+      throw new Error(
+        "defaultTarget didn't set our copy target to cockroach for some reason!",
+      );
+    }
   }
 
   globalOptions.prefs.yachtzeechain = false;
