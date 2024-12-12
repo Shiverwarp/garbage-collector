@@ -42,6 +42,7 @@ import {
   Delayed,
   ensureEffect,
   get,
+  getModifier,
   GingerBread,
   have,
   HeavyRains,
