@@ -72,17 +72,19 @@ export function meatMood(
   mood.skill($skill`Ruthless Efficiency`);
 
   // Donho's
-  const availableDonhoTurnsFromSkill = 10 * (50 - get("_donhosCasts"));
-  if (get("_donhosCasts") < 50 && !globalOptions.ascend) {
-    useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
-  } else if (
-    get("_donhosCasts") < 50 &&
-    availableDonhoTurnsFromSkill > estimatedGarboTurns()
-  ) {
-    mood.skill($skill`Donho's Bubbly Ballad`);
-  } else {
-    useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
-    mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
+  if (!globalOptions.nobarf) {
+    const availableDonhoTurnsFromSkill = 10 * (50 - get("_donhosCasts"));
+    if (get("_donhosCasts") < 50 && !globalOptions.ascend) {
+      useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
+    } else if (
+      get("_donhosCasts") < 50 &&
+      availableDonhoTurnsFromSkill > estimatedGarboTurns()
+    ) {
+      mood.skill($skill`Donho's Bubbly Ballad`);
+    } else {
+      useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
+      mood.potion($item`recording of Donho's Bubbly Ballad`, 0.2 * meat);
+    }
   }
 
   // Overdrunk survivability
