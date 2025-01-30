@@ -68,7 +68,6 @@ import { dailySetup } from "./dailies";
 import { nonOrganAdventures, runDiet } from "./diet";
 import { dailyFights, freeFights } from "./fights";
 import {
-  allMallPrices,
   bestJuneCleaverOption,
   checkGithubVersion,
   HIGHLIGHT,
@@ -154,7 +153,7 @@ export function main(argString = ""): void {
     );
   }
 
-  allMallPrices();
+  cliExecute("mallcheck.js");
 
   if (globalOptions.target === $monster.none) {
     globalOptions.target = defaultTarget();
