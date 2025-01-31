@@ -40,6 +40,7 @@ import {
   ChestMimic,
   clamp,
   Counter,
+  CrepeParachute,
   Delayed,
   ensureEffect,
   get,
@@ -103,6 +104,11 @@ const isGhost = () => get("_voteMonster") === $monster`angry ghost`;
 const isMutant = () => get("_voteMonster") === $monster`terrible mutant`;
 const isSteve = () =>
   get("nextSpookyravenStephenRoom") === $location`The Haunted Laboratory`;
+
+let lastParachuteFailure = 0;
+const shouldCheckParachute = () => totalTurnsPlayed() !== lastParachuteFailure;
+const updateParachuteFailure = () =>
+  (lastParachuteFailure = totalTurnsPlayed());
 
 function wanderTask(
   details: Delayed<WanderDetails>,
