@@ -1069,6 +1069,7 @@ const BarfTurnTasks: GarboTask[] = [
       withChoice(785, 6, () =>
         adv1($location`An Overgrown Shrine (Northeast)`, -1, ""),
       );
+      freeFightOutfit({ weapon: $item`antique machete` }).dress();
     },
     post: () => {
       if (!have($effect`Everything looks Beige`)) updateParachuteFailure();
