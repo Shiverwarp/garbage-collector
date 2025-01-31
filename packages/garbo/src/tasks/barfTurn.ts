@@ -1025,33 +1025,9 @@ const BarfTurnTasks: GarboTask[] = [
   {
     name: "Liana Parachute",
     ready: () =>
-      CrepeParachute.have() &&
-      shouldCheckParachute() &&
-      questStep("questL11Worship") > 3 &&
-      have($item`antique machete`), // TODO Support other machete's
-    completed: () => have($effect`Everything looks Beige`),
-    outfit: () => freeFightOutfit({ weapon: $item`antique machete` }),
-    do: () => CrepeParachute.fight($monster`dense liana`),
-    combat: new GarboStrategy(() =>
-      Macro.abortWithMsg(
-        "Did not instantly kill the Liana, check what went wrong",
-      ),
-    ),
-    prepare: () =>
-      withChoice(785, 6, () =>
-        adv1($location`An Overgrown Shrine (Northeast)`, -1, ""),
-      ),
-    post: () => {
-      if (!have($effect`Everything looks Beige`)) updateParachuteFailure();
-    },
-    spendsTurn: false,
-    sobriety: "sober",
-  },
-  {
-    name: "Liana Parachute (Drunk)",
-    ready: () =>
-      have($item`Drunkula's wineglass`) &&
-      canEquip($item`Drunkula's wineglass`) &&
+      (sober() ||
+        (have($item`Drunkula's wineglass`) &&
+          canEquip($item`Drunkula's wineglass`))) &&
       CrepeParachute.have() &&
       shouldCheckParachute() &&
       questStep("questL11Worship") > 3 &&
@@ -1065,17 +1041,18 @@ const BarfTurnTasks: GarboTask[] = [
       ),
     ),
     prepare: () => {
-      freeFightOutfit({ offhand: $item`Drunkula's wineglass` }).dress();
+      if (!sober()) {
+        freeFightOutfit({ offhand: $item`Drunkula's wineglass` }).dress();
+      }
       withChoice(785, 6, () =>
         adv1($location`An Overgrown Shrine (Northeast)`, -1, ""),
       );
-      freeFightOutfit({ weapon: $item`antique machete` }).dress();
+      if (!sober()) freeFightOutfit({ weapon: $item`antique machete` }).dress();
     },
     post: () => {
       if (!have($effect`Everything looks Beige`)) updateParachuteFailure();
     },
     spendsTurn: false,
-    sobriety: "drunk",
   },
 ];
 
