@@ -732,7 +732,11 @@ const pygmyBanishHandlers = [
     skill: $skill`Feel Hatred`,
     check: "_feelHatredUsed",
     limit: getUsingFreeBunnyBanish() ? 1 : 3,
-    item: $item`Louder Than Bomb`,
+    item:
+      retrievePrice($item`stuffed yam stinkbomb`) <
+      retrievePrice($item`tennis ball`)
+        ? $item`stuffed yam stinkbomb`
+        : $item`tennis ball`,
   },
   {
     pygmy: $monster`pygmy janitor`,
@@ -740,9 +744,10 @@ const pygmyBanishHandlers = [
     check: undefined,
     limit: 0,
     item:
-      mallPrice($item`stuffed yam stinkbomb`) < mallPrice($item`tennis ball`)
-        ? $item`stuffed yam stinkbomb`
-        : $item`tennis ball`,
+      retrievePrice($item`handful of split pea soup`) <
+      retrievePrice($item`Louder Than Bomb`)
+        ? $item`handful of split pea soup`
+        : $item`Louder Than Bomb`,
   },
 ] as const;
 
@@ -914,6 +919,7 @@ const freeFightSources = [
       );
       retrieveItem($item`Louder Than Bomb`);
       acquire(1, $item`stuffed yam stinkbomb`, 20000, true);
+      acquire(1, $item`handful of split pea soup`, 20000, true);
       retrieveItem($item`divine champagne popper`);
       garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro);
     },
