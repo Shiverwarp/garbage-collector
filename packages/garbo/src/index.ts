@@ -94,7 +94,7 @@ import {
 } from "./tasks";
 import { fishyPrepQuest } from "./tasks/fishyPrep";
 import { PostFishyQuest } from "./tasks/post";
-import { CockroachSetup } from "./tasks/cockroachPrep";
+import { CockroachFinish, CockroachSetup } from "./tasks/cockroachPrep";
 
 // Max price for tickets. You should rethink whether Barf is the best place if they're this expensive.
 const TICKET_MAX_PRICE = 500000;
@@ -118,7 +118,6 @@ function defaultTarget() {
   ) {
     return $monster`cockroach`;
   }
-
   if ($skills`Curse of Weaksauce, Saucegeyser`.every((s) => have(s))) {
     return maxBy(
       $monsters.all().filter((m) => m.wishable && isFreeAndCopyable(m)),
@@ -612,7 +611,7 @@ export function main(argString = ""): void {
           useSkill($skill`The Ode to Booze`);
         }
         freeFights();
-        runGarboQuests([SetupTargetCopyQuest]);
+        runGarboQuests([CockroachFinish, SetupTargetCopyQuest]);
         yachtzeeChain();
         dailyFights();
 
