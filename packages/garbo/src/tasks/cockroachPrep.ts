@@ -164,8 +164,8 @@ function checkAndFixOvercapStats(): void {
 }
 
 function dessertIslandWorthIt(): boolean {
-  // guesstimating value of giant crab at 5*VOA
-  if (garboValue($item`cocoa of youth`) > 5 * get("valueOfAdventure")) {
+  // guesstimating value of giant crab at 7.5*VOA, I was getting around 80k meat, so 7.5 is a little less than that
+  if (garboValue($item`cocoa of youth`) > 7.5 * get("valueOfAdventure")) {
     return true;
   }
   return false;
