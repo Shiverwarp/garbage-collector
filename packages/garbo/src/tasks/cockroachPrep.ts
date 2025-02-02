@@ -18,6 +18,7 @@ import {
   adv1,
   Effect,
   effectModifier,
+  haveEquipped,
   isShruggable,
   Item,
   mallPrice,
@@ -95,6 +96,9 @@ function getBestDebuffItem(stat: Stat): Item {
 // Just checking for the gummi effects for now, maybe can check other stuff later?
 function checkAndFixOvercapStats(): void {
   if (debuffedEnough()) return;
+  if (!haveEquipped($item`PirateRealm eyepatch`)) {
+    abort("We're not wearing eyepatch! Why are we trying to debuff?");
+  }
 
   for (const isShruggablePass of [true, false]) {
     for (const ef of getActiveEffects()) {
