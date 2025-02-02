@@ -5,8 +5,8 @@ import {
   $item,
   $items,
   $location,
+  $stat,
   get,
-  getActiveEffects,
   getModifier,
   have,
   maxBy,
@@ -19,7 +19,6 @@ import {
   Effect,
   effectModifier,
   haveEquipped,
-  isShruggable,
   Item,
   mallPrice,
   myAdventures,
@@ -38,7 +37,7 @@ import { acquire } from "../acquire";
 import { meatMood } from "../mood";
 import { targetMeat } from "../lib";
 import { copyTargetCount } from "../target";
-import { potionSetup, VALUABLE_MODIFIERS } from "../potions";
+import { potionSetup } from "../potions";
 
 function asEffect(thing: Item | Effect): Effect {
   return thing instanceof Effect ? thing : effectModifier(thing, "Effect");
@@ -58,12 +57,12 @@ function improvesAStat(thing: Item | Effect): boolean {
   return improvedStats(thing).length > 0;
 }
 
-function isValuable(thing: Item | Effect): boolean {
-  const effect = asEffect(thing);
-  return VALUABLE_MODIFIERS.some(
-    (modifier) => getModifier(modifier, effect) > 0,
-  );
-}
+// function isValuable(thing: Item | Effect): boolean {
+//   const effect = asEffect(thing);
+//   return VALUABLE_MODIFIERS.some(
+//     (modifier) => getModifier(modifier, effect) > 0,
+//   );
+// }
 
 const debuffedEnough = () =>
   Stat.all().every((stat) => myBuffedstat(stat) <= 100);
@@ -100,19 +99,45 @@ function checkAndFixOvercapStats(): void {
     abort("We're not wearing eyepatch! Why are we trying to debuff?");
   }
 
-  for (const isShruggablePass of [true, false]) {
-    for (const ef of getActiveEffects()) {
-      // First check all shruggable buffs, then all unshruggable
-      if (isShruggable(ef) !== isShruggablePass) continue;
-      // Only shrug effects that buff at least one stat that's too high
-      if (!improvedStats(ef).some((stat) => myBuffedstat(stat) > 100)) continue;
-      // Don't shrug effects that give meat or other stuff
-      if (isValuable(ef)) continue;
-
-      uneffect(ef);
-
-      if (debuffedEnough()) return;
+  if (myBuffedstat($stat`Muscle`) >= 100) {
+    if (have($effect`Gummiheart`)) uneffect($effect`Gummiheart`);
+    if (
+      have($effect`Punch Another Day`) &&
+      myBuffedstat($stat`Muscle`) >= 100
+    ) {
+      uneffect($effect`Punch Another Day`);
     }
+    if (have($effect`License to Punch`) && myBuffedstat($stat`Muscle`) >= 100) {
+      uneffect($effect`License to Punch`);
+    }
+    if (
+      have($effect`Angering Pizza Purists`) &&
+      myBuffedstat($stat`Muscle`) >= 100
+    ) {
+      uneffect($effect`Angering Pizza Purists`);
+    }
+  }
+  if (myBuffedstat($stat`Mysticality`) >= 100) {
+    if (have($effect`Gummibrain`)) uneffect($effect`Gummibrain`);
+    if (
+      have($effect`For Your Brain Only`) &&
+      myBuffedstat($stat`Mysticality`) >= 100
+    ) {
+      uneffect($effect`For Your Brain Only`);
+    }
+  }
+  if (myBuffedstat($stat`Moxie`) >= 100) {
+    if (have($effect`Gummiskin`)) uneffect($effect`Gummiskin`);
+    if (have($effect`Quantum of Moxie`) && myBuffedstat($stat`Moxie`) >= 100) {
+      uneffect($effect`Quantum of Moxie`);
+    }
+  }
+  if (
+    myBuffedstat($stat`Moxie`) >= 100 ||
+    myBuffedstat($stat`Mysticality`) >= 100 ||
+    myBuffedstat($stat`Muscle`) >= 100
+  ) {
+    uneffect($effect`Having a Ball!`);
   }
 
   let debuffItemLoops = 0;
