@@ -138,6 +138,8 @@ function checkAndFixOvercapStats(): void {
     myBuffedstat($stat`Muscle`) >= 100
   ) {
     uneffect($effect`Having a Ball!`);
+    uneffect($effect`Jelly-Coated Insides`);
+    uneffect($effect`Feeling Excited`);
   }
 
   let debuffItemLoops = 0;
