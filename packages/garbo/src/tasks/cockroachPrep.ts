@@ -116,6 +116,12 @@ function checkAndFixOvercapStats(): void {
     ) {
       uneffect($effect`Angering Pizza Purists`);
     }
+    if (
+      have($effect`Mucilaginous Muscle`) &&
+      myBuffedstat($stat`Muscle`) >= 100
+    ) {
+      uneffect($effect`Mucilaginous Muscle`);
+    }
   }
   if (myBuffedstat($stat`Mysticality`) >= 100) {
     if (have($effect`Gummibrain`)) uneffect($effect`Gummibrain`);
