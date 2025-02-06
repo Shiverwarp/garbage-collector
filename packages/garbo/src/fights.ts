@@ -39,7 +39,6 @@ import {
   putCloset,
   refreshStash,
   retrieveItem,
-  retrievePrice,
   runChoice,
   runCombat,
   setAutoAttack,
@@ -88,6 +87,7 @@ import {
   FloristFriar,
   gameDay,
   get,
+  getAcquirePrice,
   GingerBread,
   have,
   Latte,
@@ -733,8 +733,8 @@ const pygmyBanishHandlers = [
     check: "_feelHatredUsed",
     limit: getUsingFreeBunnyBanish() ? 1 : 3,
     item:
-      retrievePrice($item`stuffed yam stinkbomb`) <
-      retrievePrice($item`tennis ball`)
+      getAcquirePrice($item`stuffed yam stinkbomb`) <
+      getAcquirePrice($item`tennis ball`)
         ? $item`stuffed yam stinkbomb`
         : $item`tennis ball`,
   },
@@ -744,8 +744,8 @@ const pygmyBanishHandlers = [
     check: undefined,
     limit: 0,
     item:
-      retrievePrice($item`handful of split pea soup`) <
-      retrievePrice($item`Louder Than Bomb`)
+      getAcquirePrice($item`handful of split pea soup`) <
+      getAcquirePrice($item`Louder Than Bomb`)
         ? $item`handful of split pea soup`
         : $item`Louder Than Bomb`,
   },
@@ -935,7 +935,7 @@ const freeFightSources = [
         return (
           Math.max(
             0,
-            retrievePrice($item`Bowl of Scorpions`) +
+            getAcquirePrice($item`Bowl of Scorpions`) +
               sum(banishers, mallPrice) -
               (myClass() === $class`Pastamancer` ? 50000 : 0),
           ) / 11

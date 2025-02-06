@@ -29,7 +29,6 @@ import {
   npcPrice,
   print,
   retrieveItem,
-  retrievePrice,
   sellsItem,
   setProperty,
   spleenLimit,
@@ -54,6 +53,7 @@ import {
   clamp,
   Diet,
   get,
+  getAcquirePrice,
   getActiveSongs,
   getAverageAdventures,
   getModifier,
@@ -90,7 +90,7 @@ import { garboValue } from "./garboValue";
 class MenuItem<T> extends LibramMenuItem<T> {
   static defaultPriceFunction = (item: Item) => {
     const prices = [
-      retrievePrice(item),
+      getAcquirePrice(item),
       mallPrice(item),
       npcPrice(item),
     ].filter((p) => p > 0 && p < Number.MAX_SAFE_INTEGER);
