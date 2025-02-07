@@ -39,6 +39,7 @@ import {
   putCloset,
   refreshStash,
   retrieveItem,
+  retrievePrice,
   runChoice,
   runCombat,
   setAutoAttack,
@@ -935,7 +936,7 @@ const freeFightSources = [
         return (
           Math.max(
             0,
-            getAcquirePrice($item`Bowl of Scorpions`) +
+            retrievePrice($item`Bowl of Scorpions`) +
               sum(banishers, mallPrice) -
               (myClass() === $class`Pastamancer` ? 50000 : 0),
           ) / 11
