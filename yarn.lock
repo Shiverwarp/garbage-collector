@@ -3888,7 +3888,7 @@ __metadata:
     "@types/eslint__js": ^8.42.3
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
-    eslint-plugin-libram: ^0.4.21
+    eslint-plugin-libram: ^0.4.22
     lint-staged: ^15.2.9
     madge: ^8.0.0
     prettier: ^3.3.3
@@ -3912,13 +3912,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-libram@npm:^0.4.21":
-  version: 0.4.21
-  resolution: "eslint-plugin-libram@npm:0.4.21"
+"eslint-plugin-libram@npm:^0.4.22":
+  version: 0.4.22
+  resolution: "eslint-plugin-libram@npm:0.4.22"
   dependencies:
     html-entities: ^2.5.2
     requireindex: ~1.2.0
-  checksum: b0d2e4a4db7aeef1ea9a2c02f69cc99cc9d1dbfa608adcc1f4a235ec55acd41b414bb1366628f1c53ab5704d2234c366cae3fce63e820f9251ecc3f729cb14ba
+  checksum: 9ea246bb793a9391c7d8b92cb20f7630177e4951b95db7597e4ced0e5e4ec86af15d1e12c40820d533a78114b9e1938a4a7ae7d56a9425efb0ea3ec6581901fd
   languageName: node
   linkType: hard
 
@@ -4368,6 +4368,34 @@ __metadata:
     rimraf: ^6.0.1
     typescript: ^5.5.4
     vite: ^5.4.2
+  languageName: unknown
+  linkType: soft
+  
+"rancho@workspace:packages/garbo":
+  version: 0.0.0-use.local
+  resolution: "rancho@workspace:packages/garbo"
+  dependencies:
+    "@babel/cli": ^7.24.8
+    "@babel/compat-data": ^7.25.2
+    "@babel/core": ^7.25.2
+    "@babel/preset-env": ^7.25.3
+    "@babel/preset-react": ^7.24.7
+    "@babel/preset-typescript": ^7.24.7
+    "@types/node": ^22.4.1
+    copyfiles: ^2.4.1
+    esbuild: ^0.23.1
+    esbuild-plugin-babel: ^0.2.3
+    eslint: ^9.9.0
+    eslint-config-garbo: ^0.0.1
+    garbo-lib: "*"
+    grimoire-kolmafia: ^0.3.26
+    kolmafia: ^5.28067.0
+    libram: ^0.9.33
+    lint-staged: ^15.2.9
+    madge: ^8.0.0
+    prettier: ^3.3.3
+    ts-node: ^10.9.2
+    typescript: ^5.5.4
   languageName: unknown
   linkType: soft
 
@@ -5938,34 +5966,6 @@ __metadata:
   checksum: 955a2ead534f5b6a3f8d4dc5a4b95ac6468213d3fb11f8c1592a0a56345c45a3d14d5ca04d3de2bc9891493fcac38c03dfa91c48a6159aef50124e9c5afcea49
   languageName: node
   linkType: hard
-
-"rancho@workspace:packages/garbo":
-  version: 0.0.0-use.local
-  resolution: "rancho@workspace:packages/garbo"
-  dependencies:
-    "@babel/cli": ^7.24.8
-    "@babel/compat-data": ^7.25.2
-    "@babel/core": ^7.25.2
-    "@babel/preset-env": ^7.25.3
-    "@babel/preset-react": ^7.24.7
-    "@babel/preset-typescript": ^7.24.7
-    "@types/node": ^22.4.1
-    copyfiles: ^2.4.1
-    esbuild: ^0.23.1
-    esbuild-plugin-babel: ^0.2.3
-    eslint: ^9.9.0
-    eslint-config-garbo: ^0.0.1
-    garbo-lib: "*"
-    grimoire-kolmafia: ^0.3.26
-    kolmafia: ^5.28067.0
-    libram: ^0.9.33
-    lint-staged: ^15.2.9
-    madge: ^8.0.0
-    prettier: ^3.3.3
-    ts-node: ^10.9.2
-    typescript: ^5.5.4
-  languageName: unknown
-  linkType: soft
 
 "rc@npm:^1.2.8":
   version: 1.2.8
