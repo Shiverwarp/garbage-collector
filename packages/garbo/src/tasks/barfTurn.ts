@@ -74,7 +74,12 @@ import {
   sober,
   targettingMeat,
 } from "../lib";
-import { barfOutfit, freeFightOutfit, meatTargetOutfit } from "../outfit";
+import {
+  barfOutfit,
+  freeFightOutfit,
+  FreeFightOutfitMenuOptions,
+  meatTargetOutfit,
+} from "../outfit";
 import { digitizedMonstersRemaining, estimatedGarboTurns } from "../turns";
 import { deliverThesisIfAble } from "../fights";
 import { computeDiet, consumeDiet } from "../diet";
@@ -116,12 +121,19 @@ function wanderTask(
   base: Omit<GarboTask, "outfit" | "do" | "choices" | "spendsTurn"> & {
     combat?: GarboStrategy;
   },
+  additionalOutfitOptions: Omit<
+    FreeFightOutfitMenuOptions,
+    "wanderOptions"
+  > = {},
 ): GarboTask {
   return {
     do: () => wanderer().getTarget(undelay(details)),
     choices: () => wanderer().getChoices(undelay(details)),
     outfit: () =>
-      freeFightOutfit(undelay(spec), { wanderOptions: undelay(details) }),
+      freeFightOutfit(undelay(spec), {
+        wanderOptions: undelay(details),
+        ...additionalOutfitOptions,
+      }),
     spendsTurn: false,
     combat: new GarboStrategy(() => Macro.basicCombat()),
     ...base,
@@ -930,6 +942,11 @@ const BarfTurnTasks: GarboTask[] = [
         () => !have($item`carnivorous potted plant`), // Do not use autoattack with carn plant, it will cancel the swallow
       ),
       sobriety: "sober",
+    },
+    {
+      familiarOptions: {
+        mode: "run",
+      },
     },
   ),
   {
