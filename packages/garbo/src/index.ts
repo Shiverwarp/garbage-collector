@@ -468,7 +468,7 @@ export function main(argString = ""): void {
       autoTuxedo: true,
       autoPinkyRing: true,
       autoGarish: true,
-      allowNonMoodBurning: !globalOptions.ascend,
+      allowNonMoodBurning: false,
       allowSummonBurning: true,
       libramSkillsSoftcore: "none", // Don't cast librams when mana burning, handled manually based on sale price
       valueOfInventory: 2,
