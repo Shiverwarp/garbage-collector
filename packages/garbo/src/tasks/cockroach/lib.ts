@@ -2,6 +2,7 @@ import {
   abort,
   Effect,
   effectModifier,
+  haveEquipped,
   isShruggable,
   Item,
   mallPrice,
@@ -142,6 +143,9 @@ function shouldRemove(effect: Effect) {
 // Just checking for the gummi effects for now, maybe can check other stuff later?
 export function checkAndFixOvercapStats(): void {
   if (debuffedEnough()) return;
+  if (!haveEquipped($item`PirateRealm eyepatch`)) {
+    abort("We're not wearing eyepatch! Why are we trying to debuff?");
+  }
 
   // Decorative fountain is both cheap and reusable for -30% muscle, but is not a potion
   if (
@@ -191,8 +195,8 @@ export function checkAndFixOvercapStats(): void {
 }
 
 export function dessertIslandWorthIt(): boolean {
-  // estimating value of giant crab at 3*VOA
-  return garboValue($item`cocoa of youth`) > 3 * get("valueOfAdventure");
+  // guesstimating value of giant crab at 7.5*VOA, I was getting around 80k meat, so 7.5 is a little less than that
+  return garboValue($item`cocoa of youth`) > 7.5 * get("valueOfAdventure");
 }
 
 function crewRoleValue(crewmate: string): number {
