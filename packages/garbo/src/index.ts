@@ -62,6 +62,7 @@ import {
   setDefaultMaximizeOptions,
   sinceKolmafiaRevision,
   unequip,
+  withProperty,
 } from "libram";
 import { stashItems, withStash, withVIPClan } from "./clan";
 import { globalOptions, isQuickGear } from "./config";
@@ -565,7 +566,9 @@ export function main(argString = ""): void {
         // Prepare pirate realm if our copy target is cockroach
         // How do we handle if garbo was started without enough turns left without dieting to prep?
         if (globalOptions.target === $monster`cockroach`) {
-          runGarboQuests([CockroachSetup]);
+          withProperty("removeMalignantEffects", false, () =>
+            runGarboQuests([CockroachSetup]),
+          );
         }
 
         // Banish and Fishy prep
@@ -616,7 +619,10 @@ export function main(argString = ""): void {
           useSkill($skill`The Ode to Booze`);
         }
         freeFights();
-        runGarboQuests([CockroachFinish, SetupTargetCopyQuest]);
+        withProperty("removeMalignantEffects", false, () =>
+          runGarboQuests([CockroachFinish]),
+        );
+        runGarboQuests([SetupTargetCopyQuest]);
         yachtzeeChain();
         dailyFights();
 
