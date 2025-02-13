@@ -50,7 +50,7 @@ Mood.setDefaultOptions({
 });
 
 export function meatMood(
-  moodType: "Yachtzee" | "Greg" | "Replacer" | "Barf",
+  moodType: "Copiers" | "Barf",
   urKels = false,
   meat: undefined | number = undefined,
 ): Mood {
@@ -72,7 +72,7 @@ export function meatMood(
   mood.skill($skill`Ruthless Efficiency`);
 
   // Donho's
-  if (!globalOptions.nobarf) {
+  if (moodType === "Barf") {
     const availableDonhoTurnsFromSkill = 10 * (50 - get("_donhosCasts"));
     if (get("_donhosCasts") < 50 && !globalOptions.ascend) {
       useSkill($skill`Donho's Bubbly Ballad`, 50 - get("_donhosCasts"));
@@ -95,36 +95,32 @@ export function meatMood(
     mood.skill($skill`Disco Fever`);
   }
 
-  // Underwater only effects do not work during yachtzee
-  if (moodType !== "Yachtzee") {
-    // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
-    if (moodType === "Barf") {
-      const familiarMultiplier = have($familiar`Robortender`)
-        ? 2
-        : have($familiar`Hobo Monkey`)
-          ? 1.25
-          : 1;
-      // Assume base weight of 100 pounds. This is off but close enough.
-      const assumedBaseWeight = 100;
-      // Marginal value of familiar weight in % meat drop.
-      const marginalValue =
-        2 * familiarMultiplier +
-        Math.sqrt(220 * familiarMultiplier) /
-          (2 * Math.sqrt(assumedBaseWeight));
+  // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
+  if (moodType === "Barf") {
+    const familiarMultiplier = have($familiar`Robortender`)
+      ? 2
+      : have($familiar`Hobo Monkey`)
+        ? 1.25
+        : 1;
+    // Assume base weight of 100 pounds. This is off but close enough.
+    const assumedBaseWeight = 100;
+    // Marginal value of familiar weight in % meat drop.
+    const marginalValue =
+      2 * familiarMultiplier +
+      Math.sqrt(220 * familiarMultiplier) / (2 * Math.sqrt(assumedBaseWeight));
 
-      // Underwater only potions
-      mood.potion(
-        $item`temporary teardrop tattoo`,
-        ((10 * marginalValue) / 100) * baseMeat,
-      );
-      mood.potion($item`sea grease`, ((5 * marginalValue) / 100) * baseMeat);
-      // Pressure reduction potions
-      // Adding all of them even though it's technically possible to go over 100% reduction and waste buffs. Doubtful to happen because Shark cartilage will always be too expensive
-      mood.potion($item`Mer-kin fastjuice`, 0.1 * baseMeat);
-      mood.potion($item`sea salt crystal`, 0.1 * baseMeat);
-      mood.potion($item`shavin' razor`, 0.2 * baseMeat);
-      mood.potion($item`shark cartilage`, 0.4 * baseMeat); // Meat drop and meat drop penalty are included
-    }
+    // Underwater only potions
+    mood.potion(
+      $item`temporary teardrop tattoo`,
+      ((10 * marginalValue) / 100) * baseMeat,
+    );
+    mood.potion($item`sea grease`, ((5 * marginalValue) / 100) * baseMeat);
+    // Pressure reduction potions
+    // Adding all of them even though it's technically possible to go over 100% reduction and waste buffs. Doubtful to happen because Shark cartilage will always be too expensive
+    mood.potion($item`Mer-kin fastjuice`, 0.1 * baseMeat);
+    mood.potion($item`sea salt crystal`, 0.1 * baseMeat);
+    mood.potion($item`shavin' razor`, 0.2 * baseMeat);
+    mood.potion($item`shark cartilage`, 0.4 * baseMeat); // Meat drop and meat drop penalty are included
   }
 
   if (
