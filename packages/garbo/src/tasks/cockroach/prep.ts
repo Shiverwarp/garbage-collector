@@ -1,5 +1,5 @@
 import { Quest } from "grimoire-kolmafia";
-import { mallPrice, runChoice, Stat, visitUrl } from "kolmafia";
+import { mallPrice, print, runChoice, Stat, visitUrl } from "kolmafia";
 import { $item, $items, $location, get, have, questStep } from "libram";
 import { acquire } from "../../acquire";
 import { GarboStrategy, Macro } from "../../combat";
@@ -104,6 +104,11 @@ export const CockroachSetup: Quest<GarboTask> = {
       combat: new GarboStrategy(() =>
         Macro.abortWithMsg("Hit a combat while sailing the high seas!"),
       ),
+      post: () =>
+        print(
+          `Completed a Sail to First Island task and questStep is ${questStep("_questPirateRealm")}`,
+          "red",
+        ),
     },
     {
       name: "Land Ho (First Island)",

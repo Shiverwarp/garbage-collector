@@ -24,7 +24,7 @@ export const CockroachFinish: Quest<GarboTask> = {
         meatMood("Barf", false, targetMeat()).execute(copyTargetCount());
         potionSetup(false);
         meatTargetOutfit({
-          modifier: ["meat"],
+          modifier: ["20 Meat Drop"],
           equip: $items`PirateRealm eyepatch`,
           avoid: $items`Roman Candelabra`,
         }).dress();
