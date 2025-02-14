@@ -462,6 +462,10 @@ export function safeRestoreMpTarget(): number {
   return Math.min(myMaxmp(), 200);
 }
 
+let _ignoreBeatenUp = false;
+export const ignoreBeatenUp = () => (_ignoreBeatenUp = true);
+export const unignoreBeatenUp = () => (_ignoreBeatenUp = false);
+
 export function safeRestore(): void {
   if (
     get("_lastCombatLost") &&
@@ -472,7 +476,7 @@ export function safeRestore(): void {
       "You lost your most recent combat! Check to make sure everything is alright before rerunning.",
     );
   }
-  if (have($effect`Beaten Up`)) {
+  if (have($effect`Beaten Up`) && !_ignoreBeatenUp) {
     if (
       lastMonster() ===
       $monster`Sssshhsssblllrrggghsssssggggrrgglsssshhssslblgl`

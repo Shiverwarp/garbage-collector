@@ -28,6 +28,7 @@ import {
 import { VALUABLE_MODIFIERS } from "../../potions";
 import { garboValue } from "../../garboValue";
 import { acquire } from "../../acquire";
+import { ignoreBeatenUp } from "../../lib";
 
 function asEffect(thing: Item | Effect): Effect {
   return thing instanceof Effect ? thing : effectModifier(thing, "Effect");
@@ -142,6 +143,7 @@ function shouldRemove(effect: Effect) {
 
 // Just checking for the gummi effects for now, maybe can check other stuff later?
 export function checkAndFixOvercapStats(): void {
+  ignoreBeatenUp();
   if (debuffedEnough()) return;
   if (!haveEquipped($item`PirateRealm eyepatch`)) {
     abort("We're not wearing eyepatch! Why are we trying to debuff?");
