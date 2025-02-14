@@ -1,5 +1,13 @@
 import { Quest } from "grimoire-kolmafia";
-import { $items, $location, get, questStep } from "libram";
+import {
+  $effect,
+  $items,
+  $location,
+  $skill,
+  get,
+  have,
+  questStep,
+} from "libram";
 import { GarboStrategy, Macro } from "../../combat";
 import { targetMeat } from "../../lib";
 import { meatMood } from "../../mood";
@@ -8,10 +16,15 @@ import { potionSetup } from "../../potions";
 import { copyTargetCount } from "../../target";
 import { GarboTask } from "../engine";
 import { checkAndFixOvercapStats } from "./lib";
+import { doingGregFight } from "../../resources";
+import { useSkill } from "kolmafia";
 
 export const CockroachFinish: Quest<GarboTask> = {
   name: "Setup Cockroach Target",
-  ready: () => get("pirateRealmUnlockedAnemometer"),
+  ready: () =>
+    get("pirateRealmUnlockedAnemometer") &&
+    doingGregFight() &&
+    questStep("_questPirateRealm") >= 5,
   completed: () => get("_lastPirateRealmIsland") === $location`Trash Island`,
   tasks: [
     {
@@ -32,11 +45,14 @@ export const CockroachFinish: Quest<GarboTask> = {
       },
       do: $location`Crab Island`,
       outfit: () => {
-        const spec = meatTargetOutfit({
-          modifier: ["20 Meat Drop"],
-          equip: $items`PirateRealm eyepatch`,
-          avoid: $items`Roman Candelabra`,
-        });
+        const spec = meatTargetOutfit(
+          {
+            modifier: ["-Muscle", "-Mysticality", "-Moxie"],
+            equip: $items`PirateRealm eyepatch`,
+            avoid: $items`Roman Candelabra`,
+          },
+          $location`Crab Island`,
+        );
         return spec;
       },
       choices: { 1385: 1, 1368: 1 }, // Take cocoa of youth, fight crab
@@ -60,6 +76,12 @@ export const CockroachFinish: Quest<GarboTask> = {
       combat: new GarboStrategy(() =>
         Macro.abortWithMsg("Hit a combat while sailing the high seas!"),
       ),
+    },
+    {
+      name: "Stop Being Beaten Up",
+      completed: () => !have($effect`Beaten Up`),
+      do: () => useSkill($skill`Tongue of the Walrus`),
+      spendsTurn: false,
     },
   ],
 };

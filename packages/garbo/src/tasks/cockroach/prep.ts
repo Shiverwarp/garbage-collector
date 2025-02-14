@@ -1,6 +1,27 @@
 import { Quest } from "grimoire-kolmafia";
-import { mallPrice, print, runChoice, Stat, visitUrl } from "kolmafia";
-import { $item, $items, $location, get, have, questStep } from "libram";
+import {
+  abort,
+  inebrietyLimit,
+  mallPrice,
+  myAdventures,
+  myInebriety,
+  print,
+  runChoice,
+  Stat,
+  useSkill,
+  visitUrl,
+} from "kolmafia";
+import {
+  $effect,
+  $item,
+  $items,
+  $location,
+  $monster,
+  $skill,
+  get,
+  have,
+  questStep,
+} from "libram";
 import { acquire } from "../../acquire";
 import { GarboStrategy, Macro } from "../../combat";
 import { freeFightFamiliar } from "../../familiar";
@@ -12,15 +33,42 @@ import {
   dessertIslandWorthIt,
   outfitBonuses,
 } from "./lib";
+import { doingGregFight } from "../../resources";
+import { userConfirmDialog } from "../../lib";
+import { globalOptions } from "../../config";
 
 export const CockroachSetup: Quest<GarboTask> = {
   name: "Setup Cockroach Target",
-  ready: () => get("pirateRealmUnlockedAnemometer"),
+  ready: () =>
+    get("pirateRealmUnlockedAnemometer") &&
+    doingGregFight() &&
+    globalOptions.target === $monster`cockroach` &&
+    myInebriety() <= inebrietyLimit(),
   completed: () =>
     get("_lastPirateRealmIsland") === $location`Trash Island` ||
     (questStep("_questPirateRealm") === 5 &&
       get("_lastPirateRealmIsland") === $location`Crab Island`),
   tasks: [
+    {
+      name: "40 Adventure Failsafe",
+      ready: () => myAdventures() <= 40,
+      completed: () => have($item`PirateRealm eyepatch`),
+      do: () => {
+        if (
+          userConfirmDialog(
+            "You don't have enough adventures to do piraterealm; would you like us to automatically change your copy target to a Knob Goblin Guard? Otherwise, we're going to abort.",
+            true,
+          )
+        ) {
+          globalOptions.target = $monster`Knob Goblin Elite Guard Captain`;
+        } else {
+          abort(
+            "Unable to start piraterealm but you're hellbent on doing cockroaches!",
+          );
+        }
+      },
+      spendsTurn: false,
+    },
     // Tasks to progress pirate realm up to selecting Trash Island go here
     // We'll have to be careful about things like max stats becoming too high (bofa is annoying for this!)
     // To be optimal we would progress up until we're about to fight the giant giant crab, and then after buffing and fighting it, we then select trash island.
@@ -59,7 +107,10 @@ export const CockroachSetup: Quest<GarboTask> = {
       completed: () => questStep("_questPirateRealm") > 1,
       prepare: checkAndFixOvercapStats,
       do: $location`Sailing the PirateRealm Seas`,
-      outfit: () => freeFightOutfit({ acc3: $items`PirateRealm eyepatch` }),
+      outfit: {
+        equip: $items`PirateRealm eyepatch`,
+        modifier: Stat.all().map((stat) => `-${stat}`),
+      },
       choices: () => ({
         1352:
           dessertIslandWorthIt() &&
@@ -172,14 +223,14 @@ export const CockroachSetup: Quest<GarboTask> = {
       completed: () => questStep("_questPirateRealm") > 5,
       prepare: checkAndFixOvercapStats,
       do: () => $location`PirateRealm Island`,
-      outfit: () => {
-        return {
-          equip: $items`PirateRealm eyepatch`,
-          avoid: $items`Roman Candelabra`,
-        };
-      },
-      choices: { 1385: 1, 1368: 1 }, // Take cocoa of youth, fight crab
-      combat: new GarboStrategy(() => Macro.delevel().meatKill()),
+      outfit: () => ({
+        equip: $items`PirateRealm eyepatch`,
+        modifier: Stat.all().map((stat) => `-${stat}`),
+      }),
+      choices: { 1385: 1 }, // Take cocoa of youth
+      combat: new GarboStrategy(() =>
+        Macro.abortWithMsg("Hit a combat when we expected cocoa of youth!"),
+      ),
       limit: { tries: 1 },
       spendsTurn: true,
     },
@@ -196,6 +247,12 @@ export const CockroachSetup: Quest<GarboTask> = {
       combat: new GarboStrategy(() =>
         Macro.abortWithMsg("Hit a combat while sailing the high seas!"),
       ),
+    },
+    {
+      name: "Stop Being Beaten Up",
+      completed: () => !have($effect`Beaten Up`),
+      do: () => useSkill($skill`Tongue of the Walrus`),
+      spendsTurn: false,
     },
   ],
 };

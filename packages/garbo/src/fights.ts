@@ -161,8 +161,8 @@ import {
   romanticMonsterImpossible,
   safeRestore,
   setChoice,
+  targetingMeat,
   targetMeat,
-  targettingMeat,
   tryFindFreeRunOrBanish,
   userConfirmDialog,
   valueDrops,
@@ -436,7 +436,7 @@ export function dailyFights(): void {
       if (have($familiar`Pocket Professor`)) {
         const potentialPocketProfessorLectures = [
           {
-            shouldDo: targettingMeat(),
+            shouldDo: targetingMeat(),
             property: "_garbo_meatChain",
             macro: firstChainMacro,
             goalMaximize: withLocation(

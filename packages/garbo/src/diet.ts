@@ -78,8 +78,8 @@ import {
   arrayEquals,
   HIGHLIGHT,
   MEAT_TARGET_MULTIPLIER,
+  targetingMeat,
   targetMeat,
-  targettingMeat,
   userConfirmDialog,
 } from "./lib";
 import { shrugBadEffects } from "./mood";
@@ -633,7 +633,7 @@ function gregariousCount(): {
 }
 
 function copiers(): MenuItem<Note>[] {
-  const targetDifferential = targettingMeat()
+  const targetDifferential = targetingMeat()
     ? MEAT_TARGET_MULTIPLIER() * MPA
     : 0;
   const { expectedGregariousFights, marginalGregariousFights } =
@@ -874,7 +874,7 @@ function balanceMenu(
   baseMenu: MenuItem<Note>[],
   dietPlanner: DietPlanner,
 ): MenuItem<Note>[] {
-  const baseTargets = targettingMeat() ? copyTargetCount() : 0;
+  const baseTargets = targetingMeat() ? copyTargetCount() : 0;
   function rebalance(
     menu: MenuItem<Note>[],
     iterations: number,
