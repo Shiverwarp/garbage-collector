@@ -2,15 +2,12 @@ import {
   abort,
   autosellPrice,
   cliExecute,
-  closetAmount,
   equip,
   familiarEquippedEquipment,
   hippyStoneBroken,
-  itemAmount,
   myPrimestat,
   retrieveItem,
   retrievePrice,
-  takeCloset,
   toItem,
   use,
   useFamiliar,
@@ -151,12 +148,7 @@ const DailyFamiliarTasks: GarboTask[] = [
       familiarEquippedEquipment($familiar`Shorter-Order Cook`) ===
       $item`blue plate`,
     do: () => {
-      if (
-        itemAmount($item`blue plate`) < 1 &&
-        closetAmount($item`blue plate`) > 0
-      ) {
-        takeCloset($item`blue plate`);
-      }
+      retrieveItem($item`blue plate`);
       equip($familiar`Shorter-Order Cook`, $item`blue plate`);
     },
     spendsTurn: false,

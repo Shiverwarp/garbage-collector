@@ -1067,7 +1067,7 @@ export function consumeDiet(diet: Diet<Note>, name: DietName): void {
   let lastOrgans = [-1, -1, -1];
   const capacities = () => [fullnessLimit(), inebrietyLimit(), spleenLimit()];
   let lastCapacities = [-1, -1, -1];
-  let currentQuantity = sum(diet.entries, ({ quantity }) => quantity);
+  let currentQuantity = sum(diet.entries, "quantity");
   let lastQuantity = -1;
   while (currentQuantity > 0) {
     if (
@@ -1275,7 +1275,7 @@ export function consumeDiet(diet: Diet<Note>, name: DietName): void {
       }
       dietEntry.quantity -= countToConsume;
     }
-    currentQuantity = sum(diet.entries, ({ quantity }) => quantity);
+    currentQuantity = sum(diet.entries, "quantity");
   }
 }
 
