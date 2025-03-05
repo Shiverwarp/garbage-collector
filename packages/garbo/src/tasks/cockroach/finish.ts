@@ -34,7 +34,7 @@ export const CockroachFinish: Quest<GarboTask> = {
         get("_lastPirateRealmIsland") === $location`Crab Island`,
       completed: () => questStep("_questPirateRealm") > 5,
       prepare: () => {
-        meatMood("Barf", false, targetMeat()).execute(copyTargetCount());
+        meatMood("Copiers", false, targetMeat()).execute(copyTargetCount());
         potionSetup(false);
         meatTargetOutfit(
           {
