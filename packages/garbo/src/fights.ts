@@ -2205,6 +2205,7 @@ function doGhost() {
   const ghostLocation = get("ghostLocation");
   if (!ghostLocation) return;
   setLocation(ghostLocation);
+  propertyManager.setChoices(wanderer().getChoices(ghostLocation));
   freeFightOutfit({ equip: $items`protonic accelerator pack` }).dress();
   let currentTurncount;
   do {

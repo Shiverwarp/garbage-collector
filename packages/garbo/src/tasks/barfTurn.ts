@@ -699,6 +699,8 @@ const BarfTurnTasks: GarboTask[] = [
             : [],
         back: $item`protonic accelerator pack`,
       }),
+    choices: () =>
+      wanderer().getChoices(get("ghostLocation") ?? $location.none),
     combat: new GarboStrategy(() => Macro.ghostBustin()),
     spendsTurn: false,
     // Ghost fights are currently hard

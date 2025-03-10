@@ -37,6 +37,7 @@ import {
   getRemainingStomach,
   have,
   JuneCleaver,
+  Leprecondo,
   maxBy,
   set,
   undelay,
@@ -64,7 +65,7 @@ import { GarboTask } from "../engine";
 import { hotTubAvailable } from "../../resources/clanVIP";
 import { getRequiredFishyTurns } from "../fishyPrep";
 import { lavaDogsAccessible, lavaDogsComplete } from "../../resources/doghouse";
-import { autumnAtonManager } from "../../resources";
+import { autumnAtonManager, leprecondoTask } from "../../resources";
 
 const STUFF_TO_CLOSET = $items`bowling ball, funky junk key`;
 const STUFF_TO_USE = $items`Armory keycard, bottle-opener keycard, SHAWARMA Initiative Keycard`;
@@ -450,6 +451,7 @@ export function PostFishyQuest(completed?: () => boolean): Quest<GarboTask> {
       refillCinch(),
       leafResin(),
       wardrobeOMatic(),
+      { ...leprecondoTask(), available: Leprecondo.have() },
     ]
       .filter(({ available }) => undelay(available ?? true))
       .map((task) => ({ ...task, spendsTurn: false })),
