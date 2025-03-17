@@ -1002,6 +1002,9 @@ export function variableMeatPotionsSetup(
   }
 }
 
+/**
+ * WARNING: Expensive
+ */
 export function effectValue(
   effect: Effect,
   duration: number,
