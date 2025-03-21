@@ -193,6 +193,7 @@ import {
   possibleFreeGiantSandwormQuestTentacleFights,
 } from "./tasks/freeGiantSandworm";
 import { CopyTargetFight } from "./target/fights";
+import { PostBuffExtensionQuest } from "./tasks/postBuffExtension";
 
 const firstChainMacro = () =>
   Macro.if_(
@@ -254,6 +255,7 @@ function meatTargetSetup() {
   safeRestore();
   freeFightMood().execute(50);
   useBuffExtenders();
+  runGarboQuests([PostBuffExtensionQuest]);
   burnLibrams(400);
   if (
     globalOptions.ascend &&
