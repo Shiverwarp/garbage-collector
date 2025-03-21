@@ -46,7 +46,7 @@ import {
   setChoice,
   sober,
 } from "../lib";
-import { fishyPrepOutfit, freeFightOutfit, meatTargetOutfit } from "../outfit";
+import { barfOutfit, freeFightOutfit, meatTargetOutfit } from "../outfit";
 import { digitizedMonstersRemaining } from "../turns";
 import { computeDiet, countCopies } from "../diet";
 
@@ -99,6 +99,7 @@ export function getRequiredFishyTurns(): number {
     countCopies(computeDiet().diet()) +
     copyTargetCount() +
     unrealizedMimicEggFights + // We gain extra embezzler fights post-free-fights from mimic experience
+    15 + // Extra buffer for turns to complete pirate realm prep
     10); // Extra buffer of 10 turns just in case weirdness
 }
 
@@ -325,7 +326,7 @@ const fishyPrepTasks: GarboTask[] = [
     completed: () =>
       isBanished($monster`sea cowboy`) ||
       haveEffect($effect`Fishy`) >= getRequiredFishyTurns(),
-    outfit: () => fishyPrepOutfit({ equip: $items`spring shoes` }),
+    outfit: () => barfOutfit({ equip: $items`spring shoes` }),
     do: () => $location`The Coral Corral`,
     combat: new GarboStrategy(
       () =>
@@ -357,7 +358,7 @@ const fishyPrepTasks: GarboTask[] = [
   {
     name: "Fishy Prep",
     completed: () => haveEffect($effect`Fishy`) >= getRequiredFishyTurns(),
-    outfit: () => fishyPrepOutfit(),
+    outfit: () => barfOutfit({}),
     do: () => $location`The Coral Corral`,
     combat: new GarboStrategy(
       () => Macro.meatKill(),

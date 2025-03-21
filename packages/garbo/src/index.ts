@@ -93,8 +93,10 @@ import {
   BarfTurnQuests,
   CockroachFinish,
   CockroachSetup,
+  DailyFamiliarsQuest,
   PostQuest,
   runGarboQuests,
+  runSafeGarboQuests,
   SetupTargetCopyQuest,
 } from "./tasks";
 import { doingGregFight, hasMonsterReplacers } from "./resources";
@@ -572,6 +574,10 @@ export function main(argString = ""): void {
     // FIXME: Dynamically figure out pointer ring approach.
     withStash(stashItems, () => {
       withVIPClan(() => {
+        // Banish and Fishy prep. Do this before cockroach so we don't waste our buffs for copiers. Prep robort for use during these turns.
+        runSafeGarboQuests([DailyFamiliarsQuest]);
+        runGarboQuests([PostFishyQuest(), fishyPrepQuest]);
+
         // Prepare pirate realm if our copy target is cockroach
         // How do we handle if garbo was started without enough turns left without dieting to prep?
         if (globalOptions.target === $monster`cockroach`) {
@@ -579,9 +585,6 @@ export function main(argString = ""): void {
             runGarboQuests([CockroachSetup]),
           );
         }
-
-        // Banish and Fishy prep
-        runGarboQuests([PostFishyQuest(), fishyPrepQuest]);
 
         // 0. diet stuff.
         if (
