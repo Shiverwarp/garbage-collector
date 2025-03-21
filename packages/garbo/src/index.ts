@@ -79,10 +79,11 @@ import {
   propertyManager,
   questStep,
   safeRestore,
+  targetMeat,
   userConfirmDialog,
   valueDrops,
 } from "./lib";
-import { meatMood, useBuffExtenders } from "./mood";
+import { meatMood } from "./mood";
 import { potionSetup } from "./potions";
 import { endSession, startSession } from "./session";
 import { estimatedGarboTurns } from "./turns";
@@ -99,7 +100,11 @@ import {
 import { doingGregFight, hasMonsterReplacers } from "./resources";
 import { PostFishyQuest } from "./tasks/post";
 import { fishyPrepQuest } from "./tasks/fishyPrep";
-import { PostBuffExtensionQuest } from "./tasks/postBuffExtension";
+import {
+  BuffExtensionQuest,
+  PostBuffExtensionQuest,
+} from "./tasks/buffExtension";
+import { copyTargetCount } from "./target";
 
 // Max price for tickets. You should rethink whether Barf is the best place if they're this expensive.
 const TICKET_MAX_PRICE = 500000;
@@ -616,7 +621,9 @@ export function main(argString = ""): void {
 
         // 2. do some target copy stuff
         potionSetup(true);
-        useBuffExtenders(); // Buff and use extenders pre free fights primarily to extend buffs like Shadow Affinity
+        maximize("MP", false);
+        meatMood("Copiers", false, targetMeat()).execute(copyTargetCount());
+        runGarboQuests([BuffExtensionQuest, PostBuffExtensionQuest]); // Buff and use extenders pre free fights primarily to extend buffs like Shadow Affinity
         if (getActiveSongs().length >= 4 && !have($effect`Ode to Booze`)) {
           // Ensure we have Ode for our free runs
           cliExecute(`shrug ${$effect`Polka of Plenty`}`);
@@ -635,8 +642,7 @@ export function main(argString = ""): void {
           potionSetup(false);
           maximize("MP", false);
           meatMood("Barf").execute(estimatedGarboTurns());
-          useBuffExtenders();
-          runGarboQuests([PostBuffExtensionQuest]);
+          runGarboQuests([BuffExtensionQuest, PostBuffExtensionQuest]);
           try {
             runGarboQuests([PostQuest(), ...BarfTurnQuests]);
 
