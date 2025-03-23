@@ -57,6 +57,7 @@ import {
   baseMeat,
   bestShadowRift,
   HIGHLIGHT,
+  improvesAStat,
   pillkeeperOpportunityCost,
   targetingMeat,
   targetMeat,
@@ -681,6 +682,12 @@ export const farmingPotions = [
   ...(have($item`closed-circuit pay phone`) ? [rufusPotion] : []),
 ];
 
+export function getFarmingPotions(avoidStats = false): Potion[] {
+  return avoidStats
+    ? farmingPotions.filter((potion) => !improvesAStat(potion.effect()))
+    : farmingPotions;
+}
+
 export function doublingPotions(targets: number): Potion[] {
   return farmingPotions
     .filter(
@@ -714,7 +721,7 @@ export function potionSetupCompleted(): boolean {
  * Determines if potions are worth using by comparing against meat-equilibrium. Considers using pillkeeper to double them. Accounts for non-wanderer targets. Does not account for PYEC/LTC, or running out of turns with the ascend flag.
  * @param targetsOnly Are we valuing the potions only for meat targets (noBarf)?
  */
-export function potionSetup(targetsOnly: boolean): void {
+export function potionSetup(targetsOnly: boolean, avoidStats = false): void {
   castAugustScepterBuffs();
   // TODO: Count PYEC.
   // TODO: Count free fights (25 meat each for most).
@@ -749,7 +756,7 @@ export function potionSetup(targetsOnly: boolean): void {
     }
 
     // Only test potions which are reasonably close to being profitable using historical price.
-    const testPotions = farmingPotions.filter(
+    const testPotions = getFarmingPotions(avoidStats).filter(
       (potion) => potion.gross(targets) / potion.price(true) > 0.5,
     );
     const nonWishTestPotions = testPotions.filter(
@@ -802,7 +809,7 @@ export function potionSetup(targetsOnly: boolean): void {
       }
     }
 
-    variableMeatPotionsSetup(0, targets);
+    variableMeatPotionsSetup(0, targets, avoidStats);
     completedPotionSetup = true;
   });
 }
@@ -972,9 +979,12 @@ class VariableMeatPotion {
 export function variableMeatPotionsSetup(
   yachtzees: number,
   targets: number,
+  avoidStats = false,
 ): void {
   const potions = [
-    new VariableMeatPotion($item`love song of sugary cuteness`, 20, 2),
+    ...(avoidStats
+      ? []
+      : [new VariableMeatPotion($item`love song of sugary cuteness`, 20, 2)]),
     new VariableMeatPotion($item`pulled yellow taffy`, 50, 2),
     ...(globalOptions.prefs.candydish
       ? [new VariableMeatPotion($item`porcelain candy dish`, 500, 1)]
