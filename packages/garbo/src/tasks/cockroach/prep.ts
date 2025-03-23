@@ -21,6 +21,7 @@ import {
   get,
   have,
   questStep,
+  unequip,
 } from "libram";
 import { acquire } from "../../acquire";
 import { GarboStrategy, Macro } from "../../combat";
@@ -275,6 +276,7 @@ export const CockroachSetup: Quest<GarboTask> = {
       combat: new GarboStrategy(() =>
         Macro.abortWithMsg("Hit a combat while sailing the high seas!"),
       ),
+      post: () => unequip($item`PirateRealm eyepatch`), // Unequip the eyepatch when we're done, to avoid mana issues during diet etc
     },
     {
       name: "Stop Being Beaten Up",
