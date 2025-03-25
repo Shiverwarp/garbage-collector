@@ -570,6 +570,7 @@ export function main(argString = ""): void {
           !globalOptions.simdiet
         ) {
           if (!globalOptions.nodiet) nonOrganAdventures();
+          runSafeGarboQuests([DailyFamiliarsQuest]); // Prep robortender ahead of time in case it's a giant crab
           withProperty("removeMalignantEffects", false, () =>
             runGarboQuests([CockroachSetup]),
           );
