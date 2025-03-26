@@ -616,7 +616,6 @@ export function main(argString = ""): void {
         potionSetup(true);
         maximize("MP", false);
         meatMood("Copiers", false, targetMeat()).execute(copyTargetCount());
-        runGarboQuests([BuffExtensionQuest, PostBuffExtensionQuest]); // Buff and use extenders pre free fights primarily to extend buffs like Shadow Affinity
         if (getActiveSongs().length >= 4 && !have($effect`Ode to Booze`)) {
           // Ensure we have Ode for our free runs
           cliExecute(`shrug ${$effect`Polka of Plenty`}`);
