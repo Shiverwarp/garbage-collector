@@ -47,6 +47,7 @@ import {
   isSong,
   maxBy,
   Mood,
+  realmAvailable,
   sum,
   sumNumbers,
   withChoice,
@@ -1019,14 +1020,14 @@ export function effectValue(
   effect: Effect,
   duration: number,
   maxTurns?: number,
-  targets = 0,
+  targets = copyTargetCount(),
 ): number {
   if (effect === $effect`Shadow Affinity`) {
     return globalOptions.prefs.valueOfFreeFight * duration; // Each turn of Shadow Affinity gives us one free fight
   }
 
-  if (effect === $effect`Loded`) {
-    return 3400 * duration; // 70s Mining is 3400 VoA
+  if (effect === $effect`Loded` && realmAvailable("hot")) {
+    return 3400 * duration; // 70s Mining is 3400 VoA, which will always be higher than the meat% in current climate
   }
 
   return new Potion($item.none, { duration, effect }).gross(targets, maxTurns);
