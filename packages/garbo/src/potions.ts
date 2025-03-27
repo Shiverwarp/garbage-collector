@@ -1031,7 +1031,7 @@ export function effectValue(
   }
 
   const durationOverride = maxTurnsWanted
-    ? Math.max(0, maxTurnsWanted - haveEffect(effect))
+    ? clamp(maxTurnsWanted - haveEffect(effect), 0, duration)
     : undefined;
 
   return new Potion($item.none, { duration, effect }).gross(
