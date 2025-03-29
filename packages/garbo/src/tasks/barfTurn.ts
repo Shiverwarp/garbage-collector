@@ -23,6 +23,7 @@ import {
   outfitPieces,
   retrieveItem,
   runChoice,
+  setLocation,
   totalTurnsPlayed,
   use,
   useSkill,
@@ -1053,7 +1054,10 @@ const BarfTurnTasks: GarboTask[] = [
       questStep("questL11Worship") > 3 &&
       have($item`antique machete`), // TODO Support other machete's
     completed: () => have($effect`Everything looks Beige`),
-    outfit: () => freeFightOutfit({ weapon: $item`antique machete` }),
+    outfit: () => {
+      setLocation($location`An Overgrown Shrine (Northeast)`);
+      return freeFightOutfit({ weapon: $item`antique machete` });
+    },
     do: () => CrepeParachute.fight($monster`dense liana`),
     combat: new GarboStrategy(() =>
       Macro.abortWithMsg(
