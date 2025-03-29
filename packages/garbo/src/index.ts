@@ -575,7 +575,6 @@ export function main(argString = ""): void {
             runGarboQuests([CockroachSetup]),
           );
         }
-
         // 0. diet stuff.
         if (
           globalOptions.nodiet ||

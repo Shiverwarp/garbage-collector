@@ -2,7 +2,7 @@ import { $item, get, maxBy } from "libram";
 import { garboValue } from "../../garboValue";
 
 export function dessertIslandWorthIt(): boolean {
-  // guesstimating value of giant giant crab at 7.5*VOA, I was getting around 80k meat, so 7.5 is a little less than that
+  // guesstimating value of giant giant crab at 7.5*VOA, I was getting around 60k meat, so 7.5 is 59520
   return garboValue($item`cocoa of youth`) > 7.5 * get("valueOfAdventure");
 }
 

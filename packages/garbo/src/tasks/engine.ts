@@ -22,6 +22,7 @@ import {
   equip,
   itemAmount,
   Location,
+  myFamiliar,
   print,
   setLocation,
   totalTurnsPlayed,
@@ -81,7 +82,12 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
     }
     super.dress(task, outfit);
     if (itemAmount($item`tiny stillsuit`) > 0) {
-      equip($familiar`Cornbeefadon`, $item`tiny stillsuit`);
+      equip(
+        myFamiliar() === $familiar`Cornbeefadon`
+          ? $familiar`Mosquito`
+          : $familiar`Cornbeefadon`,
+        $item`tiny stillsuit`,
+      );
     }
   }
 
