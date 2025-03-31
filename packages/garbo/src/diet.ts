@@ -52,6 +52,7 @@ import {
   $items,
   $skill,
   clamp,
+  DesignerSweatpants,
   Diet,
   get,
   getActiveSongs,
@@ -545,10 +546,7 @@ function menu(): MenuItem<Note>[] {
     new MenuItem($item`designer sweatpants`, {
       size: -1,
       organ: "booze",
-      maximum: Math.min(
-        3 - get("_sweatOutSomeBoozeUsed"),
-        Math.floor(get("sweat") / 25),
-      ),
+      maximum: DesignerSweatpants.availableCasts($skill`Sweat Out Some Booze`),
     }),
     new MenuItem($item`august scepter`, {
       size: -1,

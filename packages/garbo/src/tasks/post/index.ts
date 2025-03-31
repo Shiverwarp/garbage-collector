@@ -30,7 +30,7 @@ import {
   AutumnAton,
   BurningLeaves,
   CinchoDeMayo,
-  clamp,
+  DesignerSweatpants,
   FloristFriar,
   get,
   getAcquirePrice,
@@ -160,21 +160,29 @@ function fillSweatyLiver(): GarboPostTask {
   return {
     name: "Fill Sweaty Liver",
     ready: () =>
-      have($item`designer sweatpants`) &&
       !globalOptions.nodiet &&
       get("_shivRanchoFishyPrepped", false) &&
-      get("sweat") >= 25 * clamp(3 - get("_sweatOutSomeBoozeUsed"), 0, 3),
-    completed: () => get("_sweatOutSomeBoozeUsed") >= 3,
+      DesignerSweatpants.canUseSkill($skill`Sweat Out Some Booze`) &&
+      myInebriety() > 0 &&
+      DesignerSweatpants.availableCasts($skill`Sweat Out Some Booze`) ===
+        DesignerSweatpants.potentialCasts($skill`Sweat Out Some Booze`),
+    completed: () =>
+      $skill`Sweat Out Some Booze`.dailylimit === 0 ||
+      myInebriety() -
+        DesignerSweatpants.potentialCasts($skill`Sweat Out Some Booze`) >
+        inebrietyLimit(),
     do: () => {
-      while (get("_sweatOutSomeBoozeUsed") < 3) {
-        useSkill($skill`Sweat Out Some Booze`);
+      while (
+        DesignerSweatpants.canUseSkill($skill`Sweat Out Some Booze`) &&
+        myInebriety() > 0
+      ) {
+        DesignerSweatpants.useSkill($skill`Sweat Out Some Booze`);
       }
       consumeDiet(computeDiet().sweatpants(), "SWEATPANTS");
     },
     available: () =>
-      have($item`designer sweatpants`) &&
       !globalOptions.nodiet &&
-      get("_sweatOutSomeBoozeUsed") < 3,
+      DesignerSweatpants.potentialCasts($skill`Sweat Out Some Booze`) > 0,
   };
 }
 

@@ -7,6 +7,7 @@ import {
   canEquip,
   eat,
   getWorkshed,
+  inebrietyLimit,
   isBanished,
   Item,
   itemAmount,
@@ -26,7 +27,6 @@ import {
   setLocation,
   totalTurnsPlayed,
   use,
-  useSkill,
   visitUrl,
 } from "kolmafia";
 import {
@@ -43,6 +43,7 @@ import {
   Counter,
   CrepeParachute,
   Delayed,
+  DesignerSweatpants,
   ensureEffect,
   get,
   getModifier,
@@ -199,16 +200,20 @@ const TurnGenTasks: GarboTask[] = [
     name: "Sweatpants",
     ready: () =>
       !globalOptions.nodiet &&
-      have($item`designer sweatpants`) &&
+      DesignerSweatpants.canUseSkill($skill`Sweat Out Some Booze`) &&
+      myInebriety() > 0 &&
       myAdventures() <= 1 + globalOptions.saveTurns,
-    completed: () => get("_sweatOutSomeBoozeUsed") === 3,
+    completed: () =>
+      $skill`Sweat Out Some Booze`.dailylimit === 0 ||
+      myInebriety() -
+        DesignerSweatpants.potentialCasts($skill`Sweat Out Some Booze`) >
+        inebrietyLimit(),
     do: () => {
       while (
-        get("_sweatOutSomeBoozeUsed") < 3 &&
-        get("sweat") >= 25 &&
+        DesignerSweatpants.canUseSkill($skill`Sweat Out Some Booze`) &&
         myInebriety() > 0
       ) {
-        useSkill($skill`Sweat Out Some Booze`);
+        DesignerSweatpants.useSkill($skill`Sweat Out Some Booze`);
       }
       consumeDiet(computeDiet().sweatpants(), "SWEATPANTS");
     },
