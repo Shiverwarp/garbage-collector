@@ -377,7 +377,7 @@ const FreeFightTasks: GarboFreeFightTask[] = [
           modes: { retrocape: ["robot", "kiss"] },
           avoid: $items`mutant crown, mutant arm, mutant legs, shield of the Skeleton Lord`,
           modifier:
-            numericModifier("Monster Level") >= 50 ? "-Monster Level" : [], // Above 50 ML, monsters resist stuns.
+            numericModifier("Monster Level") >= 50 ? "-7 Monster Level" : [], // Above 50 ML, monsters resist stuns.
         },
         { familiarOptions: { canChooseMacro: false } },
       ),
