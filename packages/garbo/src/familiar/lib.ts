@@ -161,6 +161,13 @@ export function snapperValue(): number {
 
 export const getUsedTcbFamiliars = () => new Set(ToyCupidBow.familiarsToday());
 
+export const tcbTurnsLeft = (f: Familiar, used: Set<Familiar>) =>
+  used.has(f)
+    ? Infinity
+    : ToyCupidBow.currentFamiliar() === f
+      ? clamp(5 - get("cupidBowFights"), 1, 5)
+      : 5;
+
 export const amuletCoinValue = () => {
   const [copies, barf] = isFree(globalOptions.target)
     ? [0, estimatedGarboTurns()]
@@ -199,7 +206,7 @@ export function tcbValue(
         100
       : 0;
   return (
-    familiarEquipmentValue(familiar) / ToyCupidBow.turnsLeft(familiar) -
+    familiarEquipmentValue(familiar) / tcbTurnsLeft(familiar, tcbFamiliars) -
     amuletCoin
   );
 }

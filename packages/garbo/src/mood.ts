@@ -66,6 +66,13 @@ export function meatMood(
   mood.skill($skill`Leash of Linguini`);
   mood.skill($skill`Empathy of the Newt`);
 
+  if (have($item`April Shower Thoughts shield`)) {
+    mood.effect($effect`Thoughtful Empathy`);
+    mood.effect($effect`Lubricating Sauce`);
+    mood.effect($effect`Tubes of Universal Meat`);
+    mood.effect($effect`Strength of the Tortoise`);
+  }
+
   mood.skill($skill`Ruthless Efficiency`);
 
   // Donho's
