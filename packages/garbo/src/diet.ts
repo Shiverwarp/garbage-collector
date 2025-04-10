@@ -22,7 +22,6 @@ import {
   myClass,
   myFamiliar,
   myFullness,
-  myId,
   myInebriety,
   myLevel,
   myMaxhp,
@@ -408,21 +407,6 @@ function legendaryPizzaToMenu(
     );
 }
 
-function getPirateEncryptionKey() {
-  switch (toInt(myId()) % 4) {
-    case 0:
-      return $item`pirate encryption key alpha`;
-    case 1:
-      return $item`pirate encryption key bravo`;
-    case 2:
-      return $item`pirate encryption key charlie`;
-    case 3:
-      return $item`pirate encryption key delta`;
-    default:
-      return $item`none`;
-  }
-}
-
 export const mallMin: (items: Item[]) => Item = (items: Item[]) =>
   maxBy(items, mallPrice, true);
 
@@ -502,18 +486,6 @@ function menu(): MenuItem<Note>[] {
     new MenuItem(mallMin(smallEpics)),
     new MenuItem($item`green hamhock`),
     ...legendaryPizzas.flat(),
-    new MenuItem($item`corned beet`, {
-      maximum: 5,
-      additionalValue: garboValue(getPirateEncryptionKey()),
-    }),
-    new MenuItem($item`pickled bread`, {
-      maximum: 5,
-      additionalValue: garboValue(getPirateEncryptionKey()),
-    }),
-    new MenuItem($item`salted mutton`, {
-      maximum: 5,
-      additionalValue: garboValue(getPirateEncryptionKey()),
-    }),
 
     // BOOZE
     new MenuItem($item`elemental caipiroska`),
