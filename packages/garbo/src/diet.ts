@@ -22,6 +22,7 @@ import {
   myClass,
   myFamiliar,
   myFullness,
+  myId,
   myInebriety,
   myLevel,
   myMaxhp,
@@ -449,12 +450,18 @@ function menu(): MenuItem<Note>[] {
     $item`Tea, Earl Grey, Hot`,
   ];
 
+  const crimboKeyValue = garboValue(
+    toItem((toInt(myId()) % 4) + $item`pirate encryption key alpha`.id),
+  );
   const boxingDayCareItems =
     $items`glass of raw eggs, punch-drunk punch`.filter((item) => have(item));
   const pilsners = $items`astral pilsner`.filter((item) => have(item));
   const instantKarma = globalOptions.usekarma
     ? $items`Instant Karma`.filter((item) => have(item))
     : [];
+  const crimboKeyItem = mallMin(
+    $items`corned beet, pickled bread, salted mutton`,
+  );
   const limitedItems = [
     ...boxingDayCareItems,
     ...pilsners,
@@ -519,6 +526,15 @@ function menu(): MenuItem<Note>[] {
 
     // MISC
     ...limitedItems,
+    ...(crimboKeyValue >=
+    Math.max(mallPrice(crimboKeyItem) + 50_000, get("valueOfAdventure") * 10) // 1.15 is made up
+      ? [
+          new MenuItem(crimboKeyItem, {
+            additionalValue: crimboKeyValue,
+            maximum: 5, // 5 is made up
+          }),
+        ]
+      : []),
 
     // HELPERS
     new MenuItem($item`distention pill`),
