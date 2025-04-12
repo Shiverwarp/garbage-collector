@@ -3,8 +3,10 @@ import {
   autosellPrice,
   availableAmount,
   buy,
+  canAdventure,
   chew,
   cliExecute,
+  dailySpecial,
   drink,
   eat,
   Element,
@@ -29,11 +31,13 @@ import {
   mySpleenUse,
   npcPrice,
   print,
+  putCloset,
   retrieveItem,
   retrievePrice,
   sellsItem,
   setProperty,
   spleenLimit,
+  takeCloset,
   toInt,
   toItem,
   turnsPerCast,
@@ -51,6 +55,7 @@ import {
   $familiar,
   $item,
   $items,
+  $locations,
   $skill,
   clamp,
   DesignerSweatpants,
@@ -70,6 +75,7 @@ import {
   set,
   sum,
   sumNumbers,
+  withProperties,
 } from "libram";
 import { acquire, priceCaps } from "./acquire";
 import { withVIPClan } from "./clan";
@@ -95,6 +101,7 @@ class MenuItem<T> extends LibramMenuItem<T> {
       retrievePrice(item),
       mallPrice(item),
       npcPrice(item),
+      dailySpecialPrice(item),
     ].filter((p) => p > 0 && p < Number.MAX_SAFE_INTEGER);
     if (prices.length > 0) {
       return Math.min(...prices);
@@ -108,6 +115,28 @@ print(`Using adventure value ${MPA}.`, HIGHLIGHT);
 
 const Mayo = MayoClinic.Mayo;
 type Note = PotionTier | null;
+
+function hasMoonZoneRestaurant(): boolean {
+  return $locations`Camp Logging Camp, Thugnderdome`.some((loc) =>
+    canAdventure(loc),
+  );
+}
+
+function availableFromMoonZoneRestaurant(item: Item) {
+  return hasMoonZoneRestaurant() && dailySpecial() === item;
+}
+
+function consumeWhileRespectingMoonRestaurant(command: () => void, item: Item) {
+  const usingMoonZoneRestaurant = availableFromMoonZoneRestaurant(item);
+  withProperties(
+    {
+      autoSatisfyWithCloset:
+        !usingMoonZoneRestaurant && get("autoSatisfyWithCloset"),
+      autoSatisfyWithMall: !usingMoonZoneRestaurant,
+    },
+    command,
+  );
+}
 
 function eatSafe(qty: number, item: Item) {
   if (
@@ -129,8 +158,9 @@ function eatSafe(qty: number, item: Item) {
     eat($item`fudge spork`);
   }
   useIfUnused($item`milk of magnesium`, "_milkOfMagnesiumUsed", 5 * MPA);
-
-  if (!eat(qty, item)) throw "Failed to eat safely";
+  consumeWhileRespectingMoonRestaurant(() => {
+    if (!eat(qty, item)) throw "Failed to eat safely";
+  }, item);
 }
 
 function drinkSafe(qty: number, item: Item) {
@@ -160,7 +190,10 @@ function drinkSafe(qty: number, item: Item) {
       );
     }
   }
-  if (!drink(qty, item)) throw "Failed to drink safely";
+  consumeWhileRespectingMoonRestaurant(() => {
+    if (!drink(qty, item)) throw "Failed to drink safely";
+  }, item);
+
   if (item.inebriety === 1 && prevDrunk === qty + myInebriety() - 1) {
     // sometimes mafia does not track the mime army shotglass property
     setProperty("_mimeArmyShotglassUsed", "true");
@@ -182,17 +215,34 @@ function consumeSafe(
     throw "No spleen to clear with this.";
   }
   const averageAdventures = getAverageAdventures(item);
-  if (!skipAcquire && (averageAdventures > 0 || additionalValue)) {
-    const cap = Math.max(0, averageAdventures * MPA) + (additionalValue ?? 0);
-    acquire(qty, item, cap, true);
-  } else if (!skipAcquire) {
-    acquire(qty, item);
+  const usingMoonZoneRestaurant = availableFromMoonZoneRestaurant(item);
+  if (!skipAcquire && !usingMoonZoneRestaurant) {
+    if (averageAdventures > 0 || additionalValue) {
+      const cap = Math.max(0, averageAdventures * MPA) + (additionalValue ?? 0);
+      acquire(qty, item, cap, true);
+    } else {
+      acquire(qty, item);
+    }
   }
-  if (itemType(item) === "food" || item === saladFork) eatSafe(qty, item);
-  else if (itemType(item) === "booze" || item === frostyMug) {
+  // When eating the daily special, we need to closet any excess food, since it's much cheaper to eat the special
+  const excessAmount = usingMoonZoneRestaurant ? itemAmount(item) : 0;
+  if (usingMoonZoneRestaurant && itemAmount(item) > 0) {
+    putCloset(item, excessAmount);
+  }
+  if (itemType(item) === "food" || item === saladFork) {
+    eatSafe(qty, item);
+    return;
+  }
+  if (itemType(item) === "booze" || item === frostyMug) {
     drinkSafe(qty, item);
-  } else if (itemType(item) === "spleen item") chewSafe(qty, item);
-  else use(qty, item);
+    return;
+  }
+  if (excessAmount > 0) takeCloset(item, excessAmount);
+  if (itemType(item) === "spleen item") {
+    chewSafe(qty, item);
+    return;
+  }
+  use(qty, item);
 }
 
 function propTrue(prop: string | boolean) {
@@ -477,6 +527,16 @@ function menu(): MenuItem<Note>[] {
       new MenuItem<Note>(out.item, { maximum: 1, priceOverride: out.price }),
   );
 
+  const dailySpecialItem =
+    hasMoonZoneRestaurant() &&
+    get("_dailySpecialPrice") < mallPrice(dailySpecial())
+      ? [
+          new MenuItem(dailySpecial(), {
+            priceOverride: get("_dailySpecialPrice"),
+          }),
+        ]
+      : [];
+
   return [
     // FOOD
     new MenuItem($item`Dreadsylvanian cold pocket`),
@@ -526,15 +586,20 @@ function menu(): MenuItem<Note>[] {
 
     // MISC
     ...limitedItems,
-    ...(crimboKeyValue >=
-    Math.max(mallPrice(crimboKeyItem) + 50_000, get("valueOfAdventure") * 10) // 1.15 is made up
+    ...(crimboKeyValue >= mallPrice(crimboKeyItem)
       ? [
           new MenuItem(crimboKeyItem, {
             additionalValue: crimboKeyValue,
-            maximum: 5, // 5 is made up
+            maximum: clamp(
+              // Restrict to a 3rd of our open stomach, capped at 5 to avoid using stomach cleansers
+              Math.floor((fullnessLimit() - myFullness()) / 3),
+              0,
+              5,
+            ),
           }),
         ]
       : []),
+    ...dailySpecialItem,
 
     // HELPERS
     new MenuItem($item`distention pill`),
@@ -898,7 +963,7 @@ function balanceMenu(
     const fullMenu = potionMenu(
       menu,
       baseTargets + targets,
-      estimatedGarboTurns() + adventures,
+      estimatedGarboTurns(false) + adventures,
     );
     if (iterations <= 0) {
       return fullMenu;
@@ -1006,7 +1071,7 @@ function printDiet(diet: Diet<Note>, name: DietName) {
 
   const targets = Math.floor(copyTargetCount() + countCopies(diet));
   const adventures = Math.floor(
-    estimatedGarboTurns() + diet.expectedAdventures(),
+    estimatedGarboTurns(false) + diet.expectedAdventures(),
   );
   print(
     `Planning to fight ${targets} ${globalOptions.target} and run ${adventures} adventures`,
@@ -1292,6 +1357,11 @@ export function consumeDiet(diet: Diet<Note>, name: DietName): void {
     }
     currentQuantity = sum(diet.entries, "quantity");
   }
+}
+
+function dailySpecialPrice(item: Item) {
+  if (!hasMoonZoneRestaurant() || item !== get("_dailySpecial")) return 0;
+  return get("_dailySpecialPrice");
 }
 
 export function runDiet(): void {
