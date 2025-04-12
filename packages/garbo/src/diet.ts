@@ -132,7 +132,7 @@ function consumeWhileRespectingMoonRestaurant(command: () => void, item: Item) {
     {
       autoSatisfyWithCloset:
         !usingMoonZoneRestaurant && get("autoSatisfyWithCloset"),
-      autoSatisfyWithMall: !usingMoonZoneRestaurant,
+      autoSatisfyWithMall: false,
     },
     command,
   );
