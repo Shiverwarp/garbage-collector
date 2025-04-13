@@ -3,6 +3,7 @@ import {
   availableChoiceOptions,
   canAdventure,
   cliExecute,
+  haveEffect,
   inebrietyLimit,
   isBanished,
   Item,
