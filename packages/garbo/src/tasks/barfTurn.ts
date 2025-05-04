@@ -392,7 +392,7 @@ function luckyTasks(
       ),
       sobriety,
       spendsTurn: true,
-      turns: () => 0, // Turns spent is handled by Lucky Sources
+      turns: 0, // Turns spent is handled by Lucky Sources
     },
   ];
 }
