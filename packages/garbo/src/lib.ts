@@ -81,6 +81,7 @@ import {
   ClosedCircuitPayphone,
   CombatLoversLocket,
   Counter,
+  Delayed,
   ensureFreeRun,
   FindActionSourceConstraints,
   get,
@@ -106,6 +107,9 @@ import { acquire } from "./acquire";
 import { globalOptions } from "./config";
 import { garboAverageValue, garboValue } from "./garboValue";
 import { Outfit, OutfitSpec } from "grimoire-kolmafia";
+import { GarboTask } from "./tasks/engine";
+
+export type AlternateTask = GarboTask & { turns: Delayed<number> };
 
 export const eventLog: {
   initialCopyTargetsFought: number;
@@ -1096,6 +1100,14 @@ const luckyAdventures: LuckyAdventure[] = [
       canAdventure($location`The Castle in the Clouds in the Sky (Top Floor)`)
         ? garboValue($item`Mick's IcyVapoHotness Inhaler`) -
           get("valueOfAdventure")
+        : 0,
+  },
+  {
+    location: $location`Cobb's Knob Treasury`,
+    phase: "target",
+    value: () =>
+      canAdventure($location`Cobb's Knob Treasury`)
+        ? 3 * get("valueOfAdventure") // Rough estimation, they have 4x the basemeat of barf
         : 0,
   },
 ];
