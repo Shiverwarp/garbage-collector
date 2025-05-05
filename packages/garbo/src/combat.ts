@@ -65,7 +65,6 @@ import {
   monsterManuelAvailable,
   targetingMeat,
 } from "./lib";
-import { CombatStrategy } from "grimoire-kolmafia";
 import { copyTargetCount } from "./target";
 import { garboValue } from "./garboValue";
 
@@ -764,7 +763,7 @@ export class Macro extends StrictMacro {
     return this.externalIf(
       myFamiliar() === $familiar`Grey Goose` &&
         gooseDroneEligible() &&
-        get("gooseDronesRemaining") < copyTargetCount(false),
+        get("gooseDronesRemaining") < copyTargetCount(),
       Macro.if_(
         globalOptions.target,
         Macro.trySkill($skill`Emit Matter Duplicating Drones`),
@@ -873,13 +872,13 @@ export class Macro extends StrictMacro {
   }
 }
 
-type CustomizeMacroOptions = {
+export type CustomizeMacroOptions = {
   freeWanderer: (macro: StrictMacro) => Macro;
   tentacle: (macro: StrictMacro) => Macro;
   innateWanderer: (macro: StrictMacro) => Macro;
 };
 
-function customizeMacro<M extends StrictMacro>(
+export function customizeMacro<M extends StrictMacro>(
   macro: M,
   {
     freeWanderer = () => Macro.basicCombat(),
@@ -979,22 +978,4 @@ export function garboAdventureAuto<M extends StrictMacro>(
   autoMacro.setAutoAttack();
   makeCcs(nextMacro);
   runCombatBy(() => adv1(loc, -1, ""));
-}
-
-export class GarboStrategy extends CombatStrategy {
-  constructor(
-    macro: () => Macro,
-    postAuto = macro,
-    useAutoAttack = () => true,
-    options: Partial<CustomizeMacroOptions> = {},
-  ) {
-    super();
-    const macroCustom = () => customizeMacro(macro(), options);
-    if (useAutoAttack()) {
-      const postAutoCustom = () => customizeMacro(postAuto(), options);
-      this.autoattack(macroCustom).macro(postAutoCustom);
-    } else {
-      this.macro(macroCustom);
-    }
-  }
 }

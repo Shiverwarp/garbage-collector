@@ -26,7 +26,8 @@ import {
   unequip,
 } from "libram";
 import { acquire } from "../../acquire";
-import { GarboStrategy, Macro } from "../../combat";
+import { Macro } from "../../combat";
+import { GarboStrategy } from "../../combatStrategy";
 import { freeFightFamiliar } from "../../familiar";
 import { freeFightOutfit, meatTargetOutfit } from "../../outfit";
 import { GarboTask } from "../engine";
@@ -36,8 +37,8 @@ import { targetMeat, unignoreBeatenUp, userConfirmDialog } from "../../lib";
 import { globalOptions } from "../../config";
 import { DebuffPlanner } from "./debuffplanner";
 import { meatMood } from "../../mood";
-import { copyTargetCount } from "../../target";
 import { potionSetup } from "../../potions";
+import { highMeatMonsterCount } from "../../turns";
 
 export const CockroachSetup: Quest<GarboTask> = {
   name: "Setup Cockroach Target",
@@ -254,7 +255,7 @@ export const CockroachSetup: Quest<GarboTask> = {
             beforeDress: [
               () =>
                 meatMood("Copiers", false, targetMeat()).execute(
-                  copyTargetCount(),
+                  highMeatMonsterCount(),
                 ), // meatMood is currently difficult to sort for things that give +stats
               () => potionSetup(false, true), // run potionSetup while avoiding stats. We do not avoid limited use buffs that may still increase stats like paw wishes or pill keeper.
             ],

@@ -35,7 +35,6 @@ import {
 import { OutfitSpec, Quest } from "grimoire-kolmafia";
 import { WanderDetails } from "garbo-lib";
 
-import { GarboStrategy, Macro } from "../combat";
 import { globalOptions } from "../config";
 import { wanderer } from "../garboWanderer";
 import {
@@ -47,12 +46,13 @@ import {
   sober,
 } from "../lib";
 import { barfOutfit, freeFightOutfit, meatTargetOutfit } from "../outfit";
-import { digitizedMonstersRemaining } from "../turns";
+import { digitizedMonstersRemaining, highMeatMonsterCount } from "../turns";
 import { computeDiet, countCopies } from "../diet";
 
 import { GarboTask } from "./engine";
 import { shouldFillLatte, tryFillLatte } from "../resources";
-import { copyTargetCount } from "../target";
+import { GarboStrategy } from "../combatStrategy";
+import { Macro } from "../combat";
 
 const steveAdventures: Map<Location, number[]> = new Map([
   [$location`The Haunted Bedroom`, [1, 3, 1]],
@@ -97,7 +97,7 @@ export function getRequiredFishyTurns(): number {
   const unrealizedMimicEggFights = 11 - get("_mimicEggsObtained");
   return (requiredFishyTurns ??=
     countCopies(computeDiet().diet()) +
-    copyTargetCount() +
+    highMeatMonsterCount() +
     unrealizedMimicEggFights + // We gain extra embezzler fights post-free-fights from mimic experience
     15 + // Extra buffer for turns to complete pirate realm prep
     10); // Extra buffer of 10 turns just in case weirdness

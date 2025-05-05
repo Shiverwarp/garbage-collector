@@ -22,11 +22,11 @@ import {
   have,
 } from "libram";
 import { globalOptions } from "../config";
-import { copyTargetCount } from "../target";
 import { garboAverageValue, garboValue } from "../garboValue";
 import { getBestLuckyAdventure } from "../lib";
 import { effectValue, Potion } from "../potions";
 import { GarboTask } from "../tasks/engine";
+import { highMeatMonsterCount } from "../turns";
 
 type ScepterSkill = {
   skill: Skill;
@@ -76,7 +76,7 @@ const SKILL_OPTIONS: ScepterSkill[] = [
         effect: $effect`Offhand Remarkable`,
         duration: 30,
         effectValues: { meatDrop: 80 }, // Half a purse
-      }).gross(copyTargetCount()) +
+      }).gross(highMeatMonsterCount("Scepter")) +
       (globalOptions.ascend
         ? 0
         : (5 + (have($familiar`Left-Hand Man`) ? 5 : 0)) *

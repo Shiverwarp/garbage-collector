@@ -114,11 +114,7 @@ import { withStash } from "./clan";
 import { garboAdventure, garboAdventureAuto, Macro, withMacro } from "./combat";
 import { globalOptions } from "./config";
 import { postFreeFightDailySetup } from "./dailiespost";
-import {
-  copyTargetCount,
-  copyTargetSources,
-  getNextCopyTargetFight,
-} from "./target";
+import { copyTargetSources, getNextCopyTargetFight } from "./target";
 import {
   bestMidnightAvailable,
   crateStrategy,
@@ -197,6 +193,7 @@ import {
   BuffExtensionQuest,
   PostBuffExtensionQuest,
 } from "./tasks/buffExtension";
+import { highMeatMonsterCount } from "./turns";
 
 const firstChainMacro = () =>
   Macro.if_(
@@ -254,13 +251,13 @@ function meatTargetSetup() {
   setLocation($location`Friar Ceremony Location`);
   potionSetup(false);
   maximize("MP", false);
-  meatMood("Copiers", true, targetMeat()).execute(copyTargetCount());
+  meatMood("Copiers", true, targetMeat()).execute(highMeatMonsterCount());
   safeRestore();
   freeFightMood().execute(50);
   runGarboQuests([BuffExtensionQuest, PostBuffExtensionQuest]);
   burnLibrams(400);
 
-  bathroomFinance(copyTargetCount());
+  bathroomFinance(highMeatMonsterCount());
 
   if (SourceTerminal.have()) {
     SourceTerminal.educate([$skill`Extract`, $skill`Digitize`]);
@@ -417,7 +414,7 @@ export function dailyFights(): void {
       // check if user wants to wish for the copy target before doing setup
       if (!getNextCopyTargetFight()) return;
       meatTargetSetup();
-      if (targetingMeat()) runGarboQuests([EmbezzlerFightsQuest()]);
+      if (targetingMeat()) runGarboQuests([EmbezzlerFightsQuest]);
 
       // PROFESSOR COPIES
       if (have($familiar`Pocket Professor`)) {

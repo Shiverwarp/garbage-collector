@@ -27,7 +27,6 @@ import {
 } from "libram";
 import { withStash } from "../clan";
 import { globalOptions } from "../config";
-import { copyTargetCount } from "../target";
 import { meatFamiliar, setBestLeprechaunAsMeatFamiliar } from "../familiar";
 import {
   baseMeat,
@@ -38,14 +37,14 @@ import {
   tryFeast,
   userConfirmDialog,
 } from "../lib";
-import { estimatedGarboTurns } from "../turns";
+import { estimatedGarboTurns, highMeatMonsterCount } from "../turns";
 import { GarboTask } from "./engine";
 import { Quest } from "grimoire-kolmafia";
 import { acquire } from "../acquire";
 import { amuletCoinValue } from "../familiar/lib";
 
 function drivebyValue(): number {
-  const targets = copyTargetCount();
+  const targets = highMeatMonsterCount();
   const cows = estimatedGarboTurns() - targets;
   const marginalRoboWeight = 50;
   const meatPercentDelta =
@@ -58,7 +57,7 @@ function drivebyValue(): number {
 }
 
 function bloodyNoraValue(): number {
-  const targets = copyTargetCount();
+  const targets = highMeatMonsterCount();
   const robortMultiplier = 2;
   const bloodyNoraWeight = 10;
   const cows = estimatedGarboTurns() - targets;
@@ -73,7 +72,7 @@ function bloodyNoraValue(): number {
 }
 
 function entendreValue(): number {
-  const cows = estimatedGarboTurns() - copyTargetCount();
+  const cows = estimatedGarboTurns() - highMeatMonsterCount();
   const marginalRoboWeight = 50;
   const itemPercent =
     Math.sqrt(55 * marginalRoboWeight) + marginalRoboWeight - 3;

@@ -76,7 +76,6 @@ import {
   TargetFightConfigOptions as CopyTargetFightConfigOptions,
   RunOptions,
 } from "./lib";
-import { embezzlerFights } from "../tasks/embezzler";
 
 export class CopyTargetFight implements CopyTargetFightConfigOptions {
   name: string;
@@ -893,7 +892,7 @@ export const emergencyChainStarters = [
     "Pocket Wish (untapped potential)",
     () => {
       if (!globalOptions.target.wishable) return false;
-      const potential = Math.floor(copyTargetCount(false));
+      const potential = Math.floor(copyTargetCount());
       if (potential < 1) return false;
       if (get("_genieFightsUsed") >= 3) return false;
       if (globalOptions.askedAboutWish) return globalOptions.wishAnswer;
@@ -955,10 +954,9 @@ export const copyTargetSources = [
   ...fakeSources,
 ];
 
-export function copyTargetCount(countEmbezzlers = true): number {
-  return (
-    sum(copyTargetSources, (source: CopyTargetFight) => source.potential()) +
-    (countEmbezzlers ? embezzlerFights() : 0)
+export function copyTargetCount(): number {
+  return sum(copyTargetSources, (source: CopyTargetFight) =>
+    source.potential(),
   );
 }
 

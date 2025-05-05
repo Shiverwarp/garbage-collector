@@ -67,11 +67,11 @@ import {
 import { OutfitSpec, Quest } from "grimoire-kolmafia";
 import { WanderDetails } from "garbo-lib";
 
-import { GarboStrategy, Macro } from "../combat";
+import { Macro } from "../combat";
+import { GarboStrategy } from "../combatStrategy";
 import { globalOptions } from "../config";
 import { wanderer } from "../garboWanderer";
 import {
-  AlternateTask,
   getBestLuckyAdventure,
   howManySausagesCouldIEat,
   kramcoGuaranteed,
@@ -90,7 +90,7 @@ import { digitizedMonstersRemaining, estimatedGarboTurns } from "../turns";
 import { deliverThesisIfAble } from "../fights";
 import { computeDiet, consumeDiet } from "../diet";
 
-import { GarboTask } from "./engine";
+import { AlternateTask, GarboTask } from "./engine";
 import { trackMarginalMpa } from "../session";
 import { garboValue } from "../garboValue";
 import {
