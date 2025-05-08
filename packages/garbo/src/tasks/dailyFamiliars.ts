@@ -44,7 +44,7 @@ import { acquire } from "../acquire";
 import { amuletCoinValue } from "../familiar/lib";
 
 function drivebyValue(): number {
-  const targets = highMeatMonsterCount();
+  const targets = highMeatMonsterCount("Scepter"); // Scepter can cause circular logic
   const cows = estimatedGarboTurns() - targets;
   const marginalRoboWeight = 50;
   const meatPercentDelta =
@@ -57,7 +57,7 @@ function drivebyValue(): number {
 }
 
 function bloodyNoraValue(): number {
-  const targets = highMeatMonsterCount();
+  const targets = highMeatMonsterCount("Scepter"); // Scepter can cause circular logic
   const robortMultiplier = 2;
   const bloodyNoraWeight = 10;
   const cows = estimatedGarboTurns() - targets;
@@ -72,7 +72,7 @@ function bloodyNoraValue(): number {
 }
 
 function entendreValue(): number {
-  const cows = estimatedGarboTurns() - highMeatMonsterCount();
+  const cows = estimatedGarboTurns() - highMeatMonsterCount("Scepter"); // Scepter can cause circular logic
   const marginalRoboWeight = 50;
   const itemPercent =
     Math.sqrt(55 * marginalRoboWeight) + marginalRoboWeight - 3;
