@@ -21,6 +21,7 @@ import {
   itemType,
   logprint,
   mallPrice,
+  mpCost,
   myClass,
   myFamiliar,
   myFullness,
@@ -41,6 +42,7 @@ import {
   toEffect,
   toInt,
   toItem,
+  toSkill,
   turnsPerCast,
   use,
   useFamiliar,
@@ -52,6 +54,7 @@ import {
   $classes,
   $coinmaster,
   $effect,
+  $effects,
   $element,
   $familiar,
   $item,
@@ -66,6 +69,8 @@ import {
   getAverageAdventures,
   getModifier,
   getRemainingLiver,
+  getSongCount,
+  getSongLimit,
   have,
   Kmail,
   MenuItem as LibramMenuItem,
@@ -76,6 +81,7 @@ import {
   set,
   sum,
   sumNumbers,
+  uneffect,
   withProperties,
   withProperty,
 } from "libram";
@@ -164,9 +170,28 @@ function eatSafe(qty: number, item: Item) {
   }, item);
 }
 
+const EXPENSIVE_SONGS = $effects`The Ballad of Richie Thingfinder, Chorale of Companionship, Donho's Bubbly Ballad`;
+const USEFUL_SONGS = $effects`Polka of Plenty, Ur-Kel's Aria of Annoyance, Fat Leon's Phat Loot Lyric`;
+function shrugForOde() {
+  const inexpensiveSongs = getActiveSongs().filter(
+    (e) => !EXPENSIVE_SONGS.includes(e),
+  );
+  if (inexpensiveSongs.length === 1) return uneffect(inexpensiveSongs[1]);
+  const uselessSongs = inexpensiveSongs.filter(
+    (e) => !USEFUL_SONGS.includes(e),
+  );
+  if (uselessSongs.length >= 1) return uneffect(uselessSongs[0]);
+  return uneffect(
+    maxBy(inexpensiveSongs, (e) => haveEffect(e) * mpCost(toSkill(e)), true),
+  );
+}
+
 function drinkSafe(qty: number, item: Item) {
   const prevDrunk = myInebriety();
   if (have($skill`The Ode to Booze`)) {
+    if (!have($effect`Ode to Booze`) && getSongCount() >= getSongLimit()) {
+      shrugForOde();
+    }
     const odeTurns = qty * item.inebriety;
     const castTurns = odeTurns - haveEffect($effect`Ode to Booze`);
     if (castTurns > 0) {
