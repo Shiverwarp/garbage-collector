@@ -72,6 +72,7 @@ import { GarboStrategy } from "../combatStrategy";
 import { globalOptions } from "../config";
 import { wanderer } from "../garboWanderer";
 import {
+  getAvailableUltraRareZones,
   getBestLuckyAdventure,
   howManySausagesCouldIEat,
   kramcoGuaranteed,
@@ -509,6 +510,11 @@ function getAutosellableMeltingJunk(): Item[] {
   );
 }
 
+const peridotZone = () =>
+  getAvailableUltraRareZones().find(
+    (l) => !RegExp(`(?:^|,)${l.id}(?:$|,)`).test(get("_perilLocations")),
+  );
+
 const NonBarfTurnTasks: AlternateTask[] = [
   {
     name: "Make Mimic Eggs (whatever we can)",
@@ -687,6 +693,29 @@ const NonBarfTurnTasks: AlternateTask[] = [
     spendsTurn: true,
     sobriety: "drunk",
     choices: { 793: 1 },
+  },
+  {
+    name: "Peridot Fish for UR",
+    ready: () =>
+      have($item`Peridot of Peril`) && !(willDrunkAdventure() && sober()),
+    completed: () => !peridotZone(),
+    do: peridotZone,
+    outfit: () =>
+      freeFightOutfit(
+        sober()
+          ? { acc1: $item`Peridot of Peril` }
+          : {
+              acc1: $item`Peridot of Peril`,
+              offhand: $item`Drunkula's wineglass`,
+            },
+      ),
+    turns: () => (peridotZone() ? 1 : 0),
+    spendsTurn: false,
+    combat: new GarboStrategy(() => Macro.kill()),
+    choices: () => ({
+      ...wanderer().getChoices(peridotZone() ?? $location.none),
+      1557: 2,
+    }),
   },
   {
     name: "Use Day Shorteners (drunk)",
