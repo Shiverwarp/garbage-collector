@@ -14,6 +14,7 @@ import {
   itemAmount,
   itemType,
   Location,
+  mallPrice,
   mpCost,
   myBuffedstat,
   myClass,
@@ -314,7 +315,12 @@ export class Macro extends StrictMacro {
           .trySkill($skill`Pocket Crumbs`)
           .item([$item`train whistle`, $item`HOA citation pad`])
           .skill($skill`Entangling Noodles`)
-          .tryHaveItem($item`Rain-Doh indigo cup`),
+          .tryHaveItem($item`Rain-Doh indigo cup`)
+          .externalIf(
+            have($item`pulled red taffy`) &&
+              mallPrice($item`pulled red taffy`) <= 100,
+            Macro.item($item`pulled red taffy`),
+          ),
       )
       .externalIf(
         have($skill`Blow the Purple Candle!`),
