@@ -55,6 +55,14 @@ export const nonCinchNCs = () =>
         ? $item`Apriling band tuba`.dailyusesleft
         : 0);
 
+export const combatNCs = () =>
+  have($item`McHugeLarge left ski`)
+    ? Math.max(0, 3 - get("_mcHugeLargeAvalancheUses"))
+    : 0 +
+      (have($item`Jurassic Parka`)
+        ? Math.max(0, 5 - get("_spikolodonSpikeUses"))
+        : 0);
+
 export const cinchNCs = () =>
   Math.min(
     Math.floor(CinchoDeMayo.totalAvailableCinch() / 60),
@@ -62,7 +70,7 @@ export const cinchNCs = () =>
   );
 
 export const maximumYachtzees = () =>
-  clamp(nonCinchNCs() + cinchNCs(), 0, fishyTurns());
+  clamp(nonCinchNCs() + cinchNCs() + combatNCs(), 0, fishyTurns());
 
 export const willYachtzee = () => canYachtzee() && maximumYachtzees() > 0;
 

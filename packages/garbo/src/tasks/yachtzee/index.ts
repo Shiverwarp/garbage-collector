@@ -73,7 +73,7 @@ function doYachtzeeTask(additionalReady: () => boolean) {
 type AlternateTask = GarboTask & { turns: Delayed<number> };
 
 export function yachtzeeTasks(): AlternateTask[] {
-  if (!willYachtzee()) return [];
+  if (!willYachtzee() && !get("noncombatForcerActive")) return [];
   return [
     {
       name: "Yachtzee (sober)",
