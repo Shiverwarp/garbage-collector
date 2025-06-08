@@ -110,6 +110,7 @@ export function yachtzeeTasks(): AlternateTask[] {
         trackMarginalMpa();
       },
       turns: 2 * Math.max(0, 3 - get("_mcHugeLargeAvalancheUses")), // Need one turn to cast the NC, and one to do the yachtzee
+      sobriety: "sober",
       spendsTurn: true,
     },
     {
@@ -133,6 +134,7 @@ export function yachtzeeTasks(): AlternateTask[] {
         trackMarginalMpa();
       },
       turns: 2 * Math.max(0, 5 - get("_spikolodonSpikeUses")), // Need one turn to cast the NC, and one to do the yachtzee
+      sobriety: "sober",
       spendsTurn: true,
     },
     {
