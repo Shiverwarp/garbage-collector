@@ -1,4 +1,12 @@
-import { adv1, Location, myLocation, use } from "kolmafia";
+import {
+  adv1,
+  booleanModifier,
+  canEquip,
+  cliExecute,
+  Location,
+  myLocation,
+  use,
+} from "kolmafia";
 import {
   $effect,
   $familiar,
@@ -14,8 +22,10 @@ import {
 import { DraggableFight } from "garbo-lib";
 import { OutfitSpec } from "grimoire-kolmafia";
 
+import { waterBreathingEquipment } from "../outfit";
 import { Macro } from "../combat";
 import { globalOptions } from "../config";
+import { freeFishyAvailable } from "../lib";
 
 /**
  * Configure the behavior of the fights in use in different parts of the fight engine
@@ -49,10 +59,25 @@ export function checkUnderwater(): boolean {
     questStep("questS01OldGuy") >= 0 &&
     !(get("_envyfishEggUsed") || have($item`envyfish egg`)) &&
     (get("_garbo_weightChain", false) || !have($familiar`Pocket Professor`)) &&
-    (have($effect`Fishy`) ||
-      (have($item`fishy pipe`) && !get("_fishyPipeUsed")))
+    (booleanModifier("Adventure Underwater") ||
+      waterBreathingEquipment.some((item) => have(item) && canEquip(item))) &&
+    freeFishyAvailable() // &&
+    // !willYachtzee() We have excess fishy, this is fine
   ) {
-    if (!have($effect`Fishy`) && !get("_fishyPipeUsed")) use($item`fishy pipe`);
+    if (
+      !have($effect`Fishy`) &&
+      have($item`fishy pipe`) &&
+      !get("_fishyPipeUsed")
+    ) {
+      use($item`fishy pipe`);
+    }
+    if (
+      !have($effect`Fishy`) &&
+      get("skateParkStatus") === "ice" &&
+      !get("_skateBuff1")
+    ) {
+      cliExecute("skate lutz");
+    }
 
     return have($effect`Fishy`);
   }

@@ -40,7 +40,6 @@ import { GarboTask } from "./engine";
 import { GarboFreeFightTask } from "./freeFight";
 import { sandwormFamiliar } from "../familiar";
 import { sober } from "../lib";
-import { acquire } from "../acquire";
 
 function sandwormSpec(spec: OutfitSpec = {}): OutfitSpec {
   const outfit = Outfit.from(
@@ -250,6 +249,22 @@ const SandwormTasks: GarboFreeFightTask[] = [
       combatCount: () => (!have($effect`Everything Looks Red`) ? 1 : 0),
     },
     {
+      name: $item`shadow brick`.name,
+      ready: () =>
+        drumMachineROI() + globalOptions.prefs.valueOfFreeFight >
+        mallPrice($item`shadow brick`),
+      completed: () => get("_shadowBricksUsed") >= 13,
+      combat: new GarboStrategy(() =>
+        sandwormMacro().tryItem($item`shadow brick`),
+      ),
+      acquire: [{ item: $item`shadow brick` }],
+      combatCount: () =>
+        drumMachineROI() + globalOptions.prefs.valueOfFreeFight >
+        mallPrice($item`shadow brick`)
+          ? clamp(13 - get("_shadowBricksUsed"), 0, 13)
+          : 0,
+    },
+    {
       name: "Yellow Ray",
       ready: () =>
         drumMachineWorthIt() &&
@@ -272,23 +287,6 @@ const SandwormTasks: GarboFreeFightTask[] = [
               : {},
         ),
       combatCount: () => (!have($effect`Everything Looks Yellow`) ? 1 : 0),
-    },
-    {
-      name: "Shadow Bricks",
-      ready: () => drumMachineWorthIt(mallPrice($item`shadow brick`)),
-      completed: () => get("_shadowBricksUsed") >= 13,
-      prepare: () => {
-        const maxBrickPrice = Math.max(
-          0,
-          getSandwormDroprate() * mallPrice($item`spice melange`) -
-            mallPrice($item`drum machine`),
-        );
-        acquire(1, $item`shadow brick`, maxBrickPrice, true);
-      },
-      combat: new GarboStrategy(() =>
-        sandwormMacro().item($item`shadow brick`),
-      ),
-      combatCount: () => clamp(13 - get("_shadowBricksUsed"), 0, 13),
     },
   ].map(sandwormTask),
   ...[
@@ -336,9 +334,9 @@ function hasWorms(): boolean {
 
 const REJECTION = 1 / 10;
 const BASE_RATE = 1 / 100;
-let _expectedSandwormItemDroprate: number;
-function getSandwormDroprate(): number {
-  if (_expectedSandwormItemDroprate === undefined) {
+let _drumMachineROI: number;
+function drumMachineROI(): number {
+  if (_drumMachineROI === undefined) {
     Outfit.from(
       sandwormSpec(),
       new Error("Failed to generate Sandworm outfit"),
@@ -347,18 +345,17 @@ function getSandwormDroprate(): number {
       have($skill`Steely-Eyed Squint`) && !have($effect`Steely-Eyed Squint`)
         ? 2
         : 1;
-    _expectedSandwormItemDroprate =
+    const rate =
       REJECTION *
       clamp(BASE_RATE * (1 + (getModifier("Item Drop") * squint) / 100), 0, 1);
+    _drumMachineROI =
+      rate * garboValue($item`spice melange`) - mallPrice($item`drum machine`);
   }
-  return _expectedSandwormItemDroprate;
+  return _drumMachineROI;
 }
 
-function drumMachineWorthIt(additionalCost = 0): boolean {
-  return (
-    mallPrice($item`drum machine`) + additionalCost <
-    getSandwormDroprate() * garboValue($item`spice melange`)
-  );
+function drumMachineWorthIt(): boolean {
+  return drumMachineROI() > 0;
 }
 
 //  Use free fights on melanges if prices are reasonable

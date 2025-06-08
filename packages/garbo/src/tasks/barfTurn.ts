@@ -80,6 +80,7 @@ import {
   romanticMonsterImpossible,
   sober,
   targetingMeat,
+  willDrunkAdventure,
 } from "../lib";
 import {
   barfOutfit,
@@ -102,13 +103,15 @@ import {
   shouldAugustCast,
   shouldFillLatte,
   tryFillLatte,
+  willYachtzee,
 } from "../resources";
 import { acquire } from "../acquire";
-import { bestYachtzeeFamiliar } from "../yachtzee/familiar";
 import { shouldMakeEgg } from "../resources";
 import { lavaDogsAccessible, lavaDogsComplete } from "../resources/doghouse";
 import { hotTubAvailable } from "../resources/clanVIP";
 import { meatMood } from "../mood";
+import { yachtzeeTasks } from "./yachtzee";
+import { bestYachtzeeFamiliar } from "./yachtzee/familiar";
 
 const digitizedTarget = () =>
   SourceTerminal.have() &&
@@ -186,10 +189,17 @@ function shouldGoUnderwater(): boolean {
   }
 
   if (have($effect`Fishy`)) return true;
+  if (willYachtzee()) return false;
   if (have($item`fishy pipe`) && !get("_fishyPipeUsed")) {
     use($item`fishy pipe`);
-    return have($effect`Fishy`);
+    if (have($effect`Fishy`)) return true;
   }
+
+  if (get("skateParkStatus") === "ice" && !get("_skateBuff1")) {
+    cliExecute("skate lutz");
+    if (have($effect`Fishy`)) return true;
+  }
+
   return false;
 }
 
@@ -398,36 +408,6 @@ function luckyTasks(
   ];
 }
 
-function aprilingYachtzee(additionalReady: () => boolean) {
-  return {
-    completed: () => !AprilingBandHelmet.canPlay("Apriling band tuba"),
-    ready: () => have($item`Apriling band tuba`) && additionalReady(),
-    choices: { 918: 2 },
-    do: $location`The Sunken Party Yacht`,
-    prepare: () => {
-      if (!get("noncombatForcerActive")) {
-        AprilingBandHelmet.play($item`Apriling band tuba`);
-      }
-    },
-    outfit: () => {
-      const spec: OutfitSpec = {
-        modifier: ["meat"],
-        familiar: bestYachtzeeFamiliar(),
-        avoid: $items`anemoney clip, cursed magnifying glass, Kramco Sausage-o-Matic™, cheap sunglasses, over-the-shoulder Folder Holder`,
-      };
-      if (!sober()) {
-        spec.equip = $items`Drunkula's wineglass`;
-      }
-      return spec;
-    },
-    combat: new GarboStrategy(() =>
-      Macro.abortWithMsg("Hit unexpected combat while trying to Yachtzee!"),
-    ),
-    turns: () => $item`Apriling band tuba`.dailyusesleft,
-    spendsTurn: true,
-  };
-}
-
 function vampOut(additionalReady: () => boolean) {
   return {
     ready: () =>
@@ -473,10 +453,6 @@ function getBestDupeItem(): Item {
     }
   }
   return bestDupeItem;
-}
-
-function willDrunkAdventure() {
-  return have($item`Drunkula's wineglass`) && globalOptions.ascend;
 }
 
 function canForceNoncombat() {
@@ -586,6 +562,7 @@ const NonBarfTurnTasks: AlternateTask[] = [
     ...lavaDogs(() => !willDrunkAdventure(), {}),
     sobriety: "sober",
   },
+  ...yachtzeeTasks(), // Use NC forces and adventure to get the Yachtzee NC
   {
     name: "Daily Dungeon (drunk)",
     ...dailyDungeon(() => willDrunkAdventure()),
@@ -642,16 +619,6 @@ const NonBarfTurnTasks: AlternateTask[] = [
   },
   ...luckyTasks("sober", () => !willDrunkAdventure()),
   ...luckyTasks("drunk", () => willDrunkAdventure()),
-  {
-    name: "Apriling Yachtzee (drunk)",
-    ...aprilingYachtzee(() => willDrunkAdventure()),
-    sobriety: "drunk",
-  },
-  {
-    name: "Apriling Yachtzee (sober)",
-    ...aprilingYachtzee(() => !willDrunkAdventure()),
-    sobriety: "sober",
-  },
   {
     name: "Map for Pills",
     completed: () =>

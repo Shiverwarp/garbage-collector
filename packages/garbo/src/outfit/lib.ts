@@ -88,6 +88,9 @@ export function useUPCs(): void {
   }
 }
 
+export const waterBreathingEquipment = $items`The Crown of Ed the Undying, aerated diving helmet, crappy Mer-kin mask, Mer-kin gladiator mask, Mer-kin scholar mask, old SCUBA tank`;
+export const familiarWaterBreathingEquipment = $items`das boot, little bitty bathysphere`;
+
 const stickerSlots = $slots`sticker1, sticker2, sticker3`;
 const UPC = $item`scratch 'n' sniff UPC sticker`;
 export function useUPCsIfNeeded({ familiar }: Outfit): void {
