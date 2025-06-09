@@ -1,5 +1,5 @@
 import { canAdventure, getMonsters, itemDropsArray, Location } from "kolmafia";
-import { $item, maxBy } from "libram";
+import { $item, $monster } from "libram";
 import {
   DraggableFight,
   getAvailableUltraRareZones,
@@ -14,17 +14,17 @@ export function ultraRareFactory(
 ): WandererTarget[] {
   return getAvailableUltraRareZones()
     .filter((l) => canAdventure(l))
-    .map((z) => {
-      const ultraRareItemArray = itemDropsArray(
-        getMonsters(z).filter((m) => m.attributes.includes("ULTRARARE"))[0],
-      ).map((a) => a.drop);
-      return new WandererTarget(
-        `UltraRare ${z}`,
-        z,
-        ultraRareItemArray.length > 0
-          ? options.itemValue(maxBy(ultraRareItemArray, options.itemValue)) /
-            500000000
-          : 0, // Ultra rares are rare, let's say 1 in 500 million to be conservative
-      );
-    });
+    .map(
+      (z) =>
+        new WandererTarget(
+          `UltraRare ${z}`,
+          z,
+          options.itemValue(
+            itemDropsArray(
+              getMonsters(z).find((m) => m.attributes.includes("ULTRARARE")) ??
+                $monster.none,
+            )[0].drop ?? $item.none,
+          ) / 500_000_000, // Ultra rares are rare, let's say 1 in 500 million to be conservative
+        ),
+    );
 }
