@@ -95,24 +95,6 @@ export const yachtzeeQuest: Quest<AlternateTask>[] = [
         spendsTurn: false,
       },
       {
-        name: "McHugeLarge Avalanche NC Forcer",
-        completed: () => get("noncombatForcerActive"),
-        ready: () =>
-          have($item`McHugeLarge left ski`) &&
-          get("_mcHugeLargeAvalancheUses") < 3,
-        outfit: () => freeFightOutfit({ equip: $items`McHugeLarge left ski` }),
-        do: $location`The Sunken Party Yacht`, // You have to use it in the location you want to force the NC
-        combat: new GarboStrategy(() =>
-          Macro.skill($skill`McHugeLarge Avalanche`).meatKill(),
-        ),
-        post: () => {
-          trackMarginalMpa();
-        },
-        turns: () => 2 * Math.max(0, 3 - get("_mcHugeLargeAvalancheUses")), // Need one turn to cast the NC, and one to do the yachtzee
-        sobriety: "sober",
-        spendsTurn: true,
-      },
-      {
         name: "Parka Spikes NC Forcer",
         completed: () => get("noncombatForcerActive"),
         ready: () =>
@@ -131,6 +113,24 @@ export const yachtzeeQuest: Quest<AlternateTask>[] = [
           trackMarginalMpa();
         },
         turns: () => 2 * Math.max(0, 5 - get("_spikolodonSpikeUses")), // Need one turn to cast the NC, and one to do the yachtzee
+        sobriety: "sober",
+        spendsTurn: true,
+      },
+      {
+        name: "McHugeLarge Avalanche NC Forcer",
+        completed: () => get("noncombatForcerActive"),
+        ready: () =>
+          have($item`McHugeLarge left ski`) &&
+          get("_mcHugeLargeAvalancheUses") < 3,
+        outfit: () => freeFightOutfit({ equip: $items`McHugeLarge left ski` }),
+        do: $location`The Sunken Party Yacht`, // You have to use it in the location you want to force the NC
+        combat: new GarboStrategy(() =>
+          Macro.skill($skill`McHugeLarge Avalanche`).meatKill(),
+        ),
+        post: () => {
+          trackMarginalMpa();
+        },
+        turns: () => 2 * Math.max(0, 3 - get("_mcHugeLargeAvalancheUses")), // Need one turn to cast the NC, and one to do the yachtzee
         sobriety: "sober",
         spendsTurn: true,
       },
