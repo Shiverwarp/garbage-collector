@@ -26,7 +26,7 @@ import { maximumYachtzees, shouldClara, willYachtzee } from "../../resources";
 import { GarboStrategy } from "../../combatStrategy";
 import { meatMood } from "../../mood";
 import { estimatedGarboTurns } from "../../turns";
-import { barfOutfit } from "../../outfit";
+import { barfOutfit, freeFightOutfit } from "../../outfit";
 import { trackMarginalMpa } from "../../session";
 
 type AlternateTask = GarboTask & { turns: Delayed<number> };
@@ -100,12 +100,11 @@ export const yachtzeeQuest: Quest<AlternateTask>[] = [
         ready: () =>
           have($item`McHugeLarge left ski`) &&
           get("_mcHugeLargeAvalancheUses") < 3,
-        outfit: () => barfOutfit({ equip: $items`McHugeLarge left ski` }),
-        do: $location`The Coral Corral`,
+        outfit: () => freeFightOutfit({ equip: $items`McHugeLarge left ski` }),
+        do: $location`The Sunken Party Yacht`, // You have to use it in the location you want to force the NC
         combat: new GarboStrategy(() =>
           Macro.skill($skill`McHugeLarge Avalanche`).meatKill(),
         ),
-        prepare: () => meatMood("Barf").execute(estimatedGarboTurns()),
         post: () => {
           trackMarginalMpa();
         },

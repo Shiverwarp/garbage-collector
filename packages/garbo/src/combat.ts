@@ -296,9 +296,9 @@ export class Macro extends StrictMacro {
     )
       .externalIf(delevel, Macro.if_(globalOptions.target, Macro.delevel()))
       .if_(
-        $monsters`sea cowboy, Mer-kin rustler`,
+        $monsters`sea cowboy, Mer-kin rustler, tumbleweed`,
         Macro.abortWithMsg(
-          "We shouldn't be encountering sea cowboys or Mer-kin rustlers!",
+          "We shouldn't be encountering tumbleweeds, sea cowboys or Mer-kin rustlers!",
         ),
       )
       .if_(
