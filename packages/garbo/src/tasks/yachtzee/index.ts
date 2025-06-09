@@ -103,9 +103,7 @@ export const yachtzeeQuest: Quest<AlternateTask>[] = [
         outfit: () => barfOutfit({ equip: $items`McHugeLarge left ski` }),
         do: $location`The Coral Corral`,
         combat: new GarboStrategy(() =>
-          Macro.delevel()
-            .skill($skill`McHugeLarge Avalanche`)
-            .meatKill(),
+          Macro.skill($skill`McHugeLarge Avalanche`).meatKill(),
         ),
         prepare: () => meatMood("Barf").execute(estimatedGarboTurns()),
         post: () => {
@@ -127,9 +125,7 @@ export const yachtzeeQuest: Quest<AlternateTask>[] = [
           }),
         do: $location`The Coral Corral`,
         combat: new GarboStrategy(() =>
-          Macro.delevel()
-            .skill($skill`Launch spikolodon spikes`)
-            .meatKill(),
+          Macro.skill($skill`Launch spikolodon spikes`).meatKill(),
         ),
         prepare: () => meatMood("Barf").execute(estimatedGarboTurns()),
         post: () => {
