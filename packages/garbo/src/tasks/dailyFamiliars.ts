@@ -43,8 +43,8 @@ import { Quest } from "grimoire-kolmafia";
 import { acquire } from "../acquire";
 import { amuletCoinValue } from "../familiar/lib";
 
-function drivebyValue(): number {
-  const targets = highMeatMonsterCount("Scepter"); // Scepter can cause circular logic
+function drivebyValue(targetCount = 0): number {
+  const targets = targetCount; // Scepter can cause circular logic
   const cows = estimatedGarboTurns() - targets;
   const marginalRoboWeight = 50;
   const meatPercentDelta =
@@ -56,8 +56,8 @@ function drivebyValue(): number {
   );
 }
 
-function bloodyNoraValue(): number {
-  const targets = highMeatMonsterCount("Scepter"); // Scepter can cause circular logic
+function bloodyNoraValue(targetCount = 0): number {
+  const targets = targetCount; // Scepter can cause circular logic
   const robortMultiplier = 2;
   const bloodyNoraWeight = 10;
   const cows = estimatedGarboTurns() - targets;
@@ -71,8 +71,8 @@ function bloodyNoraValue(): number {
   return bloodyNoraWeight * (marginalValue / 100) * baseMeat() * cows;
 }
 
-function entendreValue(): number {
-  const cows = estimatedGarboTurns() - highMeatMonsterCount("Scepter"); // Scepter can cause circular logic
+function entendreValue(targetCount = 0): number {
+  const cows = estimatedGarboTurns() - targetCount; // Scepter can cause circular logic
   const marginalRoboWeight = 50;
   const itemPercent =
     Math.sqrt(55 * marginalRoboWeight) + marginalRoboWeight - 3;
@@ -96,8 +96,12 @@ function worthFeedingRobortender(): boolean {
 
 export function prepRobortender(): void {
   if (!have($familiar`Robortender`)) return;
+  const targetCount = highMeatMonsterCount("Scepter"); // Scepter can cause circular logic
   const roboDrinks = {
-    "Drive-by shooting": { priceCap: drivebyValue(), mandatory: true },
+    "Drive-by shooting": {
+      priceCap: drivebyValue(targetCount),
+      mandatory: true,
+    },
     Newark: {
       priceCap: newarkValue() * 0.25 * estimatedGarboTurns(),
       mandatory: false,
@@ -107,10 +111,13 @@ export function prepRobortender(): void {
       mandatory: false,
     },
     "Bloody Nora": {
-      priceCap: bloodyNoraValue(),
+      priceCap: bloodyNoraValue(targetCount),
       mandatory: false,
     },
-    "Single entendre": { priceCap: entendreValue(), mandatory: false },
+    "Single entendre": {
+      priceCap: entendreValue(targetCount),
+      mandatory: false,
+    },
   };
   for (const [drinkName, { priceCap, mandatory }] of Object.entries(
     roboDrinks,
