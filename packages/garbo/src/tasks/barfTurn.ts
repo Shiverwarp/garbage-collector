@@ -1181,9 +1181,11 @@ const BarfTurnTasks: GarboTask[] = [
 ];
 
 function nonBarfTurns(): number {
-  return sum(
-    NonBarfTurnTasks.filter((t) => (t.ready?.() ?? true) && !t.completed()),
-    (t) => undelay(t.turns),
+  return (
+    sum(
+      NonBarfTurnTasks.filter((t) => (t.ready?.() ?? true) && !t.completed()),
+      (t) => undelay(t.turns),
+    ) + 5 // Some buffer turns, in case we get uncounted wanderers or procs like violet fog
   );
 }
 
