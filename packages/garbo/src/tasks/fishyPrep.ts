@@ -88,7 +88,7 @@ function wanderTask(
     spendsTurn: false,
     combat: new GarboStrategy(() => Macro.basicCombat()),
     ...base,
-    location: () => wanderer().getTarget(undelay(details)),
+    location: () => wanderer().getTarget(undelay(details)).location,
   };
 }
 
@@ -234,7 +234,7 @@ const fishyPrepTasks: GarboTask[] = [
             wanderer().getTarget({
               wanderer: "wanderer",
               allowEquipment: false,
-            }),
+            }).location,
           )
         : freeFightOutfit(),
     do: () =>
@@ -377,6 +377,7 @@ export const fishyPrepQuest: Quest<GarboTask> = {
   tasks: fishyPrepTasks,
   completed: () =>
     globalOptions.nobarf ||
+    haveEffect($effect`Fishy`) > 1000 ||
     (haveEffect($effect`Fishy`) >= getRequiredFishyTurns() &&
       isBanished($monster`sea cowboy`) &&
       get("_shivRanchoFishyPrepped", false)),
