@@ -745,21 +745,22 @@ const pygmySniffed = () =>
     pygmyBanishHandlers.some(({ pygmy }) => pygmy === get(source)),
   );
 
-const pygmyMacro = Macro.step(
-  ...pygmyBanishHandlers.map(({ pygmy, skill, item, check, limit }) =>
-    Macro.externalIf(
-      (check ? get(check) : Infinity) < limit,
-      Macro.if_(
-        pygmy,
-        skill ? Macro.trySkill(skill).item(item) : Macro.item(item),
+const pygmyMacro = () =>
+  Macro.step(
+    ...pygmyBanishHandlers.map(({ pygmy, skill, item, check, limit }) =>
+      Macro.externalIf(
+        (check ? get(check) : Infinity) < limit,
+        Macro.if_(
+          pygmy,
+          skill ? Macro.trySkill(skill).item(item) : Macro.item(item),
+        ),
+        Macro.if_(pygmy, Macro.item(item)),
       ),
-      Macro.if_(pygmy, Macro.item(item)),
     ),
-  ),
-)
-  .if_($monster`drunk pygmy`, Macro.trySkill($skill`Extract`).trySingAlong())
-  .ifInnateWanderer(Macro.basicCombat())
-  .abort();
+  )
+    .if_($monster`drunk pygmy`, Macro.trySkill($skill`Extract`).trySingAlong())
+    .ifInnateWanderer(Macro.basicCombat())
+    .abort();
 
 function getStenchLocation() {
   return (
@@ -903,7 +904,7 @@ const freeFightSources = [
       acquire(1, $item`stuffed yam stinkbomb`, 20000, true);
       acquire(1, $item`handful of split pea soup`, 20000, true);
       retrieveItem($item`divine champagne popper`);
-      garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro);
+      garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro());
     },
     true,
     {
@@ -935,7 +936,7 @@ const freeFightSources = [
     () => {
       putCloset(itemAmount($item`bowling ball`), $item`bowling ball`);
       retrieveItem($item`Bowl of Scorpions`);
-      garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro);
+      garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro());
     },
     true,
     pygmyOptions($items`miniature crystal ball`.filter((item) => have(item))),
@@ -951,7 +952,7 @@ const freeFightSources = [
     () => {
       putCloset(itemAmount($item`bowling ball`), $item`bowling ball`);
       retrieveItem($item`Bowl of Scorpions`);
-      garboAdventureAuto($location`The Hidden Bowling Alley`, pygmyMacro);
+      garboAdventureAuto($location`The Hidden Bowling Alley`, pygmyMacro());
     },
     true,
     pygmyOptions(),
@@ -1004,7 +1005,7 @@ const freeFightSources = [
             $item`Bowl of Scorpions`,
           );
         } else retrieveItem($item`Bowl of Scorpions`);
-        garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro);
+        garboAdventure($location`The Hidden Bowling Alley`, pygmyMacro());
       }
     },
     false,
@@ -1024,7 +1025,7 @@ const freeFightSources = [
       retrieveItem(1, $item`Bowl of Scorpions`);
       garboAdventure(
         $location`The Hidden Bowling Alley`,
-        Macro.if_($monster`drunk pygmy`, pygmyMacro).abort(),
+        Macro.if_($monster`drunk pygmy`, pygmyMacro()).abort(),
       );
     },
     true,
