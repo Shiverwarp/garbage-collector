@@ -170,7 +170,7 @@ function wanderTask(
     spendsTurn: false,
     combat: new GarboStrategy(() => Macro.basicCombat()),
     ...base,
-    location: () => wanderer().getTarget(undelay(details)),
+    location: () => wanderer().getTarget(undelay(details)).location,
   };
 }
 
@@ -926,7 +926,8 @@ const BarfTurnTasks: GarboTask[] = [
     location: () =>
       shouldGoUnderwater()
         ? $location`The Briny Deeps`
-        : wanderer().getTarget({ wanderer: "wanderer", allowEquipment: false }),
+        : wanderer().getTarget({ wanderer: "wanderer", allowEquipment: false })
+            .location,
   },
   wanderTask(
     "wanderer",
