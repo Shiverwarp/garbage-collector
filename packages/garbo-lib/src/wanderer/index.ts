@@ -84,6 +84,7 @@ function zoneAverageMonsterValue(
 function targetedMonsterValue(
   monsterValues: Map<Monster, number>,
 ): [Monster, number] {
+  if (monsterValues.size === 0) return [$monster`none`, 0];
   return maxBy([...monsterValues.entries()], 1);
 }
 
