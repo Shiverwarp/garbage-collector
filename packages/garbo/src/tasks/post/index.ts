@@ -150,7 +150,8 @@ function setFishyPrepPref(): GarboPostTask {
   return {
     name: "Set Fishy Prep Preference",
     ready: () =>
-      haveEffect($effect`Fishy`) >= getRequiredFishyTurns() &&
+      (haveEffect($effect`Fishy`) >= 1000 ||
+        haveEffect($effect`Fishy`) >= getRequiredFishyTurns()) &&
       isBanished($monster`sea cowboy`),
     completed: () => get("_shivRanchoFishyPrepped", false),
     do: () => set("_shivRanchoFishyPrepped", true),
