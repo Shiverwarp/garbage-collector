@@ -75,45 +75,37 @@ function zoneAverageMonsterValue(
   monsterValues: Map<Monster, number>,
 ): number {
   const rates = appearanceRates(location);
-  return sum([...monsterValues.keys()], (m) => {
-    const monsterValue = monsterValues.get(m) ?? 0;
-    const rate = rates[m.name] / 100;
-    return monsterValue * rate;
+  return sum([...monsterValues.entries()], ([monster, value]) => {
+    const rate = rates[monster.name] / 100;
+    return value * rate;
   });
 }
 
 function targetedMonsterValue(
   monsterValues: Map<Monster, number>,
 ): [Monster, number] {
-  const bestMonster = maxBy(
-    [...monsterValues.keys()],
-    (m) => monsterValues.get(m) ?? 0,
-  );
-  return [bestMonster, monsterValues.get(bestMonster) ?? 0];
+  return maxBy([...monsterValues.entries()], 1);
 }
 
+// Initializes with only zone value
 function initializeWandererLocationMap(
   zoneValues: Map<
     Location,
     {
       location: Location;
       targets: WandererTarget[];
-      value: number;
+      zoneValue: number;
+      monsterValues: Map<Monster, number>;
     }
   >,
 ): Map<Location, WandererLocation> {
   // Build initial zones
-  const wandererLocationMap = new Map<Location, WandererLocation>();
-  for (const [locationKey, { location, targets, value }] of zoneValues) {
-    const wandererLocation: WandererLocation = {
+  return new Map(
+    [...zoneValues.entries()].map(([, { location, targets, zoneValue }]) => [
       location,
-      targets,
-      value,
-      peridotMonster: $monster`none`,
-    };
-    wandererLocationMap.set(locationKey, wandererLocation);
-  }
-  return wandererLocationMap;
+      { location, targets, value: zoneValue, peridotMonster: $monster.none },
+    ]),
+  );
 }
 
 function bestWander(
@@ -122,15 +114,12 @@ function bestWander(
   nameSkiplist: string[],
   options: WandererFactoryOptions,
 ): WandererLocation {
-  const locationZoneValues = new Map<
-    Location,
-    { location: Location; targets: WandererTarget[]; value: number }
-  >();
-  const locationMonsterValues = new Map<
+  const locationValues = new Map<
     Location,
     {
       location: Location;
       targets: WandererTarget[];
+      zoneValue: number;
       monsterValues: Map<Monster, number>;
     }
   >();
@@ -147,22 +136,25 @@ function bestWander(
         const location = wanderTarget.location;
 
         // Zone specific bonuses
-        const zoneData = locationZoneValues.get(location) ?? {
+        const zoneData = locationValues.get(location) ?? {
           location,
           targets: [],
-          value: 0,
+          zoneValue: 0,
+          monsterValues: new Map<Monster, number>(),
         };
         const zoneTargets = [...zoneData.targets, wanderTarget];
-        locationZoneValues.set(location, {
+        locationValues.set(location, {
           location: location,
           targets: zoneTargets,
-          value: zoneData.value + wanderTarget.zoneValue,
+          zoneValue: zoneData.zoneValue + wanderTarget.zoneValue,
+          monsterValues: zoneData.monsterValues,
         });
 
         // Monster specific bonuses
-        const monsterData = locationMonsterValues.get(location) ?? {
+        const monsterData = locationValues.get(location) ?? {
           location,
           targets: [],
+          zoneValue: 0,
           monsterValues: new Map<Monster, number>(),
         };
         const newMonsterValues = wanderTarget.monsterValues;
@@ -174,79 +166,43 @@ function bestWander(
             oldMonsterValue + newMonsterValue,
           );
         }
-        locationMonsterValues.set(location, monsterData);
+        locationValues.set(location, monsterData);
       }
     }
   }
 
   // Determine combined values, and whether best forced target is better than the best average location drops
-  // Build initial maps with zone values
-  const initialZoneValues = initializeWandererLocationMap(locationZoneValues);
-  const mergedAverageZoneDropWandererLocations = initialZoneValues;
-  const mergedTargetedDropLocations = initialZoneValues;
 
-  // Merge in average zone monster drops
+  // Create starting map with zone value only, because it's always active
+  const constructedLocations = initializeWandererLocationMap(locationValues);
+
+  // Determine whether targeted or average is better, and then add that amount to the value of the zone
   for (const [
-    locationKey,
-    { location, targets, monsterValues },
-  ] of locationMonsterValues) {
-    const locationFromMergedMap =
-      mergedAverageZoneDropWandererLocations.get(locationKey);
-    const wandererLocation: WandererLocation = locationFromMergedMap ?? {
+    ,
+    { location, targets, zoneValue, monsterValues },
+  ] of locationValues) {
+    const wandererLocation: WandererLocation = constructedLocations.get(
+      location,
+    ) ?? {
       location,
       targets,
-      value: zoneAverageMonsterValue(location, monsterValues),
+      value: zoneValue,
       peridotMonster: $monster`none`,
     };
-    // If the location was already in the list, then we add the value to it
-    if (locationFromMergedMap) {
-      wandererLocation.value += zoneAverageMonsterValue(
-        location,
-        monsterValues,
-      );
-    }
-    mergedAverageZoneDropWandererLocations.set(locationKey, wandererLocation);
-  }
-
-  // Targeted monsters if we have peridot
-  if (PeridotOfPeril.have()) {
-    // Merge in targeted monster drops
-    for (const [
-      locationKey,
-      { location, targets, monsterValues },
-    ] of locationMonsterValues) {
-      const locationFromMergedMap =
-        mergedTargetedDropLocations.get(locationKey);
-      const [bestMonster, value] = targetedMonsterValue(monsterValues);
-      const wandererLocation: WandererLocation = locationFromMergedMap ?? {
-        location,
-        targets,
-        value,
-        peridotMonster: bestMonster,
-      };
-      // If the location already existed in the list, and we can imperil there, add the value
-      if (PeridotOfPeril.canImperil(locationKey) && locationFromMergedMap) {
-        wandererLocation.value += value;
-        wandererLocation.peridotMonster = bestMonster;
-      }
-      mergedTargetedDropLocations.set(locationKey, wandererLocation);
-    }
-  }
-
-  // Construct our map of locations, replacing any average zone drop WandererLocations with their targeted version, if they are better
-  const constructedLocations = mergedAverageZoneDropWandererLocations;
-  if (PeridotOfPeril.have()) {
-    for (const [, wandererLocationFromAverage] of constructedLocations) {
-      for (const [
-        location,
-        wandererLocationFromTargeted,
-      ] of mergedTargetedDropLocations) {
-        if (
-          wandererLocationFromTargeted.value > wandererLocationFromAverage.value
-        ) {
-          constructedLocations.set(location, wandererLocationFromTargeted);
-        }
-      }
+    const monsterAverageValue = zoneAverageMonsterValue(
+      location,
+      monsterValues,
+    );
+    const [bestMonster, monsterTargetedValue] =
+      targetedMonsterValue(monsterValues);
+    if (
+      PeridotOfPeril.canImperil(location) &&
+      monsterTargetedValue > monsterAverageValue
+    ) {
+      wandererLocation.value += monsterTargetedValue;
+      wandererLocation.peridotMonster = bestMonster;
+    } else {
+      wandererLocation.value += monsterAverageValue;
     }
   }
 
