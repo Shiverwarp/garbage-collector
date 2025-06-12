@@ -54,6 +54,7 @@ import {
   have,
   HeavyRains,
   maxBy,
+  PeridotOfPeril,
   questStep,
   realmAvailable,
   set,
@@ -64,7 +65,7 @@ import {
   withChoice,
   withProperty,
 } from "libram";
-import { getTasks, OutfitSpec, Quest } from "grimoire-kolmafia";
+import { getTasks, Outfit, OutfitSpec, Quest } from "grimoire-kolmafia";
 import { getAvailableUltraRareZones, WanderDetails } from "garbo-lib";
 
 import { Macro } from "../combat";
@@ -126,6 +127,31 @@ const shouldCheckParachute = () => totalTurnsPlayed() !== lastParachuteFailure;
 const updateParachuteFailure = () =>
   (lastParachuteFailure = totalTurnsPlayed());
 
+function createWandererOutfit(
+  details: Delayed<WanderDetails>,
+  spec: Delayed<OutfitSpec>,
+  additionalOutfitOptions: Omit<FreeFightOutfitMenuOptions, "wanderOptions">,
+): Outfit {
+  const wanderManager = wanderer();
+  const wandererFamiliar = wanderManager.getFamiliar(undelay(details));
+  const peridotEquip =
+    wanderManager.getTarget(undelay(details)).peridotMonster !== $monster`none`;
+  const undelayedSpec = undelay(spec);
+  const wandererSpec: OutfitSpec = {
+    ...undelayedSpec,
+    equip: [
+      ...(undelayedSpec.equip ?? []),
+      ...(peridotEquip ? [$item`Peridot of Peril`] : []),
+    ],
+    ...wandererFamiliar,
+  };
+
+  return freeFightOutfit(wandererSpec, {
+    wanderOptions: undelay(details),
+    ...additionalOutfitOptions,
+  });
+}
+
 function wanderTask(
   details: Delayed<WanderDetails>,
   spec: Delayed<OutfitSpec>,
@@ -138,13 +164,9 @@ function wanderTask(
   > = {},
 ): GarboTask {
   return {
-    do: () => wanderer().getTarget(undelay(details)),
+    do: () => wanderer().getTarget(undelay(details)).location,
     choices: () => wanderer().getChoices(undelay(details)),
-    outfit: () =>
-      freeFightOutfit(undelay(spec), {
-        wanderOptions: undelay(details),
-        ...additionalOutfitOptions,
-      }),
+    outfit: () => createWandererOutfit(details, spec, additionalOutfitOptions),
     spendsTurn: false,
     combat: new GarboStrategy(() => Macro.basicCombat()),
     ...base,
@@ -878,11 +900,12 @@ const BarfTurnTasks: GarboTask[] = [
             wanderer().getTarget({
               wanderer: "wanderer",
               allowEquipment: false,
-            }),
+            }).location,
           )
         : freeFightOutfit(),
     do: () =>
-      wanderer().getTarget({ wanderer: "wanderer", allowEquipment: false }),
+      wanderer().getTarget({ wanderer: "wanderer", allowEquipment: false })
+        .location,
     choices: () =>
       wanderer().getChoices({
         wanderer: "wanderer",
@@ -1177,6 +1200,37 @@ const BarfTurnTasks: GarboTask[] = [
       if (!have($effect`Everything looks Beige`)) updateParachuteFailure();
     },
     spendsTurn: false,
+  },
+  {
+    name: "Fight Cookbookbat Quest Target",
+    ready: () => {
+      const questReward = get("_cookbookbatQuestIngredient");
+      return (
+        PeridotOfPeril.have() &&
+        !!questReward &&
+        3 * garboValue(questReward) > get("valueOfAdventure")
+      );
+    },
+    completed: () => {
+      const questLocation = get("_cookbookbatQuestLastLocation");
+      return !questLocation || !PeridotOfPeril.canImperil(questLocation);
+    },
+    choices: () => {
+      const questMonster = get("_cookbookbatQuestMonster");
+      return questMonster
+        ? { 1557: `1&bandersnatch=${questMonster.id}` }
+        : { 1557: `1&bandersnatch=${0}` };
+    },
+    outfit: () =>
+      freeFightOutfit({
+        equip: sober()
+          ? $items`Peridot of Peril`
+          : $items`Peridot of Peril, Drunkula's wineglass`,
+        familiar: $familiar`Cookbookbat`,
+      }),
+    do: () => get("_cookbookbatQuestLastLocation"),
+    combat: new GarboStrategy(() => Macro.basicCombat()),
+    spendsTurn: true,
   },
 ];
 

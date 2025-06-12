@@ -1918,7 +1918,7 @@ const freeRunFightSources = [
       get("_hipsterAdv") < 7 &&
       (have($familiar`Mini-Hipster`) || have($familiar`Artistic Goth Kid`)),
     (runSource: ActionSource) => {
-      const targetLocation = wanderer().getTarget("backup");
+      const targetLocation = wanderer().getTarget("backup").location;
       propertyManager.setChoices(wanderer().getChoices(targetLocation));
       garboAdventure(
         targetLocation,
@@ -2155,10 +2155,10 @@ export function doSausage(): void {
   freeFightOutfit({ equip: $items`Kramco Sausage-o-Matic™` }).dress();
   const currentSausages = get("_sausageFights");
   do {
-    const targetLocation = wanderer().getTarget("wanderer");
+    const targetLocation = wanderer().getTarget("wanderer").location;
     propertyManager.setChoices(wanderer().getChoices(targetLocation));
     const goblin = $monster`sausage goblin`;
-    setLocation(wanderer().getTarget("wanderer"));
+    setLocation(wanderer().getTarget("wanderer").location);
     freeFightOutfit(
       {
         equip: $items`Kramco Sausage-o-Matic™`,
@@ -2392,14 +2392,14 @@ function voidMonster(): void {
     return;
   }
 
-  setLocation(wanderer().getTarget("wanderer"));
+  setLocation(wanderer().getTarget("wanderer").location);
   freeFightOutfit(
     {
       equip: $items`cursed magnifying glass`,
     },
     { wanderOptions: "wanderer" },
   ).dress();
-  const targetLocation = wanderer().getTarget("wanderer");
+  const targetLocation = wanderer().getTarget("wanderer").location;
   propertyManager.setChoices(wanderer().getChoices(targetLocation));
   garboAdventure(targetLocation, Macro.basicCombat());
   postCombatActions();
