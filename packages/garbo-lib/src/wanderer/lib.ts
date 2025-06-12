@@ -416,3 +416,5 @@ export function getAvailableUltraRareZones(): Location[] {
 
   return zones.filter((l) => canAdventure(l));
 }
+
+export const blacklistedPeridotZones = $locations`Lair of the Ninja Snowmen`;
