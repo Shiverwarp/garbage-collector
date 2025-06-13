@@ -123,7 +123,7 @@ export const yachtzeeQuest: Quest<AlternateTask>[] = [
           have($item`McHugeLarge left ski`) &&
           get("_mcHugeLargeAvalancheUses") < 3,
         outfit: () => freeFightOutfit({ equip: $items`McHugeLarge left ski` }),
-        do: $location`The Sunken Party Yacht`, // You have to use it in the location you want to force the NC
+        do: $location`The Coral Corral`,
         combat: new GarboStrategy(() =>
           Macro.skill($skill`McHugeLarge Avalanche`).meatKill(),
         ),
