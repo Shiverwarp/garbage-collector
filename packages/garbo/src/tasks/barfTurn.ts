@@ -66,7 +66,11 @@ import {
   withProperty,
 } from "libram";
 import { getTasks, Outfit, OutfitSpec, Quest } from "grimoire-kolmafia";
-import { getAvailableUltraRareZones, WanderDetails } from "garbo-lib";
+import {
+  getAvailableUltraRareZones,
+  hasNameCollision,
+  WanderDetails,
+} from "garbo-lib";
 
 import { Macro } from "../combat";
 import { GarboStrategy } from "../combatStrategy";
@@ -133,7 +137,7 @@ function createWandererOutfit(
   additionalOutfitOptions: Omit<FreeFightOutfitMenuOptions, "wanderOptions">,
 ): Outfit {
   const wanderTarget = wanderer().getTarget(undelay(details));
-  const needPeridot = wanderTarget.peridotMonster !== $monster`none`;
+  const needPeridot = wanderTarget.peridotMonster !== $monster.none;
   const sourceOutfit = Outfit.from(
     undelay(spec),
     new Error(
@@ -507,9 +511,7 @@ function getAutosellableMeltingJunk(): Item[] {
 }
 
 const peridotZone = () =>
-  getAvailableUltraRareZones().find(
-    (l) => !RegExp(`(?:^|,)${l.id}(?:$|,)`).test(get("_perilLocations")),
-  );
+  getAvailableUltraRareZones().find(PeridotOfPeril.canImperil);
 
 const NonBarfTurnTasks: AlternateTask[] = [
   {
@@ -1204,6 +1206,8 @@ const BarfTurnTasks: GarboTask[] = [
   {
     name: "Fight Cookbookbat Quest Target",
     ready: () => {
+      const questMonster = get("_cookbookbatQuestMonster");
+      if (!questMonster || hasNameCollision(questMonster)) return false;
       const questReward = get("_cookbookbatQuestIngredient");
       return (
         PeridotOfPeril.have() &&
