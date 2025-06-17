@@ -69,6 +69,7 @@ import { getTasks, Outfit, OutfitSpec, Quest } from "grimoire-kolmafia";
 import {
   getAvailableUltraRareZones,
   hasNameCollision,
+  unperidotableZones,
   WanderDetails,
 } from "garbo-lib";
 
@@ -511,7 +512,9 @@ function getAutosellableMeltingJunk(): Item[] {
 }
 
 const peridotZone = () =>
-  getAvailableUltraRareZones().find(PeridotOfPeril.canImperil);
+  getAvailableUltraRareZones().find(
+    (l) => PeridotOfPeril.canImperil(l) && !unperidotableZones.includes(l),
+  );
 
 const NonBarfTurnTasks: AlternateTask[] = [
   {
@@ -1217,7 +1220,11 @@ const BarfTurnTasks: GarboTask[] = [
     },
     completed: () => {
       const questLocation = get("_cookbookbatQuestLastLocation");
-      return !questLocation || !PeridotOfPeril.canImperil(questLocation);
+      return (
+        !questLocation ||
+        !PeridotOfPeril.canImperil(questLocation) ||
+        unperidotableZones.includes(questLocation)
+      );
     },
     choices: () => {
       const questMonster = get("_cookbookbatQuestMonster");
