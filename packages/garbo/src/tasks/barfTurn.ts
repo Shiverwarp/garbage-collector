@@ -352,8 +352,29 @@ function luckyTasks(
 ): AlternateTask[] {
   return [
     {
+      name: `Lucky Adventure (${sobriety})`,
+      completed: () => !have($effect`Lucky!`),
+      ready: () =>
+        additionalReady() &&
+        getBestLuckyAdventure().phase === "barf" &&
+        getBestLuckyAdventure().value() > get("valueOfAdventure"),
+      do: () => getBestLuckyAdventure().location,
+      outfit: () =>
+        sobriety === "drunk" ? { offhand: $item`Drunkula's wineglass` } : {},
+      combat: new GarboStrategy(() =>
+        Macro.abortWithMsg(
+          "Unexpected combat while attempting Lucky! adventure",
+        ),
+      ),
+      sobriety,
+      spendsTurn: true,
+      turns: 0, // Turns spent is handled by Lucky Sources
+    },
+    {
       name: `Apriling Band Lucky (${sobriety})`,
-      completed: () => !AprilingBandHelmet.canPlay("Apriling band saxophone"),
+      completed: () =>
+        have($effect`Lucky!`) ||
+        !AprilingBandHelmet.canPlay("Apriling band saxophone"),
       ready: () =>
         additionalReady() &&
         have($item`Apriling band saxophone`) &&
@@ -371,6 +392,7 @@ function luckyTasks(
     {
       name: `August Scepter Lucky (${sobriety})`,
       completed: () =>
+        have($effect`Lucky!`) ||
         !shouldAugustCast($skill`Aug. 2nd: Find an Eleven-Leaf Clover Day`),
       ready: () =>
         additionalReady() &&
@@ -393,7 +415,7 @@ function luckyTasks(
     },
     {
       name: `Pillkeeper Lucky (${sobriety})`,
-      completed: () => get("_freePillKeeperUsed"),
+      completed: () => have($effect`Lucky!`) || get("_freePillKeeperUsed"),
       ready: () =>
         additionalReady() &&
         have($item`Eight Days a Week Pill Keeper`) &&
@@ -411,25 +433,6 @@ function luckyTasks(
       sobriety,
       spendsTurn: false,
       turns: () => (!get("_freePillKeeperUsed") ? 1 : 0),
-    },
-    {
-      name: `Lucky Adventure (${sobriety})`,
-      completed: () => !have($effect`Lucky!`),
-      ready: () =>
-        additionalReady() &&
-        getBestLuckyAdventure().phase === "barf" &&
-        getBestLuckyAdventure().value() > get("valueOfAdventure"),
-      do: () => getBestLuckyAdventure().location,
-      outfit: () =>
-        sobriety === "drunk" ? { offhand: $item`Drunkula's wineglass` } : {},
-      combat: new GarboStrategy(() =>
-        Macro.abortWithMsg(
-          "Unexpected combat while attempting Lucky! adventure",
-        ),
-      ),
-      sobriety,
-      spendsTurn: true,
-      turns: 0, // Turns spent is handled by Lucky Sources
     },
   ];
 }
