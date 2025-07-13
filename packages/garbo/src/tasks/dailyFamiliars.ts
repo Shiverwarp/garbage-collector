@@ -229,10 +229,10 @@ const DailyFamiliarTasks: GarboTask[] = [
   {
     name: "Mummery Item",
     ready: () =>
-      have($item`mumming trunk`) && have($familiar`Trick-or-Treating Tot`),
+      have($item`mumming trunk`) && have($familiar`Jumpsuited Hound Dog`),
     completed: () => get("_mummeryMods").includes("Item Drop"),
     do: () => cliExecute("mummery item"),
-    outfit: { familiar: $familiar`Trick-or-Treating Tot` },
+    outfit: { familiar: $familiar`Jumpsuited Hound Dog` },
     spendsTurn: false,
   },
   {
