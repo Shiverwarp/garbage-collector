@@ -26189,7 +26189,7 @@ var require_wanderer = __commonJS({
           }) : Infinity;
           var baseChoices = (_this$unsupportedChoi = this.unsupportedChoices.get(location)) !== null && _this$unsupportedChoi !== void 0 ? _this$unsupportedChoi : {};
           if (!(target instanceof kolmafia_1.Location) && this.getTarget(target).peridotMonster !== libram_1.$monster.none) {
-            var peridotChoice = libram_1.PeridotOfPeril.getChoiceProperty(this.getTarget(target).peridotMonster);
+            var peridotChoice = libram_1.PeridotOfPeril.getChoiceObject(this.getTarget(target).peridotMonster);
             var newChoices = Object.assign(peridotChoice, baseChoices);
             return (0, libram_1.undelay)(newChoices, this.options, valueOfTurn);
           }
@@ -30614,7 +30614,7 @@ function checkGithubVersion() {
       var releaseSHA = (_gitBranches$find = gitBranches.find(function(branchInfo) {
         return branchInfo.name === "release";
       })) === null || _gitBranches$find === void 0 || (_gitBranches$find = _gitBranches$find.commit) === null || _gitBranches$find === void 0 ? void 0 : _gitBranches$find.sha;
-      (0, import_kolmafia100.print)("Local Version: ".concat(localSHA, " (built from ").concat("main", "@").concat("436acf8b505eedc138074a645263017a426b450f", ")"));
+      (0, import_kolmafia100.print)("Local Version: ".concat(localSHA, " (built from ").concat("main", "@").concat("4bd1c480c073c51e2676742e77ff5bd0f1a29a92", ")"));
       if (releaseSHA === localSHA) {
         (0, import_kolmafia100.print)("Garbo is up to date!", HIGHLIGHT);
       } else if (releaseSHA === void 0) {
@@ -31743,11 +31743,11 @@ function shrugForOde() {
   var inexpensiveSongs = getActiveSongs().filter(function(e) {
     return !EXPENSIVE_SONGS.includes(e);
   });
-  if (inexpensiveSongs.length === 1) return uneffect(inexpensiveSongs[1]);
   var uselessSongs = inexpensiveSongs.filter(function(e) {
     return !USEFUL_SONGS.includes(e);
   });
   if (uselessSongs.length >= 1) return uneffect(uselessSongs[0]);
+  if (inexpensiveSongs.length === 1) return uneffect(inexpensiveSongs[0]);
   return uneffect(maxBy(inexpensiveSongs, function(e) {
     return (0, import_kolmafia102.haveEffect)(e) * (0, import_kolmafia102.mpCost)((0, import_kolmafia102.toSkill)(e));
   }, true));
@@ -38692,7 +38692,7 @@ var monsterIsInEggnet = function() {
   return (_monsterInEggnet = monsterInEggnet) !== null && _monsterInEggnet !== void 0 ? _monsterInEggnet : monsterInEggnet = ChestMimic_exports.getReceivableMonsters().includes(globalOptions.target);
 };
 function shouldMakeEgg(barf) {
-  var needKickstarterEgg = barf && ChestMimic_exports.differentiableQuantity(globalOptions.target);
+  var needKickstarterEgg = barf && ChestMimic_exports.differentiableQuantity(globalOptions.target) <= 0;
   if (needKickstarterEgg && !monsterIsInEggnet()) return false;
   var experienceNeeded = 50 * (11 - get("_mimicEggsObtained")) + (needKickstarterEgg ? 50 : 0);
   return $familiar(_templateObject2197 || (_templateObject2197 = _taggedTemplateLiteral117(["Chest Mimic"]))).experience >= experienceNeeded && get("_mimicEggsObtained") < 11;
