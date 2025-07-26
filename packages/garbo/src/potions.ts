@@ -310,10 +310,7 @@ export class Potion {
 
     return (
       (bonusMeat / 100) *
-      (baseMeat() *
-        (duration - targetsApplied) *
-        (turnsToNC / (turnsToNC + 1)) +
-        (baseMeat() + targetMeatDifferential()) * targetsApplied)
+      (baseMeat() * duration + targetMeatDifferential() * targetsApplied)
     );
   }
 
