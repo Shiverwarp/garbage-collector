@@ -68,7 +68,7 @@ import { getRequiredFishyTurns } from "../fishyPrep";
 import { lavaDogsAccessible, lavaDogsComplete } from "../../resources/doghouse";
 import { autumnAtonManager, leprecondoTask } from "../../resources";
 
-const STUFF_TO_CLOSET = $items`bowling ball, funky junk key`;
+const STUFF_TO_CLOSET = $items`bowling ball, funky junk key, sand dollar`;
 const STUFF_TO_USE = $items`Armory keycard, bottle-opener keycard, SHAWARMA Initiative Keycard`;
 
 function closetStuff(): GarboPostTask {
