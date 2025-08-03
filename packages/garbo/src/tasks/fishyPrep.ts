@@ -28,6 +28,7 @@ import {
   ensureEffect,
   get,
   have,
+  PeridotOfPeril,
   questStep,
   SourceTerminal,
   undelay,
@@ -326,7 +327,10 @@ const fishyPrepTasks: GarboTask[] = [
     completed: () =>
       isBanished($monster`sea cowboy`) ||
       haveEffect($effect`Fishy`) >= getRequiredFishyTurns(),
-    outfit: () => barfOutfit({ equip: $items`spring shoes` }),
+    outfit: () =>
+      PeridotOfPeril.canImperil($location`The Coral Corral`)
+        ? barfOutfit({ equip: $items`spring shoes, Peridot of Peril` })
+        : barfOutfit({ equip: $items`spring shoes` }),
     do: () => $location`The Coral Corral`,
     combat: new GarboStrategy(
       () =>
@@ -354,6 +358,7 @@ const fishyPrepTasks: GarboTask[] = [
         ).abort(),
     ),
     spendsTurn: true,
+    choices: PeridotOfPeril.getChoiceObject($monster`sea cowboy`),
   },
   {
     name: "Fishy Prep",

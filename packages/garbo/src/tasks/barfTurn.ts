@@ -1297,7 +1297,10 @@ export const BarfTurnQuest: Quest<GarboTask> = {
     {
       name: "Banish Cowboy Barf",
       completed: () => isBanished($monster`sea cowboy`),
-      outfit: () => barfOutfit({ equip: $items`spring shoes` }),
+      outfit: () =>
+        PeridotOfPeril.canImperil($location`The Coral Corral`)
+          ? barfOutfit({ equip: $items`spring shoes, Peridot of Peril` })
+          : barfOutfit({ equip: $items`spring shoes` }),
       do: () => $location`The Coral Corral`,
       combat: new GarboStrategy(
         () =>
@@ -1312,6 +1315,7 @@ export const BarfTurnQuest: Quest<GarboTask> = {
           ).abort(),
       ),
       spendsTurn: true,
+      choices: PeridotOfPeril.getChoiceObject($monster`sea cowboy`),
     },
     {
       name: "Ranch",
