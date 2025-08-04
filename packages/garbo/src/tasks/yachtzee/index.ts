@@ -26,7 +26,7 @@ import { maximumYachtzees, shouldClara, willYachtzee } from "../../resources";
 import { GarboStrategy } from "../../combatStrategy";
 import { meatMood } from "../../mood";
 import { estimatedGarboTurns } from "../../turns";
-import { barfOutfit, freeFightOutfit } from "../../outfit";
+import { barfOutfit } from "../../outfit";
 import { trackMarginalMpa } from "../../session";
 
 type AlternateTask = GarboTask & { turns: Delayed<number> };
@@ -122,7 +122,7 @@ export const yachtzeeQuest: Quest<AlternateTask>[] = [
         ready: () =>
           have($item`McHugeLarge left ski`) &&
           get("_mcHugeLargeAvalancheUses") < 3,
-        outfit: () => freeFightOutfit({ equip: $items`McHugeLarge left ski` }),
+        outfit: () => barfOutfit({ equip: $items`McHugeLarge left ski` }),
         do: $location`The Coral Corral`,
         combat: new GarboStrategy(() =>
           Macro.skill($skill`McHugeLarge Avalanche`).meatKill(),
