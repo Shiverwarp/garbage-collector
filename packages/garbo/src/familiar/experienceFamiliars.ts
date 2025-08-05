@@ -1,4 +1,4 @@
-import { Familiar } from "kolmafia";
+import { Familiar, inebrietyLimit, myInebriety } from "kolmafia";
 import {
   $familiar,
   Delayed,
@@ -47,6 +47,14 @@ const experienceFamiliars: ExperienceFamiliar[] = [
     baseExp: 0,
     xpCost: 50,
     xpLimit: (mode: FamiliarMode) => mimicExperienceNeeded(mode === "barf"),
+  },
+  {
+    familiar: $familiar`Cooler Yeti`,
+    used: () => globalOptions.ascend && myInebriety() >= inebrietyLimit(),
+    useValue: () => 40 * 5800, // Gives us 40 adventures of overdrunk adventures
+    baseExp: 0,
+    xpCost: 400,
+    xpLimit: () => 400 * (globalOptions.ascend ? 1 : 2), // We can save up two uses of it if we aren't ascending currently
   },
 ];
 

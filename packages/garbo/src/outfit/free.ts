@@ -1,5 +1,5 @@
 import { Outfit, OutfitSpec } from "grimoire-kolmafia";
-import { Familiar, Location } from "kolmafia";
+import { Familiar, inebrietyLimit, Location, myInebriety } from "kolmafia";
 import {
   $familiar,
   $item,
@@ -51,6 +51,15 @@ const famExpValue = new Map<Familiar, Delayed<number>>([
       (!get("_meatifyMatterUsed") || !globalOptions.ascend)
         ? 15 ** 4 / 400
         : 0,
+  ],
+  [
+    $familiar`Cooler Yeti`,
+    () =>
+      globalOptions.ascend && myInebriety() >= inebrietyLimit()
+        ? 0
+        : $familiar`Cooler Yeti`.experience < (globalOptions.ascend ? 400 : 800) // We can save up 2 uses
+          ? 40 * 5800 // Gives us 40 adventures of overdrunk adventures
+          : 0,
   ],
 ]);
 
