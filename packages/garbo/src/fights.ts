@@ -13,7 +13,6 @@ import {
   equippedItem,
   familiarEquippedEquipment,
   getAutoAttack,
-  getClanId,
   haveOutfit,
   inebrietyLimit,
   isBanished,
@@ -77,7 +76,6 @@ import {
   ChestMimic,
   CinchoDeMayo,
   clamp,
-  Clan,
   ClosedCircuitPayphone,
   CombatLoversLocket,
   Counter,
@@ -192,7 +190,6 @@ import {
   PostBuffExtensionQuest,
 } from "./tasks/buffExtension";
 import { highMeatMonsterCount } from "./turns";
-import { FreeTimeCopQuest } from "./tasks/timeCop";
 
 const firstChainMacro = () =>
   Macro.if_(
@@ -2037,15 +2034,6 @@ export function freeFights(): void {
   // TODO: Run grimorized free fights until all are converted
   // TODO: freeFightMood()
   runGarboQuests([PostQuest(), FreeFightQuest, FreeGiantSandwormQuest]);
-
-  // Try to get time cop hats with item drop buffs post sandworm, fight in CDR1
-  const startingClanId = getClanId();
-  Clan.join("Collaborative Dungeon Running 1");
-  try {
-    runGarboQuests([PostQuest(), FreeTimeCopQuest]);
-  } finally {
-    Clan.join(startingClanId);
-  }
 
   getBofaWishes();
 
