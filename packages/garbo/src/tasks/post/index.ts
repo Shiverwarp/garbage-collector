@@ -301,8 +301,7 @@ function refillCinch(): GarboPostTask {
         if (!freeRest()) break;
       }
     },
-    available: () =>
-      CinchoDeMayo.have() && totalFreeRests() > get("timesRested"),
+    available: () => CinchoDeMayo.have(),
   };
 }
 
