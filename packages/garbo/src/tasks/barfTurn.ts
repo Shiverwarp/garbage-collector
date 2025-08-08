@@ -650,6 +650,7 @@ const NonBarfTurnTasks: AlternateTask[] = [
   ...luckyTasks("drunk", () => willDrunkAdventure()),
   {
     name: "Map for Pills",
+    ready: () => globalOptions.ascend,
     completed: () =>
       availableAmount($item`Map to Safety Shelter Grimace Prime`) === 0,
     choices: () => ({
