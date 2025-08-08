@@ -38,6 +38,7 @@ import {
   juneCleaverChoiceValues,
   modeUseLimitedDrops,
   modeValueOfMeat,
+  sober,
   targetPointerRingMeat,
   valueJuneCleaverOption,
 } from "../lib";
@@ -276,6 +277,19 @@ function batWings(mode: BonusEquipMode): Map<Item, number> {
   return new Map<Item, number>([[batWings, value]]);
 }
 
+function cosplaySaber(mode: BonusEquipMode): Map<Item, number> {
+  const saber = $item`Fourth of May Cosplay Saber`;
+  if (
+    !have(saber) ||
+    mode !== BonusEquipMode.BARF ||
+    get("_saberMod") !== 4 ||
+    sober()
+  ) {
+    return new Map<Item, number>();
+  }
+  return new Map<Item, number>([[saber, 0.01]]);
+}
+
 export function bonusGear(
   mode: BonusEquipMode,
   valueCircumstantialBonus = true,
@@ -290,6 +304,7 @@ export function bonusGear(
     ...bindlestocking(mode),
     ...simpleTargetCrits(mode),
     ...batWings(mode),
+    ...cosplaySaber(mode), // Slightly favour saber over other 10 fam weight things when overdrunk
     ...(valueCircumstantialBonus
       ? new Map<Item, number>([
           ...pantsgiving(mode),
