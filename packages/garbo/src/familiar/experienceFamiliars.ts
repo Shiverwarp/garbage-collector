@@ -54,7 +54,8 @@ const experienceFamiliars: ExperienceFamiliar[] = [
     useValue: () => 40 * 5800, // Gives us 40 adventures of overdrunk adventures
     baseExp: 0,
     xpCost: 400,
-    xpLimit: () => 400 * (globalOptions.ascend ? 1 : 2), // We can save up two uses of it if we aren't ascending currently
+    xpLimit: () =>
+      400 * (globalOptions.ascend || get("_coolerYetiAdventures") ? 1 : 2), // We can save up two uses of it if we aren't ascending currently
   },
 ];
 

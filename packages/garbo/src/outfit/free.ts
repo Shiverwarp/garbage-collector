@@ -57,7 +57,8 @@ const famExpValue = new Map<Familiar, Delayed<number>>([
     () =>
       globalOptions.ascend && myInebriety() > inebrietyLimit()
         ? 0
-        : $familiar`Cooler Yeti`.experience < (globalOptions.ascend ? 400 : 800) // We can save up 2 uses
+        : $familiar`Cooler Yeti`.experience <
+            (globalOptions.ascend || get("_coolerYetiAdventures") ? 400 : 800) // We can save up 2 uses
           ? 40 * 5800 // Gives us 40 adventures of overdrunk adventures
           : 0,
   ],
