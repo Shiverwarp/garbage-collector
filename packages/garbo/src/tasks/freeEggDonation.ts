@@ -40,13 +40,18 @@ import { GarboTask } from "./engine";
 function queryEggNetIncomplete(): Map<Monster, number> {
   try {
     const status: {
-      lastUpdate: number;
+      lastUpdate: string;
       eggs: { [id: string]: number };
     } = JSON.parse(visitUrl("https://eggnet.loathers.net/status"));
 
+    const lastUpdate = new Date(status.lastUpdate);
+    const daysSince =
+      (Date.now() - lastUpdate.getTime()) / (24 * 60 * 60 * 1000);
+    const max = daysSince < 0.5 ? 100 : 100 - 10 * daysSince;
+
     return new Map<Monster, number>(
       Object.entries(status.eggs)
-        .filter((entry) => entry[1] < 100)
+        .filter((entry) => entry[1] > 0 && entry[1] < max)
         .map(([id, count]) => [Monster.get(id), count]),
     );
   } catch {
@@ -69,13 +74,6 @@ function findDonateMonster(
 ): { monster: Monster; count: number } | undefined {
   const incomplete = queryEggNetIncomplete();
   if (incomplete.size === 0) return undefined;
-
-  const alreadyHave = [...ChestMimic.eggMonsters().keys()].find(incomplete.has);
-  if (alreadyHave) {
-    const count = incomplete.get(alreadyHave ?? Monster.none) ?? 0;
-    return { monster: alreadyHave, count };
-  }
-
   const maxMonsterId = $monster`time cop`.id; // Last Update Aug 2025
   const banned = new Set<Monster>([
     ...Location.all()
@@ -93,10 +91,12 @@ function findDonateMonster(
   ]);
   const monster = CombatLoversLocket.findMonster(
     (m) => m.id <= maxMonsterId && incomplete.has(m) && !banned.has(m),
-    donateMonsterValue,
+    (m) => donateMonsterValue(m),
   );
   const count = incomplete.get(monster ?? Monster.none) ?? 0;
-  return monster ? { monster, count } : undefined;
+  return !!monster && monster !== Monster.none && count > 0
+    ? { monster, count }
+    : undefined;
 }
 
 function mimicEscape(): ActionSource | undefined {
@@ -113,47 +113,49 @@ function mimicEscape(): ActionSource | undefined {
 
 function mimicEggDonation(): GarboTask[] {
   const escape = mimicEscape();
-  const donation = findDonateMonster(escape === undefined);
+  const donation = findDonateMonster(!escape);
+
+  if (!donation) {
+    return [];
+  }
 
   return [
     {
       name: `Donate mimic egg`,
-      ready: () => ChestMimic.getDonableMonsters().length > 0,
+      ready: () => ChestMimic.eggMonsters().has(donation.monster),
       completed: () => get("_mimicEggsDonated") >= 3,
       outfit: { familiar: $familiar`Chest Mimic` },
-      do: () => ChestMimic.donate(ChestMimic.getDonableMonsters()[0]),
+      do: () => ChestMimic.donate(donation.monster),
       limit: { skip: 3 },
       spendsTurn: false,
     },
     {
       name: `Harvest mimic eggs`,
       ready: () =>
-        !!donation &&
-        donation?.count > 0 &&
         CombatLoversLocket.canReminisce(donation.monster) &&
         (!!escape || donation.monster.attributes.includes("FREE")) &&
         $familiar`Chest Mimic`.experience > 50,
       completed: () =>
         get("_mimicEggsObtained") >= 11 ||
         get("_mimicEggsDonated") >= 3 ||
-        ChestMimic.eggMonsters().has(donation?.monster ?? Monster.none),
-      do: () => CombatLoversLocket.reminisce(donation?.monster ?? Monster.none),
+        ChestMimic.eggMonsters().has(donation.monster),
+      do: () => CombatLoversLocket.reminisce(donation.monster),
       combat: new GarboStrategy(
         () =>
           Macro.externalIf(
-            Math.min(donation?.count ?? 0, 3 - get("_mimicEggsDonated")) > 0,
+            Math.min(100 - donation.count, 3 - get("_mimicEggsDonated")) > 0,
             Macro.trySkill($skill`%fn, lay an egg`),
           )
             .externalIf(
-              Math.min(donation?.count ?? 0, 3 - get("_mimicEggsDonated")) > 1,
+              Math.min(100 - donation.count, 3 - get("_mimicEggsDonated")) > 1,
               Macro.trySkill($skill`%fn, lay an egg`),
             )
             .externalIf(
-              Math.min(donation?.count ?? 0, 3 - get("_mimicEggsDonated")) > 2,
+              Math.min(100 - donation.count, 3 - get("_mimicEggsDonated")) > 2,
               Macro.trySkill($skill`%fn, lay an egg`),
             )
             .externalIf(
-              !donation?.monster.attributes.includes("FREE"),
+              !!escape && !donation.monster.attributes.includes("FREE"),
               Macro.step(escape?.macro ?? ""),
             )
             .kill(),

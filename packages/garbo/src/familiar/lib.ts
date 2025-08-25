@@ -36,6 +36,7 @@ import {
 } from "../turns";
 import { garboValue } from "../garboValue";
 import { copyTargetCount } from "../target";
+import { canBullseye, safeToAttemptBullseye } from "../resources";
 
 export type FamiliarMode = "barf" | "free" | "target" | "run";
 
@@ -111,6 +112,7 @@ export function canOpenRedPresent(): boolean {
     have($familiar`Crimbo Shrub`) &&
     !have($effect`Everything Looks Red`) &&
     !have($skill`Free-For-All`) &&
+    !(safeToAttemptBullseye() && canBullseye()) &&
     get("shrubGifts") === "meat" &&
     myInebriety() <= inebrietyLimit()
   );

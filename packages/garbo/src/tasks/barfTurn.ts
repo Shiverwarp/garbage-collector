@@ -1,7 +1,5 @@
 import {
   adv1,
-  autosell,
-  autosellPrice,
   availableAmount,
   canAdventure,
   canEquip,
@@ -49,7 +47,6 @@ import {
   DesignerSweatpants,
   ensureEffect,
   get,
-  getModifier,
   GingerBread,
   have,
   HeavyRains,
@@ -103,9 +100,12 @@ import { trackMarginalMpa } from "../session";
 import { garboValue } from "../garboValue";
 import {
   bestMidnightAvailable,
+  canBullseye,
   completeBarfQuest,
+  guaranteedBullseye,
   mayamCalendarSummon,
   minimumMimicExperience,
+  safeToAttemptBullseye,
   shouldAugustCast,
   shouldFillLatte,
   tryFillLatte,
@@ -501,20 +501,6 @@ function canGetFusedFuse() {
   );
 }
 
-function getAutosellableMeltingJunk(): Item[] {
-  return Item.all().filter(
-    (i) =>
-      (getModifier("Lasts Until Rollover", i) ||
-        (globalOptions.ascend && i.quest)) &&
-      itemAmount(i) &&
-      autosellPrice(i) > 0 &&
-      (globalOptions.ascend ||
-        !(
-          ["Adventures", "PvP Fights", "Rollover Effect Duration"] as const
-        ).some((mod) => getModifier(mod))),
-  );
-}
-
 const peridotZone = () =>
   getAvailableUltraRareZones().find(
     (l) => PeridotOfPeril.canImperil(l) && !unperidotableZones.includes(l),
@@ -669,14 +655,6 @@ const NonBarfTurnTasks: AlternateTask[] = [
     spendsTurn: true,
     sobriety: "drunk",
     turns: () => availableAmount($item`Map to Safety Shelter Grimace Prime`),
-  },
-  {
-    name: "Autosell Melting Junk",
-    completed: () => getAutosellableMeltingJunk().length === 0,
-    spendsTurn: false,
-    turns: 0,
-    do: () =>
-      getAutosellableMeltingJunk().forEach((i) => autosell(i, itemAmount(i))),
   },
   {
     name: "Acquire Shore Inc. Ship Trip Scrip",
@@ -1024,6 +1002,27 @@ const BarfTurnTasks: GarboTask[] = [
   ),
   wanderTask(
     "freefight",
+    {
+      acc1: $item`Everfull Dart Holster`,
+      acc2: guaranteedBullseye() ? [] : $item`spring shoes`,
+      modifier: guaranteedBullseye() ? [] : "Monster Level",
+    },
+    {
+      name: "Darts: Bullseye",
+      ready: safeToAttemptBullseye,
+      completed: () => !canBullseye(),
+      combat: new GarboStrategy(() =>
+        Macro.if_(globalOptions.target, Macro.meatKill())
+          .familiarActions()
+          .skill($skill`Darts: Aim for the Bullseye`)
+          .skill($skill`Spring Away`),
+      ),
+      sobriety: "sober",
+      duplicate: true,
+    },
+  ),
+  wanderTask(
+    "freefight",
     {},
     {
       name: "Heavy Rains Lightning Strike",
@@ -1068,7 +1067,11 @@ const BarfTurnTasks: GarboTask[] = [
         romanticMonsterImpossible() &&
         isBanished($monster`sea cowboy`) &&
         (getWorkshed() !== $item`model train set` ||
-          TrainSet.next() !== TrainSet.Station.GAIN_MEAT),
+          TrainSet.next() !== TrainSet.Station.GAIN_MEAT) &&
+        (guaranteedBullseye() ||
+          !safeToAttemptBullseye() ||
+          have($skill`Free-For-All`) ||
+          have($effect`Everything Looks Red`, 30)),
       completed: () => have($effect`Everything Looks Green`),
       combat: new GarboStrategy(
         () =>

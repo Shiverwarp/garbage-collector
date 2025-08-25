@@ -1,7 +1,6 @@
 import { Args } from "grimoire-kolmafia";
 import {
   abort,
-  availableAmount,
   buy,
   canAdventure,
   canEquip,
@@ -37,7 +36,6 @@ import {
 import {
   $class,
   $classes,
-  $coinmaster,
   $effect,
   $familiars,
   $item,
@@ -95,6 +93,7 @@ import {
   CockroachSetup,
   DailyFamiliarsQuest,
   EmbezzlerFightsQuest,
+  FinishUpQuest,
   PostQuest,
   runGarboQuests,
   runSafeGarboQuests,
@@ -462,7 +461,7 @@ export function main(argString = ""): void {
       mpAutoRecoveryItems: mpItems,
       afterAdventureScript: "",
       betweenBattleScript: "",
-      choiceAdventureScript: "",
+      choiceAdventureScript: "garbo_choice.js",
       counterScript: "",
       familiarScript: "",
       currentMood: "apathetic",
@@ -647,20 +646,7 @@ export function main(argString = ""): void {
           if (!targetingMeat()) runGarboQuests([EmbezzlerFightsQuest]);
           try {
             runGarboQuests([PostQuest(), ...BarfTurnQuests]);
-
-            // buy one-day tickets with FunFunds if user desires
-            if (
-              globalOptions.prefs.buyPass &&
-              availableAmount($item`FunFunds™`) >= 20 &&
-              !have($item`one-day ticket to Dinseylandfill`)
-            ) {
-              print("Buying a one-day ticket", HIGHLIGHT);
-              buy(
-                $coinmaster`The Dinsey Company Store`,
-                1,
-                $item`one-day ticket to Dinseylandfill`,
-              );
-            }
+            runGarboQuests([FinishUpQuest]);
           } finally {
             setAutoAttack(0);
           }
