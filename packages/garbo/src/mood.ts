@@ -1,4 +1,5 @@
 import {
+  alliedRadio,
   booleanModifier,
   cliExecute,
   Effect,
@@ -35,6 +36,8 @@ import {
 import { usingPurse } from "./outfit";
 import { globalOptions } from "./config";
 import { estimatedGarboTurns } from "./turns";
+import { effectValue } from "./potions";
+import { acquire } from "./acquire";
 
 Mood.setDefaultOptions({
   songSlots: [
@@ -225,6 +228,17 @@ export function meatMood(
     useSkill($skill`Incredible Self-Esteem`);
   }
 
+  if (!get("_alliedRadioWildsunBoon") && wildsunBoonWorthIt()) {
+    const acquired = acquire(
+      1,
+      $item`handheld Allied radio`,
+      effectValue($effect`Wildsun Boon`, 100),
+      false,
+    );
+    if (!acquired) _wildsunBoonWorthIt = false;
+    alliedRadio("wildsun boon");
+  }
+
   const canRecord =
     getWorkshed() === $item`warbear LP-ROM burner` ||
     have($item`warbear LP-ROM burner` || get("questG04Nemesis") === "finished");
@@ -298,4 +312,11 @@ export function shrugBadEffects(...exclude: Effect[]): void {
   ]
     .filter((effect) => have(effect) && !exclude.includes(effect))
     .forEach((effect) => uneffect(effect));
+}
+
+let _wildsunBoonWorthIt: boolean;
+function wildsunBoonWorthIt(): boolean {
+  return (_wildsunBoonWorthIt ??=
+    effectValue($effect`Wildsun Boon`, 100) >
+    mallPrice($item`handheld Allied radio`));
 }
