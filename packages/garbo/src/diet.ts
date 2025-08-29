@@ -216,8 +216,8 @@ function canBusk() {
 function buskForSaltyMouth() {
   if (!canBusk()) return;
   for (let i = get("_beretBuskingUses"); i < 5; i++) {
-    PrismaticBeret.buskFor(buskEffectValuer, {});
     if (have($effect`Salty Mouth`)) break;
+    PrismaticBeret.buskFor(buskEffectValuer, {});
   }
 }
 
@@ -239,11 +239,7 @@ function drinkSafe(qty: number, item: Item) {
       );
     }
   }
-  if (
-    item.notes?.includes("BEER") &&
-    !have($effect`Salty Mouth`) &&
-    canBusk()
-  ) {
+  if (item.notes?.includes("BEER") && canBusk()) {
     for (let i = 0; i < qty; i++) {
       buskForSaltyMouth();
       consumeWhileRespectingMoonRestaurant(() => {
