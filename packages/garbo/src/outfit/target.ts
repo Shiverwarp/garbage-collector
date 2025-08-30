@@ -28,6 +28,7 @@ import {
 } from "../lib";
 import { globalOptions } from "../config";
 import { meatDrop } from "kolmafia";
+import { shouldRedigitize } from "../combat";
 
 export function meatTargetOutfit(
   spec: OutfitSpec = {},
@@ -126,7 +127,8 @@ export function meatTargetOutfit(
 
   if (
     !have($effect`Everything Looks Purple`) &&
-    target.environment !== Environment.Underwater
+    target.environment !== Environment.Underwater &&
+    !shouldRedigitize()
   ) {
     outfit.equip($item`Roman Candelabra`);
   }

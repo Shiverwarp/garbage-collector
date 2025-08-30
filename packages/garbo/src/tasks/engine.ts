@@ -9,6 +9,7 @@ import {
 import { eventLog, HIGHLIGHT, safeInterrupt, safeRestore, sober } from "../lib";
 import { wanderer } from "../garboWanderer";
 import {
+  $effect,
   $familiar,
   $item,
   $skill,
@@ -31,6 +32,7 @@ import { GarboStrategy } from "../combatStrategy";
 import { globalOptions } from "../config";
 import { sessionSinceStart } from "../session";
 import { garboValue } from "../garboValue";
+import { shrugBadEffects } from "../mood";
 
 export type GarboTask = StrictCombatTask<never, GarboStrategy> & {
   sobriety?: Delayed<"drunk" | "sober" | undefined>;
@@ -129,6 +131,7 @@ export class BaseGarboEngine extends Engine<never, GarboTask> {
     }
     const foughtATarget = get("lastEncounter") === globalOptions.target.name;
     if (foughtATarget) logTargetFight(task.name);
+    shrugBadEffects($effect`Feeling Lost`); // We deliberately use Feeling Lost sometimes
     wanderer().clear();
     sessionSinceStart().value(garboValue);
     if (duplicate && SourceTerminal.have()) {
