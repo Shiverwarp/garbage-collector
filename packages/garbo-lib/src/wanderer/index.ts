@@ -329,6 +329,7 @@ export class WandererManager {
     [$location`The Skeleton Store`, { 1060: 5 }],
     [$location`The Overgrown Lot`, { 1062: 7 }],
     [$location`The Haunted Billiards Room`, { 1436: 2, 875: 3 }], // Hustle away from the ghost
+    [$location`The Wreck of the Edgar Fitzsimmons`, { 299: 2 }], // Skip Hatch
   ]);
   equipment = new Map<Location, Item[]>([
     ...Location.all()
