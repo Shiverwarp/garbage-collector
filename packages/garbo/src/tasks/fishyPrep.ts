@@ -5,10 +5,8 @@ import {
   haveEffect,
   isBanished,
   Location,
-  mallPrice,
   maximize,
   myAdventures,
-  myLevel,
   runChoice,
   totalTurnsPlayed,
   toUrl,
@@ -23,14 +21,11 @@ import {
   $monster,
   $skill,
   clamp,
-  Counter,
   Delayed,
   ensureEffect,
   get,
   have,
   PeridotOfPeril,
-  questStep,
-  SourceTerminal,
   undelay,
 } from "libram";
 import { OutfitSpec, Quest } from "grimoire-kolmafia";
@@ -41,7 +36,6 @@ import { wanderer } from "../garboWanderer";
 import {
   howManySausagesCouldIEat,
   kramcoGuaranteed,
-  MEAT_TARGET_MULTIPLIER,
   romanticMonsterImpossible,
   setChoice,
   sober,
@@ -64,10 +58,6 @@ const steveAdventures: Map<Location, number[]> = new Map([
   [$location`The Haunted Boiler Room`, [1, 2, 2]],
   [$location`The Haunted Laboratory`, [1, 1, 3, 1, 1]],
 ]);
-
-const digitizedEmbezzler = () =>
-  SourceTerminal.have() &&
-  SourceTerminal.getDigitizeMonster() === globalOptions.target;
 
 const isGhost = () => get("_voteMonster") === $monster`angry ghost`;
 const isMutant = () => get("_voteMonster") === $monster`terrible mutant`;
@@ -102,38 +92,6 @@ export function getRequiredFishyTurns(): number {
     unrealizedMimicEggFights + // We gain extra embezzler fights post-free-fights from mimic experience
     15 + // Extra buffer for turns to complete pirate realm prep
     10); // Extra buffer of 10 turns just in case weirdness
-}
-
-function shouldGoUnderwater(): boolean {
-  if (!sober()) return false;
-  if (myLevel() < 11) return false;
-
-  if (questStep("questS01OldGuy") === -1) {
-    visitUrl("place.php?whichplace=sea_oldman&action=oldman_oldman");
-  }
-
-  if (
-    have($item`envyfish egg`) ||
-    (globalOptions.ascend && get("_envyfishEggUsed"))
-  ) {
-    return false;
-  }
-  if (!canAdventure($location`The Briny Deeps`)) return false;
-
-  // TODO: if you didn't digitize an embezzler, this equation may not be right
-  if (
-    mallPrice($item`pulled green taffy`) <
-    MEAT_TARGET_MULTIPLIER() * get("valueOfAdventure")
-  ) {
-    return false;
-  }
-
-  if (have($effect`Fishy`)) return true;
-  if (have($item`fishy pipe`) && !get("_fishyPipeUsed")) {
-    use($item`fishy pipe`);
-    return have($effect`Fishy`);
-  }
-  return false;
 }
 
 const fishyPrepTasks: GarboTask[] = [
@@ -219,55 +177,6 @@ const fishyPrepTasks: GarboTask[] = [
     prepare: () => maximize("MP", false),
     do: () => eat(howManySausagesCouldIEat(), $item`magical sausage`),
     spendsTurn: false,
-  },
-  {
-    name: "Digitize Wanderer",
-    completed: () => Counter.get("Digitize Monster") > 0,
-    acquire: () =>
-      SourceTerminal.getDigitizeMonster() === globalOptions.target &&
-      shouldGoUnderwater()
-        ? [{ item: $item`pulled green taffy` }]
-        : [],
-    outfit: () =>
-      digitizedEmbezzler()
-        ? meatTargetOutfit(
-            {},
-            wanderer().getTarget({
-              wanderer: "wanderer",
-              allowEquipment: false,
-            }).location,
-          )
-        : freeFightOutfit(),
-    do: () =>
-      shouldGoUnderwater()
-        ? $location`The Briny Deeps`
-        : wanderer().getTarget({ wanderer: "wanderer", allowEquipment: false }),
-    choices: () =>
-      shouldGoUnderwater()
-        ? {}
-        : wanderer().getChoices({
-            wanderer: "wanderer",
-            allowEquipment: false,
-          }),
-    combat: new GarboStrategy(
-      () =>
-        Macro.externalIf(
-          shouldGoUnderwater(),
-          Macro.item($item`pulled green taffy`),
-        ).meatKill(),
-      () =>
-        Macro.if_(
-          `(monsterid ${globalOptions.target.id}) && !gotjump && !(pastround 2)`,
-          Macro.externalIf(
-            shouldGoUnderwater(),
-            Macro.item($item`pulled green taffy`),
-          ).meatKill(),
-        ).abortWithMsg(
-          `Expected a digitized ${SourceTerminal.getDigitizeMonster()}, but encountered something else.`,
-        ),
-    ),
-    spendsTurn: () =>
-      !SourceTerminal.getDigitizeMonster()?.attributes.includes("FREE"),
   },
   wanderTask(
     "wanderer",
