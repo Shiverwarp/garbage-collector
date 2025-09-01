@@ -350,6 +350,7 @@ export function main(argString = ""): void {
       suppressMallPriceCacheMessages: true,
       shadowLabyrinthGoal: "effects",
       lightsOutAutomation: 1,
+      errorOnAmbiguousFold: false,
     });
     runDiet();
     propertyManager.resetAll();
