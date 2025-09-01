@@ -206,7 +206,7 @@ function buskEffectValuer(effect: Effect, duration: number): number {
     effect === $effect`Hammertime` &&
     !have($effect`Hammertime`) &&
     get("_beretBuskingUses") === 0
-      ? 1000 // Arbitrary value, assume it will give upcoming busks more value if it's our first busk
+      ? 10000 // Arbitrary value, assume it will give upcoming busks more value if it's our first busk
       : 0;
   return saltyMouthValue + famWeightValue + meatValue + hammerTimeValue;
 }
