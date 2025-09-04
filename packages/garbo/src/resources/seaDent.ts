@@ -4,6 +4,7 @@ import { $location, $skill, get, withChoice } from "libram";
 export function waveDireWarren() {
   if (
     get("_seadentWaveUsed") === "false" && // TODO fix this get when libram/eslint updates
+    get("_seadentWaveZone") !== "The Dire Warren" &&
     get("lastAdventure") === $location`The Dire Warren`
   ) {
     withChoice(1566, 1, () => {
