@@ -76,6 +76,7 @@ function closetStuff(): GarboPostTask {
     name: "Closet Stuff",
     completed: () => STUFF_TO_CLOSET.every((i) => itemAmount(i) === 0),
     do: () => STUFF_TO_CLOSET.forEach((i) => putCloset(itemAmount(i), i)),
+    post: () => cliExecute("refresh inventory"),
   };
 }
 
