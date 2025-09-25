@@ -36,7 +36,7 @@ export function gingerbreadFactory(
           $location`Gingerbread Civic Center`,
           false,
         ) > turnsUntilNextNC
-          ? 50
+          ? options.itemValue($item`fancy chocolate sculpture`) / 13 // With advance clock it takes 13 adventures
           : 0,
       ),
     ];
