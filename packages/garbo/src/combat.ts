@@ -317,6 +317,7 @@ export class Macro extends StrictMacro {
           .item([$item`train whistle`, $item`HOA citation pad`])
           .skill($skill`Entangling Noodles`)
           .tryHaveItem($item`Rain-Doh indigo cup`)
+          .tryHaveItem($item`cow poker`)
           .externalIf(
             have($item`pulled red taffy`) &&
               mallPrice($item`pulled red taffy`) <= 100,
