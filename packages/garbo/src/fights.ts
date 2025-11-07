@@ -1519,6 +1519,7 @@ const freeRunFightSources = [
       mallPrice($item`gingerbread cigarette`) <=
         globalOptions.prefs.valueOfFreeFight &&
       GingerBread.available() &&
+      GingerBread.minutesToNoon() > 0 &&
       !gingerNCAvailable() &&
       get(`breathitinCharges`) <= 0 &&
       canAdventure($location`Gingerbread Upscale Retail District`),
