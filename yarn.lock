@@ -3888,7 +3888,7 @@ __metadata:
     "@types/eslint__js": ^8.42.3
     eslint: ^9.9.0
     eslint-config-prettier: ^9.1.0
-    eslint-plugin-libram: ^0.4.32
+    eslint-plugin-libram: ^0.4.33
     lint-staged: ^15.2.9
     madge: ^8.0.0
     prettier: ^3.3.3
@@ -3912,13 +3912,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-libram@npm:^0.4.32":
-  version: 0.4.32
-  resolution: "eslint-plugin-libram@npm:0.4.32"
+"eslint-plugin-libram@npm:^0.4.33":
+  version: 0.4.33
+  resolution: "eslint-plugin-libram@npm:0.4.33"
   dependencies:
     html-entities: ^2.5.2
     requireindex: ~1.2.0
-  checksum: 0e56f095231c9ccdd232e961e02296c8fdc404222b74ae973a148ffb2a90c9c0af9c285592710f1ac9a415791aa92af90e80b78a3e97051cda2fe646aee1b07d
+  checksum: 3124fc7d9f9ce2d8aa675ad3b143a9807adba5a39ef317e8c5b659d759da4419cd4802a143865914160e4cb3c2faab9fd390bdace90c657db2c12ba4581bd039
   languageName: node
   linkType: hard
 
@@ -4346,8 +4346,8 @@ __metadata:
     eslint-config-garbo: ^0.0.1
     garbo-lib: "*"
     grimoire-kolmafia: ^0.3.29
-    kolmafia: ^5.28703.0
-    libram: ^0.11.9
+    kolmafia: ^5.28673.0
+    libram: ^0.11.11
     lint-staged: ^15.2.9
     madge: ^8.0.0
     prettier: ^3.3.3
@@ -4362,8 +4362,8 @@ __metadata:
   dependencies:
     eslint: ^9.9.0
     eslint-config-garbo: ^0.0.1
-    kolmafia: ^5.28703.0
-    libram: ^0.11.9
+    kolmafia: ^5.28673.0
+    libram: ^0.11.11
     lint-staged: ^15.2.9
     madge: ^8.0.0
     prettier: ^3.3.3
@@ -5037,10 +5037,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kolmafia@npm:^5.28703.0":
-  version: 5.28703.0
-  resolution: "kolmafia@npm:5.28703.0"
-  checksum: 142424d27bed97d037e5c4fb2bac85eb95f69a675fd43880af8435137075795330a539724dfca29da6e6d83a5468f786600e6eaae81bdfb6629b56d18c143714
+"kolmafia@npm:^5.28673.0":
+  version: 5.28746.0
+  resolution: "kolmafia@npm:5.28746.0"
+  checksum: 3eaf60161a22d4a5e6b439f1d994620d38856edbad38c4eb02d84dcfd7361edc17084e2bd4d4aef645d8ef1acabea3d98c0630338b385742665c95569b694198
   languageName: node
   linkType: hard
 
@@ -5054,14 +5054,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libram@npm:^0.11.9":
-  version: 0.11.9
-  resolution: "libram@npm:0.11.9"
+"libram@npm:^0.11.11":
+  version: 0.11.11
+  resolution: "libram@npm:0.11.11"
   dependencies:
     html-entities: ^2.5.2
   peerDependencies:
     kolmafia: ^5.28100.0
-  checksum: c172e1dc6adb2037965f77ac57ed7103ecc78bc45c26f9fa60b1ddd89c8cbd1498030b910a1216c98de21b61858e486b80948ea64470f2023a8066f3ffb82ec4
+  checksum: ff24947c78feab68004dcebe732aea17820ac81402e95abcf7addf94ac6393b707c660390583c3179da6b0c3e15f5ee6fcdb2c25aac1d97adbbe9990ea7bf073
   languageName: node
   linkType: hard
 
@@ -5985,8 +5985,8 @@ __metadata:
     eslint-config-garbo: ^0.0.1
     garbo-lib: "*"
     grimoire-kolmafia: ^0.3.29
-    kolmafia: ^5.28703.0
-    libram: ^0.11.9
+    kolmafia: ^5.28673.0
+    libram: ^0.11.11
     lint-staged: ^15.2.9
     madge: ^8.0.0
     prettier: ^3.3.3
