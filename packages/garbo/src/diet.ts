@@ -654,7 +654,10 @@ function menu(): MenuItem<Note>[] {
 
     // MISC
     ...limitedItems,
-    ...(crimboKeyValue >= mallPrice(crimboKeyItem)
+    ...(crimboKeyValue >= mallPrice(crimboKeyItem) ||
+    $items`corned beet, pickled bread, salted mutton`.includes(
+      dailySpecialItem[0].item,
+    )
       ? [
           new MenuItem(crimboKeyItem, {
             additionalValue: crimboKeyValue,
