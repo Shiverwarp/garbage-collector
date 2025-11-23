@@ -601,6 +601,12 @@ function menu(): MenuItem<Note>[] {
       ? [
           new MenuItem(dailySpecial(), {
             priceOverride: get("_dailySpecialPrice"),
+            additionalValue:
+              $items`corned beet, pickled bread, salted mutton`.includes(
+                dailySpecial(),
+              )
+                ? crimboKeyValue
+                : 0,
           }),
         ]
       : [];
@@ -654,10 +660,7 @@ function menu(): MenuItem<Note>[] {
 
     // MISC
     ...limitedItems,
-    ...(crimboKeyValue >= mallPrice(crimboKeyItem) ||
-    $items`corned beet, pickled bread, salted mutton`.includes(
-      dailySpecialItem[0].item,
-    )
+    ...(crimboKeyValue >= mallPrice(crimboKeyItem)
       ? [
           new MenuItem(crimboKeyItem, {
             additionalValue: crimboKeyValue,
