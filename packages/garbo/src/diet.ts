@@ -601,12 +601,6 @@ function menu(): MenuItem<Note>[] {
       ? [
           new MenuItem(dailySpecial(), {
             priceOverride: get("_dailySpecialPrice"),
-            additionalValue:
-              $items`corned beet, pickled bread, salted mutton`.includes(
-                dailySpecial(),
-              )
-                ? crimboKeyValue
-                : 0,
           }),
         ]
       : [];
@@ -669,6 +663,24 @@ function menu(): MenuItem<Note>[] {
               Math.floor((fullnessLimit() - myFullness()) / 3),
               0,
               5,
+            ),
+          }),
+        ]
+      : []),
+    ...($items`corned beet, pickled bread, salted mutton`.includes(
+      dailySpecial(),
+    ) &&
+    hasMoonZoneRestaurant() &&
+    get("_dailySpecialPrice") < mallPrice(dailySpecial())
+      ? [
+          new MenuItem(dailySpecial(), {
+            additionalValue: crimboKeyValue,
+            priceOverride: get("_dailySpecialPrice"),
+            maximum: clamp(
+              // Restrict to our open stomach, capped at 12 to avoid using stomach cleansers
+              Math.floor(fullnessLimit() - myFullness()),
+              0,
+              12,
             ),
           }),
         ]
