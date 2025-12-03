@@ -132,7 +132,7 @@ function defaultTarget() {
 }
 
 export function main(argString = ""): void {
-  sinceKolmafiaRevision(28603); // time cop
+  sinceKolmafiaRevision(28771); // skeleton tracking
   checkGithubVersion();
 
   Args.fill(globalOptions, argString);

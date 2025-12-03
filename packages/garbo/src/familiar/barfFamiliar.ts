@@ -352,7 +352,9 @@ export function barfFamiliar(equipmentForced: boolean): {
       ({ familiar }) => familiar === $familiar`Crimbo Shrub`,
     );
     return {
-      familiar: shrubAvailable ? $familiar`Crimbo Shrub` : meat,
+      familiar: shrubAvailable
+        ? $familiar`Crimbo Shrub`
+        : cruisingFamiliar.familiar,
       extraValue: 0,
     };
   }
