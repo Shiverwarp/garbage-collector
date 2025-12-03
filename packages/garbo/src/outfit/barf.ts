@@ -129,6 +129,11 @@ export function computeBarfOutfit(
     outfit.setModes({ jillcandle: "ultraviolet" });
   }
 
+  // Temporary maybe? Not sure how it works yet
+  if (outfit.familiar === $familiar`Skeleton of Crimbo Past`) {
+    outfit.equip($item`small peppermint-flavored sugar walking crook`);
+  }
+
   if (
     outfit.familiar === $familiar`Chest Mimic` &&
     $familiar`Chest Mimic`.experience < 550
