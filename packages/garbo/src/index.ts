@@ -476,7 +476,6 @@ export function main(argString = ""): void {
       suppressMallPriceCacheMessages: true,
       maximizerCombinationLimit: maximizerCombinationLimit,
       allowNegativeTally: true,
-      spadingScript: "excavator.js",
       lastChanceBurn: "",
       errorOnAmbiguousFold: false,
     });
