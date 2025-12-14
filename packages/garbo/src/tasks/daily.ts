@@ -13,6 +13,7 @@ import {
   gnomadsAvailable,
   guildStoreAvailable,
   handlingChoice,
+  haveEquipped,
   holiday,
   inebrietyLimit,
   isOnline,
@@ -59,6 +60,7 @@ import {
   SongBoom,
   SourceTerminal,
   sumNumbers,
+  unequip,
   Witchess,
 } from "libram";
 import { acquire } from "../acquire";
@@ -87,6 +89,7 @@ import { GarboStrategy } from "../combatStrategy";
 import { luckyGoldRingDropValues } from "../outfit/dropsgearAccessories";
 import { embezzlerFights } from "./embezzler";
 
+const photoBoothItems = $items`Sheriff badge, Sheriff pistol, Sheriff moustache, feather boa, oversized monocle on a stick, fake huge beard`;
 const closetItems = $items`4-d camera, sand dollar, unfinished ice sculpture`;
 const retrieveItems = $items`Half a Purse, seal tooth, The Jokester's gun`;
 
@@ -255,6 +258,11 @@ function pantogram(): void {
 
 function nepQuest(): void {
   if (!(get("neverendingPartyAlways") || get("_neverendingPartyToday"))) return;
+
+  // Do not enable hard mode
+  if (haveEquipped($item`PARTY HARD T-shirt`)) {
+    unequip($item`PARTY HARD T-shirt`);
+  }
 
   if (get("_questPartyFair") === "unstarted") {
     cliExecute("duffo farm");
@@ -454,6 +462,19 @@ const DailyTasks: GarboTask[] = [
     ready: () => get("hasDetectiveSchool"),
     completed: () => get("_detectiveCasesCompleted") >= 3,
     do: () => cliExecute("Detective Solver.ash"),
+    spendsTurn: false,
+  },
+  {
+    name: "Clan Photo Booth",
+    ready: () =>
+      getClanLounge()["photo booth sized crate"] !== undefined &&
+      photoBoothItems.some((item) => !have(item)),
+    completed: () => get("_photoBoothEquipment") >= 3,
+    do: () =>
+      photoBoothItems.forEach(
+        (item) =>
+          get("_photoBoothEquipment") >= 3 || have(item) || retrieveItem(item),
+      ),
     spendsTurn: false,
   },
   {
@@ -739,8 +760,11 @@ const DailyTasks: GarboTask[] = [
       myInebriety() > inebrietyLimit() &&
       have($item`Drunkula's wineglass`) &&
       canEquip($item`Drunkula's wineglass`)
-        ? { offhand: $item`Drunkula's wineglass`, avoid: $items`June cleaver` }
-        : { avoid: $items`June cleaver` },
+        ? {
+            offhand: $item`Drunkula's wineglass`,
+            avoid: $items`June cleaver, PARTY HARD T-shirt`,
+          }
+        : { avoid: $items`June cleaver, PARTY HARD T-shirt` },
     spendsTurn: false,
   },
   {
