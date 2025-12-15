@@ -71,6 +71,11 @@ import { copyTargetCount } from "./target";
 import { garboValue } from "./garboValue";
 import { maximumPinataCasts } from "./resources";
 
+export const getPreferredBarfMonster = () =>
+  have($familiar`Skeleton of Crimbo Past`) && get("_knuckleboneDrops", 0) < 100
+    ? $monster`angry tourist`
+    : $monster`garbage tourist`;
+
 export function shouldRedigitize(): boolean {
   if (!SourceTerminal.have() || !SourceTerminal.canDigitize()) return false;
   const digitizesRemaining = SourceTerminal.getDigitizeUsesRemaining();

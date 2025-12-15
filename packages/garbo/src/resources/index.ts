@@ -17,3 +17,4 @@ export * from "./everfullDarts";
 export * from "./beret";
 export * from "./seaDent";
 export * from "./bloodCubicZirconia";
+export * from "./protonpack";

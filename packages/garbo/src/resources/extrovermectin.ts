@@ -52,6 +52,7 @@ import { garboAdventure, Macro } from "../combat";
 import { acquire } from "../acquire";
 import { globalOptions } from "../config";
 import { waveDireWarren } from "./seaDent";
+import { AdventureArgument } from "../garboWanderer";
 
 const crate = $monster`crate`;
 
@@ -205,7 +206,7 @@ export function saberCrateIfSafe(): void {
   do {
     useFamiliar(
       run.constraints.familiar?.() ??
-        freeFightFamiliar({ canChooseMacro: false }),
+        freeFightFamiliar($location`Noob Cave`, { canChooseMacro: false }),
     );
     run.constraints.preparation?.();
     new Requirement([], {
@@ -288,7 +289,7 @@ function initializeCrates(): void {
       // Crank up ML to make sure the crate survives several rounds; we may have some passive damage
       useFamiliar(
         run.constraints.familiar?.() ??
-          freeFightFamiliar({ canChooseMacro: false }),
+          freeFightFamiliar($location`Noob Cave`, { canChooseMacro: false }),
       );
       run.constraints.preparation?.();
       new Requirement(["100 Monster Level"], {
@@ -313,7 +314,9 @@ function initializeCrates(): void {
       if (run === possibleBanish && !have($skill`CLEESH`)) {
         useFamiliar(
           run.constraints.familiar?.() ??
-            freeFightFamiliar({ canChooseMacro: false }),
+            freeFightFamiliar($location`The Haunted Kitchen`, {
+              canChooseMacro: false,
+            }),
         );
         run.constraints.preparation?.();
         new Requirement([], {
@@ -386,7 +389,7 @@ const combatItem = (item: Item, maxPrice?: number): Banish => ({
   prepare: () => acquire(1, item, maxPrice ?? MAX_BANISH_PRICE), // put a sanity ceiling of 50k on the banish
 });
 
-function springKickBanish(): Banish {
+function springKickBanish(adventure: AdventureArgument): Banish {
   const run =
     tryFindFreeRunOrBanish(
       freeRunConstraints({ equip: $items`spring shoes` }),
@@ -399,7 +402,7 @@ function springKickBanish(): Banish {
     prepare: () => {
       useFamiliar(
         run.constraints.familiar?.() ??
-          freeFightFamiliar({
+          freeFightFamiliar(adventure, {
             canChooseMacro: false,
             allowAttackFamiliars: false,
           }),
@@ -470,7 +473,7 @@ const shortBanishes = [
 function banishBunny(): void {
   const banishes = [
     ...longBanishes,
-    springKickBanish(),
+    springKickBanish($location`The Dire Warren`),
     ...(!have($item`miniature crystal ball`) ? shortBanishes : []),
   ].filter((b) => b.available());
 

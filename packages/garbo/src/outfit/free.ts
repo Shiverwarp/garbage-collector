@@ -11,11 +11,10 @@ import {
   SourceTerminal,
   undelay,
 } from "libram";
-import { WanderDetails } from "garbo-lib";
 
 import { FamiliarMenuOptions, freeFightFamiliar } from "../familiar";
 import { BonusEquipMode, MEAT_TARGET_MULTIPLIER, sober } from "../lib";
-import { wanderer } from "../garboWanderer";
+import { AdventureArgument, toAdventure, wanderer } from "../garboWanderer";
 
 import { chooseBjorn } from "./bjorn";
 import { bonusGear, toyCupidBow } from "./dropsgear";
@@ -65,18 +64,19 @@ const famExpValue = new Map<Familiar, Delayed<number>>([
 ]);
 
 export type FreeFightOutfitMenuOptions = {
-  location?: Location;
   duplicate?: boolean;
-  wanderOptions?: WanderDetails;
   familiarOptions?: FamiliarMenuOptions;
 };
 export function freeFightOutfit(
   spec: OutfitSpec = {},
+  adventure: AdventureArgument,
   options: FreeFightOutfitMenuOptions = {},
 ): Outfit {
   cleaverCheck();
 
-  const computedSpec = computeOutfitSpec(spec, options);
+  const { location } = toAdventure(adventure);
+
+  const computedSpec = computeOutfitSpec(spec, location);
 
   validateGarbageFoldable(computedSpec);
   const outfit = Outfit.from(
@@ -85,6 +85,7 @@ export function freeFightOutfit(
   );
 
   outfit.familiar ??= freeFightFamiliar(
+    adventure,
     computeFamiliarMenuOptions(
       options.familiarOptions,
       options.duplicate ?? false,
@@ -92,7 +93,7 @@ export function freeFightOutfit(
     ),
   );
   const mode =
-    options.location === $location`The Deep Machine Tunnels`
+    location === $location`The Deep Machine Tunnels`
       ? BonusEquipMode.DMT
       : BonusEquipMode.FREE;
 
@@ -130,7 +131,7 @@ export function freeFightOutfit(
   }
 
   if (
-    computeLocation(options) === Guzzlr.getLocation() &&
+    location === Guzzlr.getLocation() &&
     Guzzlr.turnsLeftOnQuest(false) === 1 &&
     Guzzlr.haveBooze()
   ) {
@@ -167,32 +168,11 @@ export function freeFightOutfit(
   return outfit;
 }
 
-function computeOutfitSpec(
-  spec: OutfitSpec,
-  options: FreeFightOutfitMenuOptions,
-): OutfitSpec {
-  if (options.wanderOptions) {
-    return {
-      ...spec,
-      equip: [
-        ...(spec.equip ?? []),
-        ...wanderer().getEquipment(options.wanderOptions),
-      ],
-    };
-  }
-  return spec;
-}
-
-function computeLocation(
-  options: FreeFightOutfitMenuOptions,
-): Location | undefined {
-  if (options.location) {
-    return options.location;
-  }
-  if (options.wanderOptions) {
-    return wanderer().getTarget(options.wanderOptions).location;
-  }
-  return undefined;
+function computeOutfitSpec(spec: OutfitSpec, location: Location): OutfitSpec {
+  return {
+    ...spec,
+    equip: [...(spec.equip ?? []), ...wanderer().getEquipment(location)],
+  };
 }
 
 function computeFamiliarMenuOptions(

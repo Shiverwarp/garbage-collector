@@ -1218,3 +1218,7 @@ export function marginalFamWeightValue(): number {
 export function mainStatLevel(level: number): number {
   return (level - 1) ** 2 + 4;
 }
+
+export type RequireAtLeastOne<T, K = keyof T> = K extends keyof T
+  ? Partial<T> & { [k in K]: T[K] }
+  : never;
