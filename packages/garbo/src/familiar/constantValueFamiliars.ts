@@ -136,11 +136,6 @@ const standardFamiliars: ConstantValueFamiliar[] = [
       2,
     worksOnFreeRun: true,
   },
-  {
-    familiar: $familiar`Skeleton of Crimbo Past`,
-    value: (mode) =>
-      mode === "barf" ? (get("_knuckleboneDrops", 0) < 100 ? 9_000 : 0) : 0,
-  },
 ];
 
 function peaceTurkeyDropChance(): number {

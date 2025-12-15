@@ -418,7 +418,7 @@ function getSpecialFamiliarLimit({
     case $familiar`Skeleton of Crimbo Past`:
       return (
         clamp(100 - get("_knuckleboneDrops"), 0, 100) /
-        SkeletonOfCrimboPast.expectedBones($location`Barf Mountain`)
+        SkeletonOfCrimboPast.expectedBones($location`The Coral Corral`)
       );
 
     default:
