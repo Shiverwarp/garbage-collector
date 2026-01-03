@@ -21,7 +21,6 @@ import {
   $familiar,
   $item,
   $items,
-  $monster,
   $monsters,
   $skill,
   $slot,
@@ -93,7 +92,7 @@ function findDonateMonster(
   const incomplete = queryEggNetIncomplete();
   const priority = queryEggNetPriority();
   if (incomplete.size === 0) return undefined;
-  const maxMonsterId = $monster`time cop`.id; // Last Update Aug 2025
+  const maxMonsterId = 2508; // Last Update Dec 19 2025
   const banned = new Set<Monster>([
     ...$monsters
       .all()
@@ -103,8 +102,6 @@ function findDonateMonster(
           x.attributes.includes("NOCOPY") ||
           (onlyFree && !x.attributes.includes("FREE")),
       ),
-    // Could have special handling
-    $monster`mining grobold`, // 90% hp physical damage on first and every 2 rounds
     // Impossible, cannot use items or skills
     ...$monsters`quadfaerie, cursed villager, plywood cultists, barrow wraith?, Source Agent`,
   ]);
@@ -136,12 +133,11 @@ function mimicEscape(): ActionSource | undefined {
 
 function shouldDelevel(monster: Monster): boolean {
   return (
-    !$monsters`invader bullet, swamp monster, spooky ghost`.includes(monster) &&
-    (monster.attributes.includes("Scale:") ||
-      myBuffedstat($stat`Moxie`) < monster.baseAttack + 10 ||
-      (have($skill`Hero of the Half-Shell`) &&
-        itemType(equippedItem($slot`offhand`)) === "shield" &&
-        myBuffedstat($stat`Muscle`) < monster.baseAttack + 10))
+    monster.attributes.includes("Scale:") ||
+    myBuffedstat($stat`Moxie`) < monster.baseAttack + 10 ||
+    (have($skill`Hero of the Half-Shell`) &&
+      itemType(equippedItem($slot`offhand`)) === "shield" &&
+      myBuffedstat($stat`Muscle`) < monster.baseAttack + 10)
   );
 }
 
@@ -156,12 +152,6 @@ function monsterRequirements(monster: Monster): Requirement {
     preventEquip: $items`carnivorous potted plant, Kramco Sausage-o-Matic™`,
   };
   switch (monster) {
-    case $monster`swamp monster`:
-      maximize.push("100 Stench Resistance");
-      break;
-    case $monster`spooky ghost`:
-      maximize.push("100 Spooky Resistance");
-      break;
     default:
       maximize.push("100 Avoid Attack");
       options.bonusEquip = new Map<Item, number>([
@@ -180,13 +170,9 @@ function monsterRequirements(monster: Monster): Requirement {
 
 function monsterEffects(monster: Monster): Effect[] {
   const effects: Effect[] = [];
-  if ($monsters`swamp monster, spooky ghost`.includes(monster)) {
-    if (have($skill`Elemental Saucesphere`)) {
-      effects.push($effect`Elemental Saucesphere`);
-    }
-    if (have($skill`Astral Shell`)) {
-      effects.push($effect`Astral Shell`);
-    }
+  switch (monster) {
+    default:
+      break;
   }
   return effects;
 }
@@ -232,8 +218,7 @@ function mimicEggDonation(): GarboTask[] {
               Macro.trySkill($skill`%fn, lay an egg`),
             )
             .externalIf(
-              Math.min(100 - donation.count, 3 - get("_mimicEggsDonated")) >
-                2 && donation.monster !== $monster`invader bullet`,
+              Math.min(100 - donation.count, 3 - get("_mimicEggsDonated")) > 2,
               Macro.trySkill($skill`%fn, lay an egg`),
             )
             .externalIf(
