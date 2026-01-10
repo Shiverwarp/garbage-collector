@@ -15,6 +15,7 @@ import {
 } from "kolmafia";
 import {
   $effect,
+  $familiar,
   $item,
   $items,
   $location,
@@ -28,7 +29,7 @@ import {
   PeridotOfPeril,
   undelay,
 } from "libram";
-import { OutfitSpec, Quest } from "grimoire-kolmafia";
+import { Outfit, OutfitSpec, Quest } from "grimoire-kolmafia";
 import { WanderDetails } from "garbo-lib";
 
 import { globalOptions } from "../config";
@@ -40,7 +41,12 @@ import {
   setChoice,
   sober,
 } from "../lib";
-import { barfOutfit, freeFightOutfit, meatTargetOutfit } from "../outfit";
+import {
+  barfOutfit,
+  freeFightOutfit,
+  FreeFightOutfitMenuOptions,
+  meatTargetOutfit,
+} from "../outfit";
 import { digitizedMonstersRemaining, highMeatMonsterCount } from "../turns";
 import { computeDiet, countCopies } from "../diet";
 
@@ -64,18 +70,46 @@ const isMutant = () => get("_voteMonster") === $monster`terrible mutant`;
 const isSteve = () =>
   get("nextSpookyravenStephenRoom") === $location`The Haunted Laboratory`;
 
+function createWandererOutfit(
+  details: Delayed<WanderDetails>,
+  spec: Delayed<OutfitSpec>,
+  additionalOutfitOptions: Omit<FreeFightOutfitMenuOptions, "wanderOptions">,
+): Outfit {
+  const wanderTarget = wanderer().getTarget(undelay(details));
+  const needPeridot = wanderTarget.peridotMonster !== $monster.none;
+  const sourceOutfit = Outfit.from(
+    undelay(spec),
+    new Error(
+      `Failed to build outfit for Wanderer from ${JSON.stringify(undelay(spec))}`,
+    ),
+  );
+  if (wanderTarget.familiar !== $familiar`none`) {
+    sourceOutfit.familiar = wanderTarget.familiar;
+  }
+  if (needPeridot) sourceOutfit.equip($item`Peridot of Peril`);
+
+  return freeFightOutfit(
+    sourceOutfit.spec(),
+    undelay(details),
+    additionalOutfitOptions,
+  );
+}
+
 function wanderTask(
   details: Delayed<WanderDetails>,
   spec: Delayed<OutfitSpec>,
   base: Omit<GarboTask, "outfit" | "do" | "choices" | "spendsTurn"> & {
     combat?: GarboStrategy;
   },
+  additionalOutfitOptions: Omit<
+    FreeFightOutfitMenuOptions,
+    "wanderOptions"
+  > = {},
 ): GarboTask {
   return {
-    do: () => wanderer().getTarget(undelay(details)),
+    do: () => wanderer().getTarget(undelay(details)).location,
     choices: () => wanderer().getChoices(undelay(details)),
-    outfit: () =>
-      freeFightOutfit(undelay(spec), { wanderOptions: undelay(details) }),
+    outfit: () => createWandererOutfit(details, spec, additionalOutfitOptions),
     spendsTurn: false,
     combat: new GarboStrategy(() => Macro.basicCombat()),
     ...base,
@@ -137,13 +171,16 @@ const fishyPrepTasks: GarboTask[] = [
     completed: () => get("questPAGhost") === "unstarted",
     do: () => get("ghostLocation") as Location,
     outfit: () =>
-      freeFightOutfit({
-        modifier:
-          get("ghostLocation") === $location`The Icy Peak`
-            ? ["Cold Resistance 5 min"]
-            : [],
-        back: $item`protonic accelerator pack`,
-      }),
+      freeFightOutfit(
+        {
+          modifier:
+            get("ghostLocation") === $location`The Icy Peak`
+              ? ["Cold Resistance 5 min"]
+              : [],
+          back: $item`protonic accelerator pack`,
+        },
+        get("ghostLocation") as Location,
+      ),
     combat: new GarboStrategy(() => Macro.ghostBustin()),
     spendsTurn: false,
     // Ghost fights are currently hard
