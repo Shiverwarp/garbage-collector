@@ -89,6 +89,7 @@ import {
   have,
   Latte,
   maxBy,
+  MonsterProperty,
   PocketProfessor,
   property,
   Robortender,
@@ -100,7 +101,6 @@ import {
   withChoice,
   withProperties,
 } from "libram";
-import { MonsterProperty } from "libram/dist/propertyTypes";
 import { WanderDetails } from "garbo-lib";
 
 import { acquire } from "./acquire";
@@ -211,7 +211,8 @@ const firstChainMacro = () =>
           .externalIf(
             get("_enamorangs") === 0,
             Macro.tryCopier($item`LOV Enamorang`),
-          ),
+          )
+          .tryCopier($skill`Club 'Em Into Next Week`),
       )
       .trySkill($skill`lecture on relativity`)
       .meatKill(false),
@@ -239,7 +240,8 @@ const secondChainMacro = () =>
           .externalIf(
             get("_enamorangs") === 0,
             Macro.tryCopier($item`LOV Enamorang`),
-          ),
+          )
+          .tryCopier($skill`Club 'Em Into Next Week`),
       )
       .trySkill($skill`lecture on relativity`)
       .meatKill(false),

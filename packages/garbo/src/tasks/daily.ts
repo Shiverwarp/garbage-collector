@@ -72,9 +72,9 @@ import { estimatedAttunementTentacles } from "../fights";
 import { baseMeat, HIGHLIGHT, songboomMeat, targetMeat } from "../lib";
 import { garboValue } from "../garboValue";
 import {
-  digitizedMonstersRemaining,
   estimatedGarboTurns,
   highMeatMonsterCount,
+  wanderingCopytargetsRemaining,
 } from "../turns";
 import { GarboTask } from "./engine";
 import { AcquireItem, Quest } from "grimoire-kolmafia";
@@ -215,7 +215,7 @@ function pantogram(): void {
     const expectedBarfTurns = globalOptions.nobarf
       ? 0
       : estimatedGarboTurns() -
-        digitizedMonstersRemaining() -
+        wanderingCopytargetsRemaining() -
         highMeatMonsterCount();
     pantogramValue = 100 * expectedBarfTurns;
   } else {

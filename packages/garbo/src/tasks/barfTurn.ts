@@ -49,6 +49,7 @@ import {
   GingerBread,
   have,
   HeavyRains,
+  LegendarySealClubbingClub,
   maxBy,
   PeridotOfPeril,
   questStep,
@@ -90,7 +91,7 @@ import {
   FreeFightOutfitMenuOptions,
   meatTargetOutfit,
 } from "../outfit";
-import { digitizedMonstersRemaining, estimatedGarboTurns } from "../turns";
+import { estimatedGarboTurns, wanderingCopytargetsRemaining } from "../turns";
 import { deliverThesisIfAble } from "../fights";
 import { computeDiet, consumeDiet } from "../diet";
 
@@ -234,10 +235,7 @@ function shouldGoUnderwater(): boolean {
  * @param targetKillMacro - Macro to use when digitize monster is the target
  * @param nonTargetKillMacro - Macro to use otherwise (defaults to Macro.kill())
  */
-function digitizeMacros(
-  targetKillMacro: Macro,
-  nonTargetKillMacro: Macro = Macro.kill(),
-): [() => Macro, () => Macro] {
+function digitizeMacros(prepend?: Delayed<Macro>): [() => Macro, () => Macro] {
   const makeMacro =
     (useAutoattackCondition: boolean): (() => Macro) =>
     () => {
@@ -250,8 +248,8 @@ function digitizeMacros(
         condition,
         Macro.externalIf(
           digitizeMonster === globalOptions.target,
-          targetKillMacro,
-          nonTargetKillMacro,
+          (undelay(prepend) ?? new Macro()).meatKill(),
+          Macro.kill(),
         ),
       ).abortWithMsg(
         `Expected a digitized ${digitizeMonster}, but encountered something else.`,
@@ -259,6 +257,15 @@ function digitizeMacros(
     };
   return [makeMacro(true), makeMacro(false)];
 }
+
+const mimicSpec = () =>
+  get("_mimicEggsObtained") < 11 &&
+  $familiar`Chest Mimic`.experience >
+    (wanderingCopytargetsRemaining() === 1
+      ? 50
+      : (11 - get("_mimicEggsObtained")) * 50)
+    ? { familiar: $familiar`Chest Mimic` }
+    : {};
 
 const TurnGenTasks: GarboTask[] = [
   {
@@ -907,7 +914,7 @@ const BarfTurnTasks: GarboTask[] = [
     do: $location`The Briny Deeps`,
     outfit: () => meatTargetOutfit({}, $location`The Briny Deeps`),
     combat: new GarboStrategy(
-      ...digitizeMacros(Macro.item($item`pulled green taffy`).meatKill()),
+      ...digitizeMacros(Macro.item($item`pulled green taffy`)),
     ),
     sobriety: "sober",
     spendsTurn: true,
@@ -917,19 +924,10 @@ const BarfTurnTasks: GarboTask[] = [
     completed: () => Counter.get("Digitize Monster") > 0,
     outfit: () =>
       digitizedTarget()
-        ? meatTargetOutfit(
-            get("_mimicEggsObtained") < 11 &&
-              $familiar`Chest Mimic`.experience >
-                (digitizedMonstersRemaining() === 1
-                  ? 50
-                  : (11 - get("_mimicEggsObtained")) * 50)
-              ? { familiar: $familiar`Chest Mimic` }
-              : {},
-            wanderer().getTarget({
-              wanderer: "wanderer",
-              allowEquipment: false,
-            }).location,
-          )
+        ? meatTargetOutfit(mimicSpec(), {
+            wanderer: "wanderer",
+            allowEquipment: false,
+          })
         : freeFightOutfit(
             undefined,
             wanderer().getTarget({
@@ -945,7 +943,7 @@ const BarfTurnTasks: GarboTask[] = [
         wanderer: "wanderer",
         allowEquipment: false,
       }),
-    combat: new GarboStrategy(...digitizeMacros(Macro.meatKill())),
+    combat: new GarboStrategy(...digitizeMacros()),
     spendsTurn: () =>
       !SourceTerminal.getDigitizeMonster()?.attributes.includes("FREE"),
     location: () =>
@@ -953,6 +951,31 @@ const BarfTurnTasks: GarboTask[] = [
         ? $location`The Briny Deeps`
         : wanderer().getTarget({ wanderer: "wanderer", allowEquipment: false })
             .location,
+  },
+  {
+    name: "Club Into Next Week Monster",
+    completed: () => LegendarySealClubbingClub.turnsUntilNextWeekFight() > 0,
+    outfit: () =>
+      LegendarySealClubbingClub.clubIntoNextWeekMonster() ===
+      globalOptions.target
+        ? meatTargetOutfit(mimicSpec(), {
+            wanderer: "wanderer",
+            allowEquipment: false,
+          })
+        : freeFightOutfit({}, { wanderer: "wanderer", allowEquipment: false }),
+    do: () =>
+      wanderer().getTarget({ wanderer: "wanderer", allowEquipment: false })
+        .location,
+    choices: () =>
+      wanderer().getChoices({
+        wanderer: "wanderer",
+        allowEquipment: false,
+      }),
+    combat: new GarboStrategy(() => Macro.target("club 'em into next week")),
+    spendsTurn: () =>
+      !LegendarySealClubbingClub.clubIntoNextWeekMonster()?.attributes.includes(
+        "FREE",
+      ),
   },
   wanderTask(
     "wanderer",
@@ -1361,7 +1384,7 @@ export const NonBarfTurnQuest: Quest<GarboTask> = {
     if (!startedNonBarf) {
       startedNonBarf =
         clamp(
-          myAdventures() - digitizedMonstersRemaining(),
+          myAdventures() - wanderingCopytargetsRemaining(),
           1,
           myAdventures(),
         ) <=
