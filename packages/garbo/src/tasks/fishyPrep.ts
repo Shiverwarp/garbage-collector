@@ -1,5 +1,4 @@
 import {
-  availableAmount,
   canAdventure,
   eat,
   haveEffect,
@@ -21,9 +20,7 @@ import {
   $location,
   $monster,
   $skill,
-  clamp,
   Delayed,
-  ensureEffect,
   get,
   have,
   PeridotOfPeril,
@@ -38,7 +35,6 @@ import {
   howManySausagesCouldIEat,
   kramcoGuaranteed,
   romanticMonsterImpossible,
-  setChoice,
   sober,
 } from "../lib";
 import {
@@ -47,7 +43,7 @@ import {
   FreeFightOutfitMenuOptions,
   meatTargetOutfit,
 } from "../outfit";
-import { digitizedMonstersRemaining, highMeatMonsterCount } from "../turns";
+import { highMeatMonsterCount } from "../turns";
 import { computeDiet, countCopies } from "../diet";
 
 import { GarboTask } from "./engine";
@@ -238,28 +234,6 @@ const fishyPrepTasks: GarboTask[] = [
       completed: () => get("cursedMagnifyingGlassCount") !== 13,
     },
   ),
-  {
-    name: "Map for Pills",
-    ready: () =>
-      globalOptions.ascend &&
-      clamp(myAdventures() - digitizedMonstersRemaining(), 1, myAdventures()) <=
-        availableAmount($item`Map to Safety Shelter Grimace Prime`),
-    completed: () => false,
-    do: () => {
-      const choiceToSet =
-        availableAmount($item`distention pill`) <
-        availableAmount($item`synthetic dog hair pill`) +
-          availableAmount($item`Map to Safety Shelter Grimace Prime`)
-          ? 1
-          : 2;
-      setChoice(536, choiceToSet);
-      ensureEffect($effect`Transpondent`);
-      use($item`Map to Safety Shelter Grimace Prime`);
-      return true;
-    },
-    spendsTurn: true,
-    sobriety: "drunk",
-  },
   {
     name: "Use Fishy Pipe",
     ready: () => have($item`fishy pipe`),
