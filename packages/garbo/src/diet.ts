@@ -98,6 +98,7 @@ import {
 } from "./resources";
 import {
   arrayEquals,
+  availableOvercapEquipment,
   HIGHLIGHT,
   MEAT_TARGET_MULTIPLIER,
   targetingMeat,
@@ -108,6 +109,7 @@ import { shrugBadEffects } from "./mood";
 import { Potion, PotionTier } from "./potions";
 import { estimatedGarboTurns, highMeatMonsterCount } from "./turns";
 import { garboValue } from "./garboValue";
+import { Outfit } from "grimoire-kolmafia";
 
 class MenuItem<T> extends LibramMenuItem<T> {
   static defaultPriceFunction = (item: Item) => {
@@ -1486,6 +1488,10 @@ export function runDiet(): void {
         $classes`Turtle Tamer, Accordion Thief`.includes(myClass())
       ) {
         cliExecute("barrelprayer buff");
+      }
+
+      if (globalOptions.overcapped) {
+        Outfit.from({ equip: availableOvercapEquipment })?.dress();
       }
 
       consumeDiet(dietBuilder.diet(), "FULL");
