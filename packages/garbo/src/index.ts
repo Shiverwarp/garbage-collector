@@ -69,6 +69,7 @@ import { dailySetup } from "./dailies";
 import { nonOrganAdventures, runDiet } from "./diet";
 import { dailyFights, freeFights } from "./fights";
 import {
+  availableOvercapEquipment,
   bestJuneCleaverOption,
   checkGithubVersion,
   HIGHLIGHT,
@@ -626,9 +627,7 @@ export function main(argString = ""): void {
         }
 
         setDefaultMaximizeOptions({
-          forceEquip: globalOptions.overcapped
-            ? $items`devilbone rosary, devilbone greaves, devilbone corset, angelbone totem, angelbone chopsticks, angelbone dice`
-            : undefined,
+          forceEquip: globalOptions.overcapped ? availableOvercapEquipment : [],
           preventEquip: preventEquip,
           preventSlot: $slots`buddy-bjorn, crown-of-thrones`,
           updateOnLocationChange: true,
