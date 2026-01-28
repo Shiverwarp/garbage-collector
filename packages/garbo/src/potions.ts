@@ -58,6 +58,7 @@ import {
 import { acquire } from "./acquire";
 import {
   aprilFoolsRufus,
+  availableOvercapEquipment,
   baseMeat,
   bestShadowRift,
   HIGHLIGHT,
@@ -77,6 +78,7 @@ import {
   getBCZStatFloor,
   safeSweatEquityCasts,
 } from "./resources";
+import { Outfit } from "grimoire-kolmafia";
 
 export type PotionTier = "target" | "overlap" | "barf" | "ascending";
 const banned = $items`Uncle Greenspan's Bathroom Finance Guide`;
@@ -605,6 +607,9 @@ export const rufusPotion = new Potion($item`closed-circuit pay phone`, {
       // Grab the buff from the NC
       const curTurncount = myTurncount();
       if (have($item`Rufus's shadow lodestone`)) {
+        if (globalOptions.overcapped) {
+          Outfit.from({ equip: availableOvercapEquipment })?.dress();
+        }
         if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
           equip($item`continuum transfunctioner`);
         }
