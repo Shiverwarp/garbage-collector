@@ -58,13 +58,13 @@ import {
 import { acquire } from "./acquire";
 import {
   aprilFoolsRufus,
-  availableOvercapEquipment,
   baseMeat,
   bestShadowRift,
   HIGHLIGHT,
   improvesAStat,
   marginalFamWeightValue,
   pillkeeperOpportunityCost,
+  requiredOvercapEquipment,
   targetMeat,
   targetMeatDifferential,
   withLocation,
@@ -608,7 +608,7 @@ export const rufusPotion = new Potion($item`closed-circuit pay phone`, {
       const curTurncount = myTurncount();
       if (have($item`Rufus's shadow lodestone`)) {
         if (globalOptions.overcapped) {
-          Outfit.from({ equip: availableOvercapEquipment })?.dress();
+          Outfit.from({ equip: requiredOvercapEquipment })?.dress();
         }
         if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
           equip($item`continuum transfunctioner`);
