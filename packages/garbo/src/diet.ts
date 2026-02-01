@@ -573,9 +573,10 @@ function menu(): MenuItem<Note>[] {
   );
   const boxingDayCareItems =
     $items`glass of raw eggs, punch-drunk punch`.filter((item) => have(item));
-  const pilsners = $items`astral pilsner`.filter(
-    (item) => globalOptions.ascend && have(item),
-  );
+  const pilsners =
+    globalOptions.usepilsners || globalOptions.ascend
+      ? $items`astral pilsner`.filter((item) => have(item))
+      : [];
   const instantKarma = globalOptions.usekarma
     ? $items`Instant Karma`.filter((item) => have(item))
     : [];
