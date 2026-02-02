@@ -22,9 +22,9 @@ const PearlTargets: PearlTarget[] = [
     estimatedProgress: 5,
   },
   {
-    location: $location`The Briniest Deepests`,
-    completionPref: "_unblemishedPearlTheBriniestDeepests",
-    progressPref: "_unblemishedPearlTheBriniestDeepestsProgress",
+    location: $location`Madness Reef`,
+    completionPref: "_unblemishedPearlMadnessReef",
+    progressPref: "_unblemishedPearlMadnessReefProgress",
     estimatedProgress: 5,
   },
 ];
