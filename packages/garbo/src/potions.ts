@@ -610,11 +610,14 @@ export const rufusPotion = new Potion($item`closed-circuit pay phone`, {
       // Grab the buff from the NC
       const curTurncount = myTurncount();
       if (have($item`Rufus's shadow lodestone`)) {
+        const transFunctioner =
+          bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+            ? [$item`continuum transfunctioner`]
+            : [];
         if (globalOptions.overcapped) {
-          Outfit.from({ equip: requiredOvercapEquipment })?.dress();
-        }
-        if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
-          equip($item`continuum transfunctioner`);
+          Outfit.from({
+            equip: [...requiredOvercapEquipment, ...transFunctioner],
+          })?.dress();
         }
         withChoice(1500, 2, () => adv1(bestShadowRift(), -1, ""));
       }
