@@ -105,11 +105,10 @@ export function meatMood(
     mood.skill($skill`Carol of the Bulls`);
     mood.skill($skill`Blood Bubble`);
     mood.skill($skill`Ghostly Shell`);
-    mood.skill($skill`Jalapeño Saucesphere`);
     mood.skill($skill`Tenacity of the Snapper`);
     mood.skill($skill`Grease Up`);
-    mood.skill($skill`Spiky Shell`);
     mood.effect($effect`Disco over Matter`);
+    mood.effect($effect`Trivia Master`);
   }
 
   // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
@@ -316,7 +315,7 @@ const otherBadEffects = Effect.all().filter(
 );
 export function shrugBadEffects(...exclude: Effect[]): void {
   [
-    ...(myInebriety() <= inebrietyLimit() ? damageEffects : []),
+    ...damageEffects,
     ...textAlteringEffects,
     ...teleportEffects,
     ...otherBadEffects,
