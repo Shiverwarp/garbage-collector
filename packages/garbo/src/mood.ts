@@ -316,7 +316,7 @@ const otherBadEffects = Effect.all().filter(
 );
 export function shrugBadEffects(...exclude: Effect[]): void {
   [
-    ...damageEffects,
+    ...(myInebriety() <= inebrietyLimit() ? damageEffects : []),
     ...textAlteringEffects,
     ...teleportEffects,
     ...otherBadEffects,
