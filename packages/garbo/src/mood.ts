@@ -78,6 +78,7 @@ export function meatMood(
   }
 
   mood.skill($skill`Ruthless Efficiency`);
+  mood.skill($skill`Astral Shell`);
 
   // Donho's
   if (moodType === "Barf") {
@@ -101,6 +102,14 @@ export function meatMood(
     mood.skill($skill`Song of Bravado`);
     mood.skill($skill`Rage of the Reindeer`);
     mood.skill($skill`Disco Fever`);
+    mood.skill($skill`Carol of the Bulls`);
+    mood.skill($skill`Blood Bubble`);
+    mood.skill($skill`Ghostly Shell`);
+    mood.skill($skill`Jalapeño Saucesphere`);
+    mood.skill($skill`Tenacity of the Snapper`);
+    mood.skill($skill`Grease Up`);
+    mood.skill($skill`Spiky Shell`);
+    mood.effect($effect`Disco over Matter`);
   }
 
   // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
