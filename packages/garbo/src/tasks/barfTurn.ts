@@ -1429,7 +1429,7 @@ export const BarfTurnQuest: Quest<GarboTask> = {
       completed: () => myAdventures() === 0,
       outfit: () =>
         barfOutfit(
-          myInebriety() > inebrietyLimit()
+          myInebriety() > inebrietyLimit() && !globalOptions.overcapped
             ? { weapon: $item`June cleaver` }
             : {},
         ),

@@ -108,6 +108,11 @@ export function meatMood(
     mood.skill($skill`Tenacity of the Snapper`);
     mood.skill($skill`Grease Up`);
     mood.effect($effect`Disco over Matter`);
+    if (globalOptions.overcapped) {
+      // Extra if doing overcapped
+      mood.effect($effect`Phorcefullness`);
+      mood.effect($effect`Trivia Master`);
+    }
   }
 
   // Don't run pressure reduction potions during embezzlers, the pressure is only 50 which is covered by Asdon + Donhos + cowskin bed
