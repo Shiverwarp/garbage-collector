@@ -110,7 +110,7 @@ export function meatMood(
     mood.effect($effect`Disco over Matter`);
     if (globalOptions.overcapped) {
       // Extra if doing overcapped
-      mood.effect($effect`Phorcefullness`);
+      mood.effect($effect`Ultraheart`);
       mood.effect($effect`Trivia Master`);
     }
   }
