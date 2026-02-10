@@ -28,13 +28,14 @@ export function yachtzeeFactory(
         false,
       ) > get("encountersUntilYachtzeeChoice");
     return [
-      new WandererTarget(
-        "Yachtzee Countdown",
-        $location`The Sunken Party Yacht`,
-        options.ascend && !canFinishDelay // If we're ascending and don't have wanderer turns to finish delay, just use fallback value
-          ? 20
-          : (20000 - get("valueOfAdventure")) / 19,
-      ),
+      new WandererTarget({
+        name: "Yachtzee Countdown",
+        location: $location`The Sunken Party Yacht`,
+        zoneValue:
+          options.ascend && !canFinishDelay // If we're ascending and don't have wanderer turns to finish delay, just use fallback value
+            ? 20
+            : (20000 - get("valueOfAdventure")) / 19,
+      }),
     ];
   }
   return [];

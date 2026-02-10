@@ -50,12 +50,13 @@ export function pearlFactory(
           turnsRemainingToComplete(t.progressPref, t.estimatedProgress),
     ).map(
       (t) =>
-        new WandererTarget(
-          `${t.location} Pearl`,
-          t.location,
-          options.itemValue($item`unblemished pearl`) *
+        new WandererTarget({
+          name: `${t.location} Pearl`,
+          location: t.location,
+          zoneValue:
+            options.itemValue($item`unblemished pearl`) *
             (t.estimatedProgress / 100),
-        ),
+        }),
     );
   }
   return [];
