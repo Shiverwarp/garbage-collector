@@ -16,9 +16,15 @@ export function yachtzeeFactory(
     realmAvailable("sleaze") &&
     have($effect`Fishy`) &&
     get("encountersUntilYachtzeeChoice") !== 0 &&
-    ["backup", "wanderer", "yellow ray", "freefight", "freerun"].includes(
-      type,
-    ) &&
+    [
+      "backup",
+      "wanderer",
+      "yellow ray",
+      "freefight",
+      "freerun",
+      "conditional freefight",
+      "freefight (no items)",
+    ].includes(type) &&
     !locationSkiplist.includes($location`The Sunken Party Yacht`)
   ) {
     const canFinishDelay =
