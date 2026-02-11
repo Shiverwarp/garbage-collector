@@ -75,7 +75,6 @@ import { globalOptions } from "./config";
 import {
   beretEffectValue,
   castAugustScepterBuffs,
-  getBCZStatFloor,
   safeSweatEquityCasts,
 } from "./resources";
 import { Outfit } from "grimoire-kolmafia";
@@ -747,10 +746,7 @@ function sweatEquity() {
   }
 
   // TODO Use new libram cast function for this when it's added
-  BloodCubicZirconia.castDownTo(
-    $skill`BCZ: Sweat Equity`,
-    getBCZStatFloor($skill`BCZ: Sweat Equity`),
-  );
+  BloodCubicZirconia.cast($skill`BCZ: Sweat Equity`, safeSweatEquityCasts());
 }
 
 let completedPotionSetup = false;
