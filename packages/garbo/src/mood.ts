@@ -78,7 +78,9 @@ export function meatMood(
   }
 
   mood.skill($skill`Ruthless Efficiency`);
+  // Better pearl progress
   mood.skill($skill`Astral Shell`);
+  mood.skill($skill`Elemental Saucesphere`);
 
   // Donho's
   if (moodType === "Barf") {
