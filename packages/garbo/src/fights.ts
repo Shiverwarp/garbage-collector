@@ -151,6 +151,7 @@ import {
   propertyManager,
   questStep,
   RequireAtLeastOne,
+  requiredOvercapEquipment,
   romanticMonsterImpossible,
   safeRestore,
   setChoice,
@@ -1287,8 +1288,14 @@ const freeFightSources = [
     () => {
       if (have($item`Rufus's shadow lodestone`)) {
         setChoice(1500, 2); // Turn in lodestone if you have it
-        if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
-          equip($item`continuum transfunctioner`);
+        const transFunctioner =
+          bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+            ? [$item`continuum transfunctioner`]
+            : [];
+        if (globalOptions.overcapped) {
+          Outfit.from({
+            equip: [...requiredOvercapEquipment, ...transFunctioner],
+          })?.dress();
         }
         adv1(bestShadowRift(), -1, "");
       }
@@ -1313,8 +1320,14 @@ const freeFightSources = [
           ClosedCircuitPayphone.chooseQuest(() => 2);
           aprilFoolsRufus();
         }
-        if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
-          equip($item`continuum transfunctioner`);
+        const transFunctioner =
+          bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+            ? [$item`continuum transfunctioner`]
+            : [];
+        if (globalOptions.overcapped) {
+          Outfit.from({
+            equip: [...requiredOvercapEquipment, ...transFunctioner],
+          })?.dress();
         }
         adv1(bestShadowRift(), -1, ""); // grab the NC
       }
@@ -1324,8 +1337,14 @@ const freeFightSources = [
       }
 
       if (have($item`Rufus's shadow lodestone`)) {
-        if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
-          equip($item`continuum transfunctioner`);
+        const transFunctioner =
+          bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+            ? [$item`continuum transfunctioner`]
+            : [];
+        if (globalOptions.overcapped) {
+          Outfit.from({
+            equip: [...requiredOvercapEquipment, ...transFunctioner],
+          })?.dress();
         }
         setChoice(1500, 2); // Check for lodestone at the end again
         adv1(bestShadowRift(), -1, "");
@@ -2585,8 +2604,14 @@ function runShadowRiftTurn(): void {
     get("rufusQuestType") === "items" ||
     get("rufusQuestType") === "entity" // We can't handle bosses... yet
   ) {
-    if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
-      equip($item`continuum transfunctioner`);
+    const transFunctioner =
+      bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+        ? [$item`continuum transfunctioner`]
+        : [];
+    if (globalOptions.overcapped) {
+      Outfit.from({
+        equip: [...requiredOvercapEquipment, ...transFunctioner],
+      })?.dress();
     }
     adv1(bestShadowRift(), -1, ""); // We shouldn't be using NC forcers
     return;
@@ -2612,13 +2637,25 @@ function runShadowRiftTurn(): void {
     freeFightOutfit({ shirt: $item`Jurassic Parka` }, bestShadowRift()).dress();
     cliExecute("parka spikolodon");
     const macro = Macro.skill($skill`Launch spikolodon spikes`).basicCombat();
-    if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
-      equip($item`continuum transfunctioner`);
+    const transFunctioner =
+      bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+        ? [$item`continuum transfunctioner`]
+        : [];
+    if (globalOptions.overcapped) {
+      Outfit.from({
+        equip: [...requiredOvercapEquipment, ...transFunctioner],
+      })?.dress();
     }
     garboAdventureAuto(bestShadowRift(), macro);
   } else {
-    if (bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`) {
-      equip($item`continuum transfunctioner`);
+    const transFunctioner =
+      bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+        ? [$item`continuum transfunctioner`]
+        : [];
+    if (globalOptions.overcapped) {
+      Outfit.from({
+        equip: [...requiredOvercapEquipment, ...transFunctioner],
+      })?.dress();
     }
     adv1(bestShadowRift(), -1, ""); // We wanted to use NC forcers, but none are suitable now
   }
