@@ -155,7 +155,7 @@ function bestDevilerCandy(): Item {
   }
 
   const bestCandyFromMall = maxBy(
-    Item.all().filter((i) => i.candy && i.tradeable),
+    Item.all().filter((i) => i.candy && i.tradeable && mallPrice(i) > 0),
     mallPrice,
     true,
   );
