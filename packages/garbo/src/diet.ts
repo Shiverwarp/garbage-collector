@@ -12,6 +12,7 @@ import {
   Effect,
   Element,
   elementalResistance,
+  equippedItem,
   fullnessLimit,
   getClanLounge,
   getProperty,
@@ -32,12 +33,14 @@ import {
   myMaxhp,
   mySpleenUse,
   npcPrice,
+  numericModifier,
   print,
   putCloset,
   retrieveItem,
   retrievePrice,
   sellsItem,
   setProperty,
+  Slot,
   spleenLimit,
   takeCloset,
   toEffect,
@@ -61,6 +64,7 @@ import {
   $item,
   $items,
   $locations,
+  $modifier,
   $skill,
   clamp,
   DesignerSweatpants,
@@ -84,6 +88,7 @@ import {
   sum,
   sumNumbers,
   uneffect,
+  unequip,
   withProperties,
   withProperty,
 } from "libram";
@@ -1468,10 +1473,23 @@ function dailySpecialPrice(item: Item) {
 
 export function runDiet(): void {
   withVIPClan(() => {
+    // Strip organ capacity enhancers to avoid accidental overfilling.
     if (myFamiliar() === $familiar`Stooper`) {
       useFamiliar($familiar.none);
     }
 
+    for (const slot of Slot.all()) {
+      const item = equippedItem(slot);
+      if (
+        numericModifier(item, $modifier`stomach capacity`) ||
+        numericModifier(item, $modifier`liver capacity`) ||
+        numericModifier(item, $modifier`spleen capacity`)
+      ) {
+        unequip(slot);
+      }
+    }
+
+    // Compute diet
     const dietBuilder = computeDiet();
 
     if (globalOptions.simdiet) {
