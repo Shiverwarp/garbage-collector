@@ -1478,14 +1478,18 @@ export function runDiet(): void {
       useFamiliar($familiar.none);
     }
 
-    for (const slot of Slot.all()) {
-      const item = equippedItem(slot);
-      if (
-        numericModifier(item, $modifier`stomach capacity`) ||
-        numericModifier(item, $modifier`liver capacity`) ||
-        numericModifier(item, $modifier`spleen capacity`)
-      ) {
-        unequip(slot);
+    if (globalOptions.overcapped) {
+      Outfit.from({ equip: requiredOvercapEquipment })?.dress();
+    } else {
+      for (const slot of Slot.all()) {
+        const item = equippedItem(slot);
+        if (
+          numericModifier(item, $modifier`stomach capacity`) ||
+          numericModifier(item, $modifier`liver capacity`) ||
+          numericModifier(item, $modifier`spleen capacity`)
+        ) {
+          unequip(slot);
+        }
       }
     }
 
@@ -1516,10 +1520,6 @@ export function runDiet(): void {
         $classes`Turtle Tamer, Accordion Thief`.includes(myClass())
       ) {
         cliExecute("barrelprayer buff");
-      }
-
-      if (globalOptions.overcapped) {
-        Outfit.from({ equip: requiredOvercapEquipment })?.dress();
       }
 
       consumeDiet(dietBuilder.diet(), "FULL");
