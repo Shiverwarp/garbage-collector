@@ -450,7 +450,7 @@ function usePorkToilet(): GarboPostTask {
   return {
     name: "Use Pork Elf toilet",
     ready: () => myFullness() >= 2 && !globalOptions.overcapped,
-    completed: () => get("_porkElfToiletUsed", true),
+    completed: () => get("_porkElfToiletUsed"),
     do: () => {
       const startingFullness = myFullness();
       visitUrl("campground.php?action=rest");
