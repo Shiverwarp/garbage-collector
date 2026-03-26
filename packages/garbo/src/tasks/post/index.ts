@@ -3,6 +3,7 @@ import {
   availableChoiceOptions,
   canAdventure,
   cliExecute,
+  getCampground,
   haveEffect,
   inebrietyLimit,
   isBanished,
@@ -10,6 +11,7 @@ import {
   itemAmount,
   mallPrice,
   myAdventures,
+  myFullness,
   myInebriety,
   myLevel,
   putCloset,
@@ -143,11 +145,13 @@ function floristFriars(): GarboPostTask[] {
 
 function fillPantsgivingFullness(): GarboPostTask {
   return {
-    name: "Fill Pantsgiving Fullness",
+    name: "Fill Pantsgiving/Toilet Fullness",
     ready: () => !globalOptions.nodiet && get("_shivRanchoFishyPrepped", false),
     completed: () => getRemainingStomach() <= 0,
     do: () => consumeDiet(computeDiet().pantsgiving(), "PANTSGIVING"),
-    available: () => have($item`Pantsgiving`),
+    available: () =>
+      have($item`Pantsgiving`) ||
+      $item`Pork Elf toilet`.name in getCampground(),
   };
 }
 
@@ -442,6 +446,22 @@ function uneffectAttunement(): GarboPostTask {
   };
 }
 
+function usePorkToilet(): GarboPostTask {
+  return {
+    name: "Use Pork Elf toilet",
+    ready: () => myFullness() >= 2 && !globalOptions.overcapped,
+    completed: () => get("_porkElfToiletUsed", true),
+    do: () => {
+      const startingFullness = myFullness();
+      visitUrl("campground.php?action=rest");
+      if (myFullness() >= startingFullness) {
+        throw new Error("Using toilet did not reduce our fullness!");
+      }
+    },
+    available: () => $item`Pork Elf toilet`.name in getCampground(),
+  };
+}
+
 export function PostQuest(completed?: () => boolean): Quest<GarboTask> {
   return {
     name: "Postcombat",
@@ -484,6 +504,7 @@ export function PostFishyQuest(completed?: () => boolean): Quest<GarboTask> {
       juneCleaver(),
       setFishyPrepPref(),
       refillCinch(),
+      usePorkToilet(),
       leafResin(),
       wardrobeOMatic(),
       { ...leprecondoTask(), available: Leprecondo.have() },
