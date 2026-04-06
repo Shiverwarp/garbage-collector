@@ -449,7 +449,10 @@ function uneffectAttunement(): GarboPostTask {
 function usePorkToilet(): GarboPostTask {
   return {
     name: "Use Pork Elf toilet",
-    ready: () => myFullness() >= 2 && !globalOptions.overcapped,
+    ready: () =>
+      myFullness() >= 2 &&
+      !globalOptions.overcapped &&
+      (!CinchoDeMayo.have() || totalFreeRests() <= get("timesRested")),
     completed: () => get("_porkElfToiletUsed"),
     do: () => {
       const startingFullness = myFullness();
@@ -483,6 +486,7 @@ export function PostQuest(completed?: () => boolean): Quest<GarboTask> {
       eightBitFatLoot(),
       setFishyPrepPref(),
       refillCinch(),
+      usePorkToilet(),
       leafResin(),
       wardrobeOMatic(),
     ]
