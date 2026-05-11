@@ -1519,7 +1519,7 @@ export function runDiet(): void {
           $item`Asdon Martin keyfob (on ring)`
         ) {
           AsdonMartin.drive(
-            $effect`Driving Observantly`,
+            $effect`Driving Waterproofly`,
             dietAdventures(dietBuilder.diet()) +
               (globalOptions.ascend ? 0 : estimatedTurnsTomorrow),
           );
