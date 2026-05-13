@@ -264,7 +264,7 @@ export const CockroachSetup: Quest<GarboTask> = {
             avoid: $items`Roman Candelabra`,
             beforeDress: [
               () =>
-                meatMood("Copiers", false, targetMeat()).execute(
+                meatMood("PirateRealm", false, targetMeat()).execute(
                   highMeatMonsterCount(),
                 ), // meatMood is currently difficult to sort for things that give +stats
               () => potionSetup(false, true), // run potionSetup while avoiding stats. We do not avoid limited use buffs that may still increase stats like paw wishes or pill keeper.

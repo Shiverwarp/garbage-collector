@@ -50,7 +50,7 @@ Mood.setDefaultOptions({
 });
 
 export function meatMood(
-  moodType: "Copiers" | "Barf",
+  moodType: "Copiers" | "Barf" | "PirateRealm",
   urKels = false,
   meat: undefined | number = undefined,
 ): Mood {
@@ -74,7 +74,9 @@ export function meatMood(
     mood.effect($effect`Thoughtful Empathy`);
     mood.effect($effect`Lubricating Sauce`);
     mood.effect($effect`Tubes of Universal Meat`);
-    mood.effect($effect`Strength of the Tortoise`);
+    if (moodType !== "PirateRealm") {
+      mood.effect($effect`Strength of the Tortoise`);
+    }
   }
 
   mood.skill($skill`Ruthless Efficiency`);
