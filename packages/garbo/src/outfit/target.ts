@@ -61,14 +61,28 @@ export function meatTargetOutfit(
   ) {
     const meat = meatDrop($monster`Knob Goblin Embezzler`) + songboomMeat();
     outfit.modifier.push(`${meat / 100} Meat Drop`, "-tie");
-  } else if (targetingMeat()) {
-    outfit.modifier.push(
-      `${modeValueOfMeat(BonusEquipMode.MEAT_TARGET)} Meat Drop`,
-      "-tie",
-    );
-  } else if (globalOptions.target.attributes.includes("FREE")) {
-    outfit.modifier.push("-tie");
+  } else {
+    if (targetingMeat()) {
+      outfit.modifier.push(
+        `${modeValueOfMeat(BonusEquipMode.MEAT_TARGET)} Meat Drop`,
+        "-tie",
+      );
+    } else if (globalOptions.target.attributes.includes("FREE")) {
+      outfit.modifier.push("-tie");
+    }
+    if (nextWeekReady()) {
+      outfit.equip($item`legendary seal-clubbing club`);
+    }
+
+    if (
+      !have($effect`Everything Looks Purple`) &&
+      location?.environment !== Environment.Underwater &&
+      !shouldRedigitize()
+    ) {
+      outfit.equip($item`Roman Candelabra`);
+    }
   }
+
   applyCheeseBonus(
     outfit,
     targetingMeat() ? BonusEquipMode.MEAT_TARGET : BonusEquipMode.FREE,
@@ -135,14 +149,6 @@ export function meatTargetOutfit(
     parka: "kachungasaur",
     edpiece: "fish",
   });
-
-  if (
-    !have($effect`Everything Looks Purple`) &&
-    location?.environment !== Environment.Underwater &&
-    !shouldRedigitize()
-  ) {
-    outfit.equip($item`Roman Candelabra`);
-  }
 
   return outfit;
 }
