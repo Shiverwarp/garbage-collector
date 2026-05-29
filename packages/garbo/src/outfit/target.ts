@@ -77,7 +77,8 @@ export function meatTargetOutfit(
     if (
       !have($effect`Everything Looks Purple`) &&
       location?.environment !== Environment.Underwater &&
-      !shouldRedigitize()
+      !shouldRedigitize() &&
+      !(nextWeekReady() && globalOptions.overcapped)
     ) {
       outfit.equip($item`Roman Candelabra`);
     }
