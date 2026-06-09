@@ -3,6 +3,7 @@ import {
   availableChoiceOptions,
   canAdventure,
   cliExecute,
+  equippedItem,
   getCampground,
   haveEffect,
   inebrietyLimit,
@@ -29,6 +30,7 @@ import {
   $location,
   $monster,
   $skill,
+  $slots,
   AutumnAton,
   BurningLeaves,
   CinchoDeMayo,
@@ -36,12 +38,14 @@ import {
   FloristFriar,
   get,
   getAcquirePrice,
+  getModifier,
   getRemainingStomach,
   have,
   JuneCleaver,
   Leprecondo,
   maxBy,
   set,
+  sum,
   undelay,
   uneffect,
   withProperty,
@@ -146,7 +150,12 @@ function floristFriars(): GarboPostTask[] {
 function fillPantsgivingFullness(): GarboPostTask {
   return {
     name: "Fill Pantsgiving/Toilet Fullness",
-    ready: () => !globalOptions.nodiet && get("_shivRanchoFishyPrepped", false),
+    ready: () =>
+      !globalOptions.nodiet &&
+      get("_shivRanchoFishyPrepped", false) &&
+      sum($slots.all(), (slot) =>
+        getModifier("Stomach Capacity", equippedItem(slot)),
+      ) <= 0,
     completed: () => getRemainingStomach() <= 0,
     do: () => consumeDiet(computeDiet().pantsgiving(), "PANTSGIVING"),
     available: () =>
@@ -176,7 +185,10 @@ function fillSweatyLiver(): GarboPostTask {
       DesignerSweatpants.canUseSkill($skill`Sweat Out Some Booze`) &&
       myInebriety() > 0 &&
       DesignerSweatpants.availableCasts($skill`Sweat Out Some Booze`) ===
-        DesignerSweatpants.potentialCasts($skill`Sweat Out Some Booze`),
+        DesignerSweatpants.potentialCasts($skill`Sweat Out Some Booze`) &&
+      sum($slots.all(), (slot) =>
+        getModifier("Liver Capacity", equippedItem(slot)),
+      ) <= 0,
     completed: () =>
       $skill`Sweat Out Some Booze`.dailylimit === 0 ||
       myInebriety() -
