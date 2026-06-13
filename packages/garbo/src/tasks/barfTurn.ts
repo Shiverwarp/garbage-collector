@@ -119,6 +119,7 @@ import {
 import { meatMood } from "../mood";
 import { yachtzeeQuest } from "./yachtzee";
 import { bestYachtzeeFamiliar } from "./yachtzee/familiar";
+import { embezzlerFightTask } from "./embezzler";
 
 const digitizedTarget = () =>
   SourceTerminal.have() &&
@@ -416,6 +417,11 @@ function luckyTasks(
       sobriety,
       spendsTurn: true,
       turns: 0, // Turns spent is handled by Lucky Sources
+    },
+    {
+      ...embezzlerFightTask,
+      name: `Lucky Embezzler (${sobriety})`,
+      ready: () => additionalReady() && embezzlerFightTask.ready(),
     },
     ...luckySourceTasks,
   ];

@@ -43,20 +43,12 @@ export function meatTargetOutfit(
     new Error(`Failed to construct outfit from spec ${JSON.stringify(spec)}`),
   );
 
-  const { location } = toAdventure(adventureArgument ?? $location.none);
-  if (
-    nextWeekReady() &&
-    location !== $location`Crab Island` &&
-    !globalOptions.overcapped
-  ) {
-    outfit.equip($item`legendary seal-clubbing club`);
-  }
-
+  const { location, target } = toAdventure(adventureArgument ?? $location.none);
   if (location === $location`Crab Island`) {
     const meat = meatDrop($monster`giant giant crab`) + songboomMeat();
     outfit.modifier.push(`${meat / 100} Meat Drop`, "-tie");
   } else if (
-    location === $location`Cobb's Knob Treasury` &&
+    target === $monster`Knob Goblin Embezzler` &&
     have($effect`Lucky!`)
   ) {
     const meat = meatDrop($monster`Knob Goblin Embezzler`) + songboomMeat();
@@ -70,7 +62,11 @@ export function meatTargetOutfit(
     } else if (globalOptions.target.attributes.includes("FREE")) {
       outfit.modifier.push("-tie");
     }
-    if (nextWeekReady()) {
+    if (
+      nextWeekReady() &&
+      location !== $location`Crab Island` &&
+      !globalOptions.overcapped
+    ) {
       outfit.equip($item`legendary seal-clubbing club`);
     }
 
