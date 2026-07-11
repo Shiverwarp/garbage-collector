@@ -15,11 +15,13 @@ import {
   itemPockets,
   mallPrice,
   meatPockets,
+  myAscensions,
   myInebriety,
   pickedPockets,
   pocketItems,
   pocketMeat,
   print,
+  putCloset,
   runChoice,
   scrapPockets,
   sellPrice,
@@ -245,6 +247,19 @@ const DailyItemTasks: GarboTask[] = [
       if (best !== $item.none) {
         cliExecute(`try; create ${$skill`Summon Clip Art`.dailylimit} ${best}`);
       }
+    },
+    spendsTurn: false,
+  },
+  {
+    name: "Defective Game Grid Token",
+    ready: () =>
+      get("lastArcadeAscension") === myAscensions() ||
+      have($item`Game Grid token`) ||
+      have($item`Game Grid ticket`),
+    completed: () => get("_defectiveTokenChecked"),
+    do: (): void => {
+      visitUrl("place.php?whichplace=arcade", false);
+      visitUrl("place.php?whichplace=arcade&action=arcade_plumber", false);
     },
     spendsTurn: false,
   },
@@ -522,6 +537,17 @@ const DailyItemTasks: GarboTask[] = [
       get("_timeSpinnerMinutesUsed") <= 8,
     completed: () => get("_timeSpinnerReplicatorUsed"),
     do: () => cliExecute("FarFuture drink"),
+    spendsTurn: false,
+  },
+  {
+    name: $skill`That's Not a Knife`.name,
+    ready: () => have($skill`That's Not a Knife`),
+    completed: () => get("_discoKnife"),
+    do: () => {
+      const knives = $items`boot knife, broken beer bottle, sharpened spoon, candy knife, soap knife`;
+      knives.forEach((item) => putCloset(itemAmount(item), item));
+      useSkill($skill`That's Not a Knife`);
+    },
     spendsTurn: false,
   },
   {
