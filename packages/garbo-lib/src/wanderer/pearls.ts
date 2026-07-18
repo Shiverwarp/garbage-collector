@@ -14,18 +14,18 @@ type PearlTarget = {
   estimatedProgress: number;
 };
 const PearlTargets: PearlTarget[] = [
-  // estimating progress at some lower rates, 3.4 is with just passives
+  // estimating progress at some lower rates, 3.3 is with just passives
   {
     location: $location`The Briniest Deepests`,
     completionPref: "_unblemishedPearlTheBriniestDeepests",
     progressPref: "_unblemishedPearlTheBriniestDeepestsProgress",
-    estimatedProgress: 5,
+    estimatedProgress: 3.3,
   },
   {
     location: $location`Madness Reef`,
     completionPref: "_unblemishedPearlMadnessReef",
     progressPref: "_unblemishedPearlMadnessReefProgress",
-    estimatedProgress: 5,
+    estimatedProgress: 3.3,
   },
 ];
 
