@@ -291,6 +291,19 @@ function cosplaySaber(mode: BonusEquipMode): Map<Item, number> {
   return new Map<Item, number>([[saber, 0.01]]);
 }
 
+function portableLaughingStock(mode: BonusEquipMode): Map<Item, number> {
+  const portStock = $item`Portable Laughing Stock`;
+  if (
+    !have(portStock) ||
+    mode === BonusEquipMode.MEAT_TARGET ||
+    mode === BonusEquipMode.DMT ||
+    get("_laughingStockFruitDropped", 12) >= 11
+  ) {
+    return new Map<Item, number>();
+  }
+  return new Map<Item, number>([[portStock, 700]]);
+}
+
 export function bonusGear(
   mode: BonusEquipMode,
   valueCircumstantialBonus = true,
@@ -319,6 +332,7 @@ export function bonusGear(
           ...rakeLeaves(mode),
           ...aviatorGoggles(mode),
           ...skeletonCane(mode),
+          ...portableLaughingStock(mode),
         ])
       : []),
   ]);
