@@ -1,9 +1,14 @@
-import { have } from "libram";
-import { myAdventures, myLocation, totalTurnsPlayed } from "kolmafia";
-import { $effect, $item, $items, $location, CrepeParachute, get } from "libram";
+import { $monster, $skill, PeridotOfPeril } from "libram";
+import {
+  inebrietyLimit,
+  isBanished,
+  myAdventures,
+  myInebriety,
+} from "kolmafia";
+import { $item, $items, $location } from "libram";
 import { Quest } from "grimoire-kolmafia";
 
-import { getPreferredBarfMonster, Macro } from "../../combat";
+import { Macro } from "../../combat";
 import { GarboStrategy } from "../../combatStrategy";
 import { globalOptions } from "../../config";
 import { barfOutfit } from "../../outfit";
@@ -13,43 +18,44 @@ import { trackMarginalMpa } from "../../session";
 import { meatMood } from "../../mood";
 
 import { GarboTask } from "../engine";
-import {
-  canContinue,
-  shouldCheckParachute,
-  updateParachuteFailure,
-} from "./lib";
+import { canContinue } from "./lib";
 
 export const BarfTurnQuest: Quest<GarboTask> = {
   name: "Barf Turn",
   tasks: [
     {
-      name: "Barf Parachute",
-      ready: () =>
-        CrepeParachute.have() &&
-        shouldCheckParachute() &&
-        myLocation() === $location`Barf Mountain`,
-      completed: () => have($effect`Everything looks Beige`),
-      outfit: () => barfOutfit({}),
-      do: () => CrepeParachute.fight(getPreferredBarfMonster()),
-      combat: new GarboStrategy(() => Macro.meatKill()),
-      prepare: () =>
-        !(totalTurnsPlayed() % 11) && meatMood().execute(estimatedGarboTurns()),
-      post: () => {
-        if (!have($effect`Everything looks Beige`)) updateParachuteFailure();
-        completeBarfQuest();
-        trackMarginalMpa();
-      },
+      name: "Banish Cowboy Barf",
+      completed: () => isBanished($monster`sea cowboy`),
+      outfit: () =>
+        PeridotOfPeril.canImperil($location`The Coral Corral`)
+          ? barfOutfit({ equip: $items`spring shoes, Peridot of Peril` })
+          : barfOutfit({ equip: $items`spring shoes` }),
+      do: () => $location`The Coral Corral`,
+      combat: new GarboStrategy(
+        () =>
+          Macro.if_(
+            $monster`sea cowboy`,
+            Macro.skill($skill`Spring Kick`).trySkill($skill`Spring Away`),
+          ).basicCombat(),
+        () =>
+          Macro.if_(
+            `(monsterid ${globalOptions.target.id}) && !gotjump && !(pastround 2)`,
+            Macro.meatKill(),
+          ).abort(),
+      ),
       spendsTurn: true,
+      choices: PeridotOfPeril.getChoiceObject($monster`sea cowboy`),
     },
     {
-      name: "Barf",
+      name: "Ranch",
       completed: () => myAdventures() === 0,
-      outfit: () => {
-        const lubing =
-          get("dinseyRollercoasterNext") && have($item`lube-shoes`);
-        return barfOutfit(lubing ? { equip: $items`lube-shoes` } : {});
-      },
-      do: $location`Barf Mountain`,
+      outfit: () =>
+        barfOutfit(
+          myInebriety() > inebrietyLimit() && !globalOptions.overcapped
+            ? { weapon: $item`June cleaver` }
+            : {},
+        ),
+      do: $location`The Coral Corral`,
       combat: new GarboStrategy(
         () => Macro.meatKill(),
         () =>
@@ -58,10 +64,7 @@ export const BarfTurnQuest: Quest<GarboTask> = {
             Macro.meatKill(),
           ).abort(),
       ),
-      prepare: () =>
-        !get("dinseyRollercoasterNext") &&
-        !(totalTurnsPlayed() % 11) &&
-        meatMood().execute(estimatedGarboTurns()),
+      prepare: () => meatMood("Barf").execute(estimatedGarboTurns()),
       post: () => {
         completeBarfQuest();
         trackMarginalMpa();
