@@ -27,6 +27,24 @@ const PearlTargets: PearlTarget[] = [
     progressPref: "_unblemishedPearlMadnessReefProgress",
     estimatedProgress: 3.3,
   },
+  {
+    location: $location`Anemone Mine`,
+    completionPref: "_unblemishedPearlAnemoneMine",
+    progressPref: "_unblemishedPearlAnemoneMineProgress",
+    estimatedProgress: 3.3,
+  },
+  {
+    location: $location`The Dive Bar`,
+    completionPref: "_unblemishedPearlDiveBar",
+    progressPref: "_unblemishedPearlDiveBarProgress",
+    estimatedProgress: 3.3,
+  },
+  {
+    location: $location`The Marinara Trench`,
+    completionPref: "_unblemishedPearlMarinaraTrench",
+    progressPref: "_unblemishedPearlMarinaraTrenchProgress",
+    estimatedProgress: 3.3,
+  },
 ];
 
 function turnsRemainingToComplete(
