@@ -1,11 +1,9 @@
-import { Familiar } from "kolmafia";
+import { Familiar, inebrietyLimit, myInebriety } from "kolmafia";
 import {
   $familiar,
-  $item,
   Delayed,
   findLeprechaunMultiplier,
   get,
-  getAverageAdventures,
   have,
   propertyTypes,
   undelay,
@@ -55,18 +53,12 @@ const experienceFamiliars: ExperienceFamiliar[] = [
   },
   {
     familiar: $familiar`Cooler Yeti`,
-    used: () => {
-      return (
-        $familiar`Cooler Yeti`.experience >= 400 ||
-        globalOptions.ascend ||
-        !globalOptions.prefs.chargeYeti
-      );
-    },
-    // Vintage Smart Drink is 40 adventures
-    useValue:
-      getAverageAdventures($item`vintage smart drink`) *
-      get("valueOfAdventure"),
+    used: () => globalOptions.ascend && myInebriety() > inebrietyLimit(),
+    useValue: () => 40 * 5800, // Gives us 40 adventures of overdrunk adventures
     baseExp: 0,
+    xpCost: 400,
+    xpLimit: () =>
+      400 * (globalOptions.ascend || get("_coolerYetiAdventures") ? 1 : 2), // We can save up two uses of it if we aren't ascending currently
   },
 ];
 
