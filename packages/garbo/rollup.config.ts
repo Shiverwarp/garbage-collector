@@ -9,7 +9,10 @@ const extensions = [".js", ".ts"];
 // KoLmafia loads every script on its own, so each one is a separate build with
 // no shared chunks.
 const scripts = [
-  { input: "src/index.ts", file: "dist/scripts/garbage-collector/garbo.js" },
+  {
+    input: "src/index.ts",
+    file: "dist/scripts/garbage-collector/shivGarbo.js",
+  },
   { input: "src/relay_garbo.ts", file: "dist/relay/relay_garbo.js" },
   {
     input: "src/price_garbo.ts",
