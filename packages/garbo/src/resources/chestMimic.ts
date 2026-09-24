@@ -9,7 +9,7 @@ export const mimicExperienceNeeded = (needKickstarterEgg: boolean) =>
       get("_mimicEggsObtained") < 11
       ? 50
       : 0
-    : 550);
+    : 0); // I have a lot of fam exp and free fights, don't need to charge extra the day before
 
 export function shouldChargeMimic(needKickstarterEgg: boolean): boolean {
   /* If we can't make any more eggs tomorrow, don't charge the mimic more */
