@@ -110,6 +110,11 @@ export function meatMood(
       mood.skill($skill`Tenacity of the Snapper`);
       mood.skill($skill`Grease Up`);
       mood.effect($effect`Disco over Matter`);
+      if (globalOptions.overcapped) {
+        // Extra if doing overcapped
+        mood.effect($effect`Ultraheart`);
+        mood.effect($effect`Trivia Master`);
+      }
     }
   }
 

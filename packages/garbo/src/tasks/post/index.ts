@@ -466,7 +466,10 @@ function uneffectAttunement(): GarboPostTask {
 function usePorkToilet(): GarboPostTask {
   return {
     name: "Use Pork Elf toilet",
-    ready: () => myFullness() >= 2,
+    ready: () =>
+      myFullness() >= 2 &&
+      !globalOptions.overcapped &&
+      (!CinchoDeMayo.have() || totalFreeRests() <= get("timesRested")),
     completed: () => get("_porkElfToiletUsed"),
     do: () => {
       const startingFullness = myFullness();

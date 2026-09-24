@@ -66,14 +66,19 @@ export function meatTargetOutfit(
     } else if (globalOptions.target.attributes.includes("FREE")) {
       outfit.modifier.push("-tie");
     }
-    if (nextWeekReady()) {
+    if (
+      nextWeekReady() &&
+      location !== $location`Crab Island` &&
+      !globalOptions.overcapped
+    ) {
       outfit.equip($item`legendary seal-clubbing club`);
     }
 
     if (
       !have($effect`Everything Looks Purple`) &&
       location?.environment !== Environment.Underwater &&
-      !shouldRedigitize()
+      !shouldRedigitize() &&
+      !(nextWeekReady() && globalOptions.overcapped)
     ) {
       outfit.equip($item`Roman Candelabra`);
     }

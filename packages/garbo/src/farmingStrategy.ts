@@ -3,6 +3,7 @@ import {
   Effect,
   equippedItem,
   getMonsters,
+  inebrietyLimit,
   isBanished,
   itemDropsArray,
   itemType,
@@ -10,6 +11,7 @@ import {
   mallPrice,
   Monster,
   myBuffedstat,
+  myInebriety,
   print,
 } from "kolmafia";
 import { GarboStrategy } from "./combatStrategy";
@@ -230,12 +232,19 @@ const THE_CORAL_CORRAL: FarmingStrategyOptions = {
   shouldOlfact: false,
 
   outfit: ({ banish }) => {
-    const banishItem = banish?.equip;
-    if (banishItem) {
-      print(`Planning to banish equipping ${banishItem?.name}`);
+    const banishItem = banish?.equip ? [banish.equip] : [];
+    if (banishItem[0]) {
+      print(`Planning to banish equipping ${banishItem[0]?.name}`);
     }
 
-    return banishItem ? { equip: [banishItem] } : {};
+    const survivalItem =
+      myInebriety() > inebrietyLimit() && !globalOptions.overcapped
+        ? [$item`June cleaver`]
+        : [];
+
+    const equips = [...banishItem, ...survivalItem];
+
+    return { equip: equips };
   },
 
   combat: ({ banish }) =>

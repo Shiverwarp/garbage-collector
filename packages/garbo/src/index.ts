@@ -29,6 +29,7 @@ import {
   Stat,
   toInt,
   use,
+  useSkill,
   visitUrl,
 } from "kolmafia";
 import {
@@ -46,6 +47,7 @@ import {
   Clan,
   examine,
   get,
+  getActiveSongs,
   getCombatFlags,
   getFoldGroup,
   have,
@@ -72,8 +74,10 @@ import {
   printEventLog,
   propertyManager,
   questStep,
+  requiredOvercapEquipment,
   safeRestore,
   targetingMeat,
+  targetMeat,
   userConfirmDialog,
   valueDrops,
 } from "./lib";
@@ -603,17 +607,30 @@ export function main(argString = ""): void {
             ...$items`Brimstone Bludgeon, Brimstone Bunker, Brimstone Brooch, Brimstone Bracelet, Brimstone Boxers, Brimstone Beret`,
           );
         }
-        // TODO: Until properly handled ban equipment that expands organs
-        preventEquip.push(
-          ...$items`devilbone rosary, devilbone greaves, devilbone corset, angelbone totem, angelbone chopsticks, angelbone dice`,
-        );
+        if (!globalOptions.overcapped) {
+          // Avoid equipping organ expanders so that we don't accidentally overcap during incidental diet tasks (pantsgiving, sweatpants)
+          preventEquip.push(
+            ...$items`devilbone rosary, devilbone greaves, devilbone corset, angelbone totem, angelbone chopsticks, angelbone dice`,
+          );
+        }
 
         setDefaultMaximizeOptions({
+          forceEquip: globalOptions.overcapped ? requiredOvercapEquipment : [],
           preventEquip: preventEquip,
           preventSlot: $slots`buddy-bjorn, crown-of-thrones`,
+          updateOnLocationChange: true,
         });
 
         // 2. do some target copy stuff
+        potionSetup(true);
+        maximize("MP", false);
+        meatMood(false, targetMeat()).execute(copyTargetCount());
+        if (getActiveSongs().length >= 4 && !have($effect`Ode to Booze`)) {
+          // Ensure we have Ode for our free runs
+          cliExecute(`shrug ${$effect`Polka of Plenty`}`);
+          useSkill($skill`The Ode to Booze`);
+        }
+
         freeFights();
         runGarboQuests([SetupTargetCopyQuest]);
         dailyFights();
@@ -656,3 +673,4 @@ import { FarmQuests } from "./tasks/farm";
 import { FinishUpQuest } from "./tasks/finishUp";
 import { PostQuest } from "./tasks/post";
 import { SetupTargetCopyQuest } from "./tasks/target";
+import { copyTargetCount } from "./target/fights";

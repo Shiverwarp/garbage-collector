@@ -1,4 +1,5 @@
 import {
+  abort,
   autosellPrice,
   availableAmount,
   buy,
@@ -105,6 +106,7 @@ import { synthesize } from "./resources/synthesis";
 import {
   HIGHLIGHT,
   MEAT_TARGET_MULTIPLIER,
+  requiredOvercapEquipment,
   targetingMeat,
   targetMeat,
   userConfirmDialog,
@@ -119,6 +121,7 @@ import {
 import { garboValue } from "./garboValue";
 import { GarboWorkshed } from "./tasks/post/worksheds";
 import { FarmingStrategy } from "./farmingStrategy";
+import { Outfit } from "grimoire-kolmafia";
 
 const MPA = get("valueOfAdventure");
 print(`Using adventure value ${MPA}.`, HIGHLIGHT);
@@ -1474,14 +1477,18 @@ export function runDiet(): void {
       useFamiliar($familiar.none);
     }
 
-    for (const slot of Slot.all()) {
-      const item = equippedItem(slot);
-      if (
-        numericModifier(item, $modifier`stomach capacity`) ||
-        numericModifier(item, $modifier`liver capacity`) ||
-        numericModifier(item, $modifier`spleen capacity`)
-      ) {
-        unequip(slot);
+    if (globalOptions.overcapped) {
+      Outfit.from({ equip: requiredOvercapEquipment })?.dress();
+    } else {
+      for (const slot of Slot.all()) {
+        const item = equippedItem(slot);
+        if (
+          numericModifier(item, $modifier`stomach capacity`) ||
+          numericModifier(item, $modifier`liver capacity`) ||
+          numericModifier(item, $modifier`spleen capacity`)
+        ) {
+          unequip(slot);
+        }
       }
     }
 
@@ -1533,6 +1540,9 @@ export function runDiet(): void {
       }
 
       consumeDiet(dietBuilder.diet(), "FULL");
+      if (myFullness() < fullnessLimit() || myInebriety() < inebrietyLimit()) {
+        abort("Diet didn't fill organs!");
+      }
 
       shrugBadEffects();
     }

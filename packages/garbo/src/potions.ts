@@ -64,6 +64,7 @@ import {
   improvesAStat,
   marginalFamWeightValue,
   pillkeeperOpportunityCost,
+  requiredOvercapEquipment,
   targetMeat,
   targetMeatDifferential,
   withLocation,
@@ -75,6 +76,7 @@ import { beretEffectValue } from "./resources/beret";
 import { safeSweatEquityCasts } from "./resources/bloodCubicZirconia";
 import { castAugustScepterBuffs } from "./resources/scepter";
 import { FarmingStrategy } from "./farmingStrategy";
+import { Outfit } from "grimoire-kolmafia";
 
 export type PotionTier = "target" | "overlap" | "barf" | "ascending";
 const banned = $items`Uncle Greenspan's Bathroom Finance Guide`;
@@ -607,6 +609,15 @@ export const rufusPotion = new Potion($item`closed-circuit pay phone`, {
       // Grab the buff from the NC
       const curTurncount = myTurncount();
       if (have($item`Rufus's shadow lodestone`)) {
+        const transFunctioner =
+          bestShadowRift() === $location`Shadow Rift (The 8-Bit Realm)`
+            ? [$item`continuum transfunctioner`]
+            : [];
+        if (globalOptions.overcapped) {
+          Outfit.from({
+            equip: [...requiredOvercapEquipment, ...transFunctioner],
+          })?.dress();
+        }
         withChoice(1500, 2, () => adv1(bestShadowRift(), -1, ""));
       }
       if (myTurncount() > curTurncount) {
