@@ -4501,37 +4501,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"garbo@workspace:packages/garbo":
-  version: 0.0.0-use.local
-  resolution: "garbo@workspace:packages/garbo"
-  dependencies:
-    "@babel/cli": ^7.29.7
-    "@babel/compat-data": ^7.29.7
-    "@babel/core": ^7.29.7
-    "@babel/preset-env": ^7.29.7
-    "@babel/preset-typescript": ^7.29.7
-    "@rollup/plugin-babel": ^7.1.0
-    "@rollup/plugin-commonjs": ^29.0.3
-    "@rollup/plugin-node-resolve": ^16.0.3
-    "@rollup/plugin-replace": ^6.0.3
-    "@types/babel__core": ^7.20.5
-    "@types/node": ^22.4.1
-    copyfiles: ^2.4.1
-    eslint: ^9.39.2
-    eslint-config-garbo: "workspace:^"
-    garbo-lib: "workspace:*"
-    grimoire-kolmafia: ^0.3.35
-    jiti: ^2.6.1
-    kolmafia: ^5.29250.0
-    libram: ^0.11.32
-    lint-staged: ^15.2.9
-    madge: ^8.0.0
-    prettier: ^3.3.3
-    rollup: ^4.63.1
-    typescript: ^5.5.4
-  languageName: unknown
-  linkType: soft
-
 "gauge@npm:^4.0.3":
   version: 4.0.4
   resolution: "gauge@npm:4.0.4"
@@ -6747,6 +6716,37 @@ __metadata:
   checksum: 1a2bcae50de99034fcd92ad4212d8e01eedf52c7ec7830eedcf886622804fe36884278f2be8be0ea5fde3fd1c23911643a4e0f726c8685b61871c8908af01222
   languageName: node
   linkType: hard
+
+"shivGarbo@workspace:packages/garbo":
+  version: 0.0.0-use.local
+  resolution: "shivGarbo@workspace:packages/garbo"
+  dependencies:
+    "@babel/cli": ^7.29.7
+    "@babel/compat-data": ^7.29.7
+    "@babel/core": ^7.29.7
+    "@babel/preset-env": ^7.29.7
+    "@babel/preset-typescript": ^7.29.7
+    "@rollup/plugin-babel": ^7.1.0
+    "@rollup/plugin-commonjs": ^29.0.3
+    "@rollup/plugin-node-resolve": ^16.0.3
+    "@rollup/plugin-replace": ^6.0.3
+    "@types/babel__core": ^7.20.5
+    "@types/node": ^22.4.1
+    copyfiles: ^2.4.1
+    eslint: ^9.39.2
+    eslint-config-garbo: "workspace:^"
+    garbo-lib: "workspace:*"
+    grimoire-kolmafia: ^0.3.35
+    jiti: ^2.6.1
+    kolmafia: ^5.29250.0
+    libram: ^0.11.32
+    lint-staged: ^15.2.9
+    madge: ^8.0.0
+    prettier: ^3.3.3
+    rollup: ^4.63.1
+    typescript: ^5.5.4
+  languageName: unknown
+  linkType: soft
 
 "signal-exit@npm:^3.0.2, signal-exit@npm:^3.0.7":
   version: 3.0.7
