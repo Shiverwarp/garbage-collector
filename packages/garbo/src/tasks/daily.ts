@@ -33,7 +33,6 @@ import {
   runChoice,
   toSlot,
   totalTurnsPlayed,
-  toUrl,
   use,
   visitUrl,
   votingBoothInitiatives,
@@ -268,14 +267,7 @@ function nepQuest(): void {
   }
 
   if (get("_questPartyFair") === "unstarted") {
-    visitUrl(toUrl($location`The Neverending Party`));
-    if (
-      ["food", "booze", "trash", "dj"].includes(get("_questPartyFairQuest"))
-    ) {
-      runChoice(1); // Accept quest
-    } else {
-      runChoice(2); // Decline quest
-    }
+    cliExecute("duffo farm");
   }
 
   if (["food", "booze"].includes(get("_questPartyFairQuest"))) {
