@@ -727,8 +727,6 @@ export function bestShadowRift(): Location {
     _bestShadowRift = withLocation($location`Shadow Rift`, () =>
       ClosedCircuitPayphone.chooseRift({
         canAdventure: true,
-        otherFilter: (l: Location) =>
-          l !== $location`Shadow Rift (The 8-Bit Realm)`,
         sortBy: (l: Location) => {
           // We probably aren't capping item drops with the penalty
           // so we don't really need to compute the actual outfit (or the dropModifier for that matter actually)
@@ -926,6 +924,10 @@ function maxFamiliarDamage(familiar: Familiar): number {
       return Math.floor((totalFamWeight + 3) * 1.5);
     case $familiar`Jill-of-All-Trades`:
       return totalFamWeight + 3;
+    case $familiar`Frumious Bandersnatch`:
+      return 0;
+    case $familiar`Left-Hand Man`:
+      return Math.floor(totalFamWeight + 3);
     // TODO: Unknown rate, assume 2x until properly spaded
     case $familiar`Adventurous Spelunker`:
       return Math.floor((totalFamWeight + 3) * 2);
