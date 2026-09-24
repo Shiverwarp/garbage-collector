@@ -95,6 +95,7 @@ import {
   uneffect,
   unequip,
   withProperties,
+  withProperty,
 } from "libram";
 import { acquire, priceCaps } from "./acquire";
 import { withVIPClan } from "./clan";
@@ -145,7 +146,7 @@ function consumeWhileRespectingMoonRestaurant(command: () => void, item: Item) {
     {
       autoSatisfyWithCloset:
         !usingMoonZoneRestaurant && get("autoSatisfyWithCloset"),
-      autoSatisfyWithMall: !usingMoonZoneRestaurant,
+      autoSatisfyWithMall: false,
     },
     command,
   );
@@ -258,7 +259,9 @@ function drinkSafe(qty: number, item: Item) {
 }
 
 function chewSafe(qty: number, item: Item) {
-  if (!chew(qty, item)) throw "Failed to chew safely";
+  withProperty("autoSatisfyWithMall", false, () => {
+    if (!chew(qty, item)) throw "Failed to chew safely";
+  });
 }
 
 function consumeSafe(
