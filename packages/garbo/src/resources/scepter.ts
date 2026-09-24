@@ -5,6 +5,7 @@ import {
   myMeat,
   Skill,
   toSlot,
+  useFamiliar,
   useSkill,
 } from "kolmafia";
 import {
@@ -118,6 +119,11 @@ const SKILL_OPTIONS: ScepterSkill[] = [
     type: "summon",
   },
   {
+    skill: $skill`Aug. 28th: Race Your Mouse Day!`,
+    value: () => garboValue($item`tiny consolation ribbon`),
+    type: "summon",
+  },
+  {
     skill: $skill`Aug. 29th: More Herbs, Less Salt  Day!`,
     value: () => 3 * garboValue($item`Mrs. Rush`),
     type: "summon",
@@ -180,7 +186,12 @@ function summonTask({ skill }: ScepterSkill): GarboTask {
   return {
     name: skill.name,
     completed: () => !shouldAugustCast(skill),
-    do: () => useSkill(skill),
+    do: () => {
+      if (skill === $skill`Aug. 28th: Race Your Mouse Day!`) {
+        useFamiliar($familiar`Bulky Buddy Box`);
+      }
+      useSkill(skill);
+    },
     spendsTurn: false,
   };
 }
