@@ -684,6 +684,24 @@ function menu(): MenuItem<Note>[] {
           }),
         ]
       : []),
+    ...($items`corned beet, pickled bread, salted mutton`.includes(
+      dailySpecial(),
+    ) &&
+    hasMoonZoneRestaurant() &&
+    get("_dailySpecialPrice") < mallPrice(dailySpecial())
+      ? [
+          new MenuItem(dailySpecial(), {
+            additionalValue: crimboKeyValue,
+            priceOverride: get("_dailySpecialPrice"),
+            maximum: clamp(
+              // Restrict to our open stomach, capped at 12 to avoid using stomach cleansers
+              Math.floor(fullnessLimit() - myFullness()),
+              0,
+              12,
+            ),
+          }),
+        ]
+      : []),
     ...dailySpecialItem,
 
     // HELPERS
