@@ -222,7 +222,7 @@ const BARF_MOUNTAIN: FarmingStrategyOptions = {
 };
 
 const THE_CORAL_CORRAL: FarmingStrategyOptions = {
-  stasisRounds: 5,
+  stasisRounds: 20,
   asdonEffect: $effect`Driving Waterproofly`,
   ensureBarfAccess: false,
   baseMeat: 300,
