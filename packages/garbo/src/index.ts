@@ -618,9 +618,6 @@ export function main(argString = ""): void {
           updateOnLocationChange: true,
         });
 
-        runGarboQuests([CockroachFinish]); // Fight the giant giant crab after we've dieted for some extra buffs
-        maximize("MP", false); // Remove our piraterealm eyepatch after we leave piraterealm
-
         // 2. do some target copy stuff
         potionSetup(true);
         maximize("MP", false);
@@ -632,6 +629,8 @@ export function main(argString = ""): void {
         }
 
         freeFights();
+        runGarboQuests([CockroachFinish]); // Fight the giant giant crab after we've dieted for some extra buffs
+        maximize("MP", false); // Remove our piraterealm eyepatch after we leave piraterealm
         runGarboQuests([SetupTargetCopyQuest]);
         dailyFights();
 
