@@ -137,6 +137,9 @@ export function main(argString = ""): void {
       (get("seahorseName") === "" && get("lassoTrainingCount") < 20))
   ) {
     globalOptions.prefs.farmingMethod = FarmingMethod.BARF_MOUNTAIN;
+    abort(
+      "We intended to do rancho, but garbo doesn't want to! What happened?",
+    );
   }
 
   // Hit up main.php to get out of easily escapable choices
