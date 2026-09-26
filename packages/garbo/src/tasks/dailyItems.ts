@@ -308,6 +308,20 @@ const DailyItemTasks: GarboTask[] = [
     spendsTurn: false,
   },
   {
+    name: "Purchase Soybean Futures",
+    ready: () => globalOptions.ascend,
+    completed: () => itemAmount($item`Interesting Coin`) < 7,
+    do: (): void => {
+      if (itemAmount($item`Interesting Coin`) > 7) {
+        abort(
+          "We have more than 7 Interesting coins somehow! Figure out how to spend them",
+        );
+      }
+      buy($coinmaster`Interesting Coin`, 1, $item`soybean futures`);
+    },
+    spendsTurn: false,
+  },
+  {
     name: "Chateau Mantegna Desk",
     ready: () => ChateauMantegna.have(),
     completed: () => get("_chateauDeskHarvested"),
