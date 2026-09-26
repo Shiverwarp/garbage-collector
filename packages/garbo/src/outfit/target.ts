@@ -18,10 +18,8 @@ import {
   applyCheeseBonus,
   bestBjornalike,
   cleaverCheck,
-  familiarWaterBreathingEquipment,
   useUPCsIfNeeded,
   validateGarbageFoldable,
-  waterBreathingEquipment,
 } from "./lib";
 import {
   BonusEquipMode,
@@ -102,13 +100,7 @@ export function meatTargetOutfit(
 
   const underwater = location?.environment === "underwater";
   if (underwater) {
-    if (!outfit.familiar.underwater && !have($effect`Driving Waterproofly`)) {
-      outfit.equipFirst(familiarWaterBreathingEquipment);
-    }
-
-    if (!outfit.equipFirst(waterBreathingEquipment)) {
-      outfit.modifier.push("sea");
-    }
+    outfit.modifier.push("sea");
   }
 
   if (outfit.familiar === $familiar`Jill-of-All-Trades`) {
