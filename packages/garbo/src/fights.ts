@@ -1416,8 +1416,62 @@ const freeRunFightSources = [
       location: $location`Gingerbread Civic Center`,
     },
   ),
+  // Use cigarettes for noon
+  new FreeFight(
+    () =>
+      mallPrice($item`gingerbread cigarette`) <=
+        globalOptions.prefs.valueOfFreeFight &&
+      GingerBread.available() &&
+      GingerBread.minutesToNoon() > 0 &&
+      get(`breathitinCharges`) <= 0 &&
+      canAdventure($location`Gingerbread Upscale Retail District`),
+    () => {
+      propertyManager.setChoices({
+        1215: 1, // Gingerbread Civic Center advance clock
+      });
+      acquire(
+        1,
+        $item`gingerbread cigarette`,
+        globalOptions.prefs.valueOfFreeFight,
+        true,
+      );
+      garboAdventure(
+        $location`Gingerbread Upscale Retail District`,
+        Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
+          `Was unable to free kill with our gingerbread cigarette!`,
+        ),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    true,
+    {
+      spec: {
+        bonuses: new Map([
+          [
+            $item`carnivorous potted plant`,
+            globalOptions.prefs.valueOfFreeFight * 0.04,
+          ],
+        ]),
+      },
+      location: $location`Gingerbread Upscale Retail District`,
+    },
+  ),
+  // Default garbo for noon
   new FreeRunFight(
-    () => GingerBread.available() && GingerBread.minutesToNoon() > 0,
+    () =>
+      mallPrice($item`gingerbread cigarette`) >
+        globalOptions.prefs.valueOfFreeFight &&
+      GingerBread.available() &&
+      GingerBread.minutesToNoon() > 0,
     (runSource: ActionSource) => {
       propertyManager.setChoices({
         1215: 1, // Gingerbread Civic Center advance clock
@@ -1435,7 +1489,7 @@ const freeRunFightSources = [
       }
     },
     {
-      spec: { bonuses: new Map([[$item`carnivorous potted plant`, 100]]) },
+      spec: { bonuses: new Map([[$item`carnivorous potted plant`, 1000]]) },
       location: $location`Gingerbread Civic Center`,
     },
   ),
@@ -1444,22 +1498,86 @@ const freeRunFightSources = [
     () => {
       propertyManager.setChoices({
         1204: 1, // Gingerbread Train Station Noon random candy
+        1208: 7, // Retail Noon, Stick em up
       });
-      garboAdventure(
-        $location`Gingerbread Train Station`,
-        Macro.abortWithMsg(
-          `Expected "Noon at the Train Station" but ended up in combat.`,
-        ),
-      );
+      if (availableAmount($item`sprinkles`) >= 300) {
+        garboAdventure(
+          $location`Gingerbread Train Station`,
+          Macro.abortWithMsg(
+            `Expected "Noon at the Train Station" but ended up in combat.`,
+          ),
+        );
+      } else {
+        garboAdventure(
+          $location`Gingerbread Upscale Retail District`,
+          Macro.abortWithMsg(`Expected "Upscale Noon" but ended up in combat.`),
+        );
+      }
     },
     false,
     {
+      spec: {
+        equip: $items`gingerbread mask, gingerbread pistol, gingerbread moneybag`,
+      },
       noncombat: () => true,
       location: $location`Gingerbread Train Station`,
     },
   ),
+  // Use cigarettes for midnight
+  new FreeFight(
+    () =>
+      mallPrice($item`gingerbread cigarette`) <=
+        globalOptions.prefs.valueOfFreeFight &&
+      GingerBread.available() &&
+      GingerBread.minutesToMidnight() > 0 &&
+      GingerBread.minutesToNoon() < 0 &&
+      get(`breathitinCharges`) <= 0 &&
+      canAdventure($location`Gingerbread Upscale Retail District`),
+    () => {
+      propertyManager.setChoices({
+        1215: 1, // Gingerbread Civic Center advance clock
+      });
+      acquire(
+        1,
+        $item`gingerbread cigarette`,
+        globalOptions.prefs.valueOfFreeFight,
+        true,
+      );
+      garboAdventure(
+        $location`Gingerbread Upscale Retail District`,
+        Macro.tryItem($item`gingerbread cigarette`).abortWithMsg(
+          `Was unable to free kill with our gingerbread cigarette!`,
+        ),
+      );
+      if (
+        [
+          "Even Tamer Than Usual",
+          "Never Break the Chain",
+          "Close, but Yes Cigar",
+          "Armchair Quarterback",
+        ].includes(get("lastEncounter"))
+      ) {
+        set("_gingerbreadCityTurns", 1 + get("_gingerbreadCityTurns"));
+      }
+    },
+    true,
+    {
+      spec: {
+        bonuses: new Map([
+          [
+            $item`carnivorous potted plant`,
+            globalOptions.prefs.valueOfFreeFight * 0.04,
+          ],
+        ]),
+      },
+      location: $location`Gingerbread Upscale Retail District`,
+    },
+  ),
+  // garbo default for midnight
   new FreeRunFight(
     () =>
+      mallPrice($item`gingerbread cigarette`) >
+        globalOptions.prefs.valueOfFreeFight &&
       GingerBread.available() &&
       GingerBread.minutesToMidnight() > 0 &&
       GingerBread.minutesToNoon() < 0 &&
@@ -1481,7 +1599,7 @@ const freeRunFightSources = [
       }
     },
     {
-      spec: { bonuses: new Map([[$item`carnivorous potted plant`, 100]]) },
+      spec: { bonuses: new Map([[$item`carnivorous potted plant`, 1000]]) },
       location: $location`Gingerbread Civic Center`,
     },
   ),
