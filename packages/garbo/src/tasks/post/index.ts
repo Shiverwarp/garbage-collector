@@ -497,7 +497,7 @@ function waterBalloonChampion(): GarboPostTask {
         );
       }
     },
-    available: () => get("_waterBalloonBuffGranted", true),
+    available: () => !get("_waterBalloonBuffGranted", true),
   };
 }
 
