@@ -1229,10 +1229,13 @@ const priorityFreeRunFightSources = [
       if (!have($effect`Singing of your Prowess`)) {
         useSkill($skill`%fn, sing a song of my prowess`);
       }
+      acquire(1, $item`very small red dress`, 100, false);
       safeRestore();
       garboAdventure(
         $location`Sloppy Seconds Diner`,
-        Macro.skill($skill`%fn, protect me!`).step(runSource.macro),
+        Macro.tryItem($item`very small red dress`)
+          .skill($skill`%fn, protect me!`)
+          .step(runSource.macro),
       );
     },
     {
@@ -1241,7 +1244,7 @@ const priorityFreeRunFightSources = [
         famequip: $items`can of shield tenderizer`,
         modifier: [
           "100 ML",
-          "10 Moxie", // Because it's scaling apparently this is good?
+          "100 Moxie", // Because it's scaling apparently this is good?
           "HP",
           "-DR",
           "-100 DA",
