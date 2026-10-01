@@ -308,7 +308,7 @@ const DailyItemTasks: GarboTask[] = [
     spendsTurn: false,
   },
   {
-    name: "Purchase Soybean Futures",
+    name: "Spend Interesting Coins",
     ready: () => globalOptions.ascend,
     completed: () => itemAmount($item`Interesting Coin`) < 7,
     do: (): void => {
@@ -317,7 +317,12 @@ const DailyItemTasks: GarboTask[] = [
           "We have more than 7 Interesting coins somehow! Figure out how to spend them",
         );
       }
-      buy($coinmaster`Interesting Coin`, 1, $item`soybean futures`);
+      const bestPotion = maxBy(
+        $items`mint, circle of overdraft protection scroll, invisible hand`,
+        garboValue,
+      );
+      buy($coinmaster`Interesting Coin`, 1, $item`homeowner's loam`);
+      buy($coinmaster`Interesting Coin`, 2, bestPotion);
     },
     spendsTurn: false,
   },
