@@ -26,6 +26,7 @@ import {
   myClass,
   myFamiliar,
   myLevel,
+  myMaxhp,
   myThrall,
   myTurncount,
   numericModifier,
@@ -33,6 +34,7 @@ import {
   print,
   putCloset,
   refreshStash,
+  restoreHp,
   retrieveItem,
   retrievePrice,
   runChoice,
@@ -1233,7 +1235,7 @@ const priorityFreeRunFightSources = [
         useSkill($skill`%fn, sing a song of my prowess`);
       }
       acquire(2, $item`very small red dress`, 100, false);
-      safeRestore();
+      restoreHp(myMaxhp());
       garboAdventure(
         $location`Sloppy Seconds Diner`,
         Macro.tryItem([
