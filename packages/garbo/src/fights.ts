@@ -1234,14 +1234,11 @@ const priorityFreeRunFightSources = [
       if (!have($effect`Singing of your Prowess`)) {
         useSkill($skill`%fn, sing a song of my prowess`);
       }
-      acquire(2, $item`very small red dress`, 100, false);
+      acquire(1, $item`very small red dress`, 100, false);
       restoreHp(myMaxhp());
       garboAdventure(
         $location`Sloppy Seconds Diner`,
-        Macro.tryItem([
-          $item`very small red dress`,
-          $item`very small red dress`,
-        ])
+        Macro.tryItem($item`very small red dress`)
           .skill($skill`%fn, protect me!`)
           .step(runSource.macro),
       );
