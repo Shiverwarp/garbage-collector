@@ -1234,11 +1234,14 @@ const priorityFreeRunFightSources = [
       if (!have($effect`Singing of your Prowess`)) {
         useSkill($skill`%fn, sing a song of my prowess`);
       }
-      acquire(1, $item`very small red dress`, 100, false);
+      acquire(2, $item`very small red dress`, 100, false);
       restoreHp(myMaxhp());
       garboAdventure(
         $location`Sloppy Seconds Diner`,
-        Macro.tryItem($item`very small red dress`)
+        Macro.tryItem([
+          $item`very small red dress`,
+          $item`very small red dress`,
+        ])
           .skill($skill`%fn, protect me!`)
           .step(runSource.macro),
       );
@@ -1248,9 +1251,9 @@ const priorityFreeRunFightSources = [
         familiar: $familiar`Meat Shield Maiden`,
         famequip: $items`can of shield tenderizer`,
         modifier: [
-          "100 ML",
-          "100 Moxie", // Because it's scaling apparently this is good?
-          "HP",
+          "ML",
+          "Moxie", // Because it's scaling apparently this is good?
+          "100 HP",
           "-DR",
           "-100 DA",
           "-Sleaze resistance",
