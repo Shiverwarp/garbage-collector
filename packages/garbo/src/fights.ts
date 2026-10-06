@@ -1251,8 +1251,8 @@ const priorityFreeRunFightSources = [
         familiar: $familiar`Meat Shield Maiden`,
         famequip: $items`can of shield tenderizer`,
         modifier: [
-          "ML",
-          "Moxie", // Because it's scaling apparently this is good?
+          "100 ML",
+          "100 Moxie", // Because it's scaling apparently this is good?
           "100 HP",
           "-DR",
           "-100 DA",
