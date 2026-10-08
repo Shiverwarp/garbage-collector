@@ -1224,6 +1224,7 @@ const priorityFreeRunFightSources = [
         ? $location`Barf Mountain`
         : $location`The Dire Warren`,
     },
+    { maximumCost: () => 20000 },
   ),
   new FreeRunFight(
     () =>
@@ -1253,7 +1254,7 @@ const priorityFreeRunFightSources = [
         modifier: [
           "100 ML",
           "100 Moxie", // Because it's scaling apparently this is good?
-          "100 HP",
+          "90 HP",
           "-DR",
           "-100 DA",
           "-Sleaze resistance",
@@ -1262,6 +1263,7 @@ const priorityFreeRunFightSources = [
       },
       location: $location`Sloppy Seconds Diner`,
     },
+    { maximumCost: () => 5000 },
   ),
 ];
 
