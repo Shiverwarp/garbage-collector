@@ -451,7 +451,17 @@ const DailyTasks: GarboTask[] = [
     ready: () => have($item`Bastille Battalion control rig`),
     completed: () => get("_bastilleGames") !== 0,
     do: () => {
-      cliExecute(`pompeii brutalist gesture`);
+      const potionOptions = [
+        { identifier: "sharks", item: $item`sharkfin gumbo` },
+        { identifier: "lava", item: $item`boiling broth` },
+        { identifier: "truth", item: $item`interrogative elixir` },
+      ];
+      const bestPotionIdentifier = maxBy(potionOptions, (potion) =>
+        garboValue(potion.item),
+      ).identifier;
+      cliExecute(
+        `pompeii brutalist gesture ${globalOptions.ascend ? `nolock nopotions ${bestPotionIdentifier}` : ""}`,
+      );
     },
     spendsTurn: false,
   },
