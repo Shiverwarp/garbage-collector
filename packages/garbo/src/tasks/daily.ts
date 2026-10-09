@@ -449,7 +449,10 @@ const DailyTasks: GarboTask[] = [
   {
     name: "Bastille Battalion",
     ready: () => have($item`Bastille Battalion control rig`),
-    completed: () => get("_bastilleGames") !== 0,
+    completed: () =>
+      globalOptions.ascend
+        ? get("_bastilleGames") !== 0
+        : get("_bastilleLockedInScore", 0) > 0,
     do: () => {
       const potionOptions = [
         { identifier: "sharks", item: $item`sharkfin gumbo` },
