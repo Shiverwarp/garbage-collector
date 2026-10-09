@@ -123,6 +123,7 @@ import {
 import {
   aprilFoolsRufus,
   asArray,
+  baseMeat,
   bestShadowRift,
   burnLibrams,
   ESTIMATED_OVERDRUNK_TURNS,
@@ -187,7 +188,7 @@ import {
   BuffExtensionQuest,
   PostBuffExtensionQuest,
 } from "./tasks/buffExtension";
-import { highMeatMonsterCount } from "./turns";
+import { estimatedGarboTurns, highMeatMonsterCount } from "./turns";
 
 const firstChainMacro = () =>
   Macro.if_(
@@ -1224,7 +1225,18 @@ const priorityFreeRunFightSources = [
         ? $location`Barf Mountain`
         : $location`The Dire Warren`,
     },
-    { maximumCost: () => 20000 },
+    {
+      maximumCost: globalOptions.nobarf
+        ? undefined
+        : () => {
+            const highMeatMonsters = highMeatMonsterCount();
+            const baseFights = estimatedGarboTurns() - highMeatMonsters;
+            // Citizen gives 50%
+            const meatFromTargets = targetMeat() * 0.5 * highMeatMonsters;
+            const meatFromLeftovers = baseMeat() * 0.5 * baseFights;
+            return meatFromTargets + meatFromLeftovers;
+          },
+    },
   ),
   new FreeRunFight(
     () =>
@@ -1263,7 +1275,18 @@ const priorityFreeRunFightSources = [
       },
       location: $location`Sloppy Seconds Diner`,
     },
-    { maximumCost: () => 5000 },
+    {
+      maximumCost: globalOptions.nobarf
+        ? undefined
+        : () => {
+            const maxHighMeatMonster = Math.min(50, highMeatMonsterCount());
+            const leftoverFights = Math.max(0, 50 - maxHighMeatMonster);
+            // Using 35% meat since that seems about what we get with current strategy
+            const meatFromTargets = targetMeat() * 0.35 * maxHighMeatMonster;
+            const meatFromLeftovers = baseMeat() * 0.35 * leftoverFights;
+            return meatFromTargets + meatFromLeftovers;
+          },
+    },
   ),
 ];
 
