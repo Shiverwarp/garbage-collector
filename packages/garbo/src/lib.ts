@@ -1194,3 +1194,8 @@ export const requiredOvercapEquipment = availableOvercapEquipment.filter(
     return true;
   },
 );
+export const expectedDropValue = (monster: Monster) =>
+  sum(
+    itemDropsArray(monster),
+    ({ drop, rate }) => (rate / 100) * garboValue(drop),
+  );

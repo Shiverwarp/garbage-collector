@@ -108,6 +108,10 @@ class FarmingStrategySkeleton {
     return this.ncTurns !== Infinity;
   }
 
+  primaryMonster(): Monster {
+    return undelay(this.targetMonster);
+  }
+
   olfactMonster(): Monster | null {
     return this.shouldOlfact ? undelay(this.targetMonster) : null;
   }

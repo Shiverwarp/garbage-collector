@@ -228,6 +228,14 @@ const SummonTasks: GarboTask[] = [
   ),
 ];
 
+function cheapestInterestingCoinItemCost(): number {
+  return Math.min(
+    ...Item.all()
+      .filter((item) => sellsItem($coinmaster`Interesting Coin`, item))
+      .map((item) => sellPrice($coinmaster`Interesting Coin`, item)),
+  );
+}
+
 let triedForest = false;
 const DailyItemTasks: GarboTask[] = [
   {
@@ -309,20 +317,34 @@ const DailyItemTasks: GarboTask[] = [
   },
   {
     name: "Spend Interesting Coins",
-    ready: () => globalOptions.ascend,
-    completed: () => itemAmount($item`Interesting Coin`) < 7,
+    ready: () => have($item`Interesting Coin`) && globalOptions.ascend,
+    completed: () =>
+      itemAmount($item`Interesting Coin`) < cheapestInterestingCoinItemCost(),
     do: (): void => {
-      if (itemAmount($item`Interesting Coin`) > 7) {
-        abort(
-          "We have more than 7 Interesting coins somehow! Figure out how to spend them",
-        );
+      while (itemAmount($item`Interesting Coin`) >= 0) {
+        // We visit URL to reset new shop prices
+        visitUrl("shop.php?whichshop=interesting");
+        const itemsWithCosts = Item.all()
+          .filter(
+            (i) =>
+              sellsItem($coinmaster`Interesting Coin`, i) &&
+              sellPrice($coinmaster`Interesting Coin`, i) <=
+                itemAmount($item`Interesting Coin`),
+          )
+          .map((item) => ({
+            item,
+            cost: sellPrice($coinmaster`Interesting Coin`, item),
+            value:
+              garboValue(item) / sellPrice($coinmaster`Interesting Coin`, item),
+          }));
+
+        if (itemsWithCosts.length === 0) {
+          break;
+        }
+
+        const { item } = maxBy(itemsWithCosts, "value");
+        buy($coinmaster`Interesting Coin`, 1, item);
       }
-      const bestPotion = maxBy(
-        $items`mint, circle of overdraft protection scroll, invisible hand`,
-        garboValue,
-      );
-      buy($coinmaster`Interesting Coin`, 1, $item`homeowner's loam`);
-      buy($coinmaster`Interesting Coin`, 2, bestPotion);
     },
     spendsTurn: false,
   },
