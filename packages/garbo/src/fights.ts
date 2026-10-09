@@ -1281,9 +1281,9 @@ const priorityFreeRunFightSources = [
         : () => {
             const maxHighMeatMonster = Math.min(50, highMeatMonsterCount());
             const leftoverFights = Math.max(0, 50 - maxHighMeatMonster);
-            // Using 35% meat since that seems about what we get with current strategy
-            const meatFromTargets = targetMeat() * 0.35 * maxHighMeatMonster;
-            const meatFromLeftovers = baseMeat() * 0.35 * leftoverFights;
+            // Using 30% meat since that seems to be the lower bound
+            const meatFromTargets = targetMeat() * 0.3 * maxHighMeatMonster;
+            const meatFromLeftovers = baseMeat() * 0.3 * leftoverFights;
             return meatFromTargets + meatFromLeftovers;
           },
     },
