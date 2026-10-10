@@ -4,7 +4,6 @@ import {
   canEquip,
   cliExecute,
   currentRound,
-  effectFact,
   equip,
   getCampground,
   getClanName,
@@ -54,6 +53,8 @@ import {
   have,
   haveInCampground,
   JuneCleaver,
+  logger,
+  LogLevels,
   maxBy,
   set,
   setCombatFlags,
@@ -67,7 +68,7 @@ import {
   withStash,
   withVIPClan,
 } from "./clan";
-import { FarmingMethod, globalOptions, isQuickGear } from "./config";
+import { globalOptions, isQuickGear } from "./config";
 import { dailySetup } from "./dailies";
 import { nonOrganAdventures, runDiet } from "./diet";
 import { dailyFights, freeFights } from "./fights";
@@ -135,16 +136,14 @@ export function main(argString = ""): void {
     return;
   }
 
-  // Cowo is for professionals only
-  if (
-    globalOptions.prefs.farmingMethod === FarmingMethod.THE_CORAL_CORRAL &&
-    (effectFact($monster`sea cow`) !== $effect`Fishy` ||
-      (get("seahorseName") === "" && get("lassoTrainingCount") < 20))
-  ) {
-    globalOptions.prefs.farmingMethod = FarmingMethod.BARF_MOUNTAIN;
-    abort(
-      "We intended to do rancho, but garbo doesn't want to! What happened?",
+  if (!FarmingStrategy.available) {
+    throw new Error(
+      `Farming strategy not available: ${globalOptions.prefs.farmingMethod}`,
     );
+  }
+
+  if (globalOptions.debug) {
+    logger.setLevel(LogLevels.DEBUG);
   }
 
   // Hit up main.php to get out of easily escapable choices
