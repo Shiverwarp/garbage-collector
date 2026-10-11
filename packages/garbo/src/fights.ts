@@ -123,7 +123,6 @@ import {
 import {
   aprilFoolsRufus,
   asArray,
-  baseMeat,
   bestShadowRift,
   burnLibrams,
   ESTIMATED_OVERDRUNK_TURNS,
@@ -1233,7 +1232,8 @@ const priorityFreeRunFightSources = [
             const baseFights = estimatedGarboTurns() - highMeatMonsters;
             // Citizen gives 50%
             const meatFromTargets = targetMeat() * 0.5 * highMeatMonsters;
-            const meatFromLeftovers = baseMeat() * 0.5 * baseFights;
+            const meatFromLeftovers =
+              FarmingStrategy.baseMeat() * 0.5 * baseFights;
             return meatFromTargets + meatFromLeftovers;
           },
     },
@@ -1283,7 +1283,8 @@ const priorityFreeRunFightSources = [
             const leftoverFights = Math.max(0, 50 - maxHighMeatMonster);
             // Using 30% meat since that seems to be the lower bound
             const meatFromTargets = targetMeat() * 0.3 * maxHighMeatMonster;
-            const meatFromLeftovers = baseMeat() * 0.3 * leftoverFights;
+            const meatFromLeftovers =
+              FarmingStrategy.baseMeat() * 0.3 * leftoverFights;
             return meatFromTargets + meatFromLeftovers;
           },
     },
@@ -2479,3 +2480,4 @@ function runShadowRiftTurn(): void {
 import { EmbezzlerFightsQuest } from "./tasks/embezzler";
 import { runGarboQuests } from "./tasks/engine";
 import { FreeMimicEggDonationQuest } from "./tasks/freeEggDonation";
+import { FarmingStrategy } from "./farmingStrategy";
