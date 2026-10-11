@@ -7,6 +7,7 @@ import {
   cliExecute,
   Effect,
   effectModifier,
+  effectsModifier,
   equip,
   getMonsters,
   haveEffect,
@@ -26,6 +27,7 @@ import {
   print,
   retrievePrice,
   setLocation,
+  Skill,
   toSkill,
   use,
 } from "kolmafia";
@@ -42,6 +44,7 @@ import {
   ClosedCircuitPayphone,
   CursedMonkeyPaw,
   get,
+  getAcquirePrice,
   getActiveEffects,
   getActiveSongs,
   getModifier,
@@ -58,7 +61,6 @@ import {
 import { acquire } from "./acquire";
 import {
   aprilFoolsRufus,
-  baseMeat,
   bestShadowRift,
   HIGHLIGHT,
   improvesAStat,
@@ -66,13 +68,11 @@ import {
   pillkeeperOpportunityCost,
   requiredOvercapEquipment,
   targetMeat,
-  targetMeatDifferential,
   withLocation,
 } from "./lib";
 import { usingPurse } from "./outfit/lib";
 import { estimatedGarboTurns, highMeatMonsterCount } from "./turns";
 import { globalOptions } from "./config";
-import { beretEffectValue } from "./resources/beret";
 import { safeSweatEquityCasts } from "./resources/bloodCubicZirconia";
 import { castAugustScepterBuffs } from "./resources/scepter";
 import { FarmingStrategy } from "./farmingStrategy";
@@ -303,11 +303,11 @@ export class Potion {
     );
 
     return (
-      (bonusMeat / 100) *
-      (baseMeat() *
+      bonusMeat *
+      (FarmingStrategy.meatDropValue() *
         (duration - targetsApplied) *
         FarmingStrategy.ncAdjustment() +
-        (baseMeat() + targetMeatDifferential()) * targetsApplied)
+        targetMeat() * targetsApplied)
     );
   }
 
@@ -734,7 +734,7 @@ function useBusks() {
     return;
   }
   for (let i = get("_beretBuskingUses"); i < 5; i++) {
-    PrismaticBeret.buskFor(beretEffectValue, {});
+    PrismaticBeret.buskFor(effectValueWithOpportunityCost, {});
   }
 }
 
@@ -863,7 +863,8 @@ export function bathroomFinance(targets: number): void {
   const tourists = 100 - targets;
 
   // Average meat % for tourists is sum of arithmetic series, 2 * sum(targets + 1 -> 100)
-  const averageTouristGross = (baseMeat() * 2 * (100 + targets + 1)) / 2 / 100;
+  const averageTouristGross =
+    (FarmingStrategy.baseMeat() * 2 * (100 + targets + 1)) / 2 / 100;
   const touristGross = averageTouristGross * tourists;
 
   const greenspan = $item`Uncle Greenspan's Bathroom Finance Guide`;
@@ -985,8 +986,8 @@ class VariableMeatPotion {
     const yachtzeeValue = 2000;
     const targetValue = targetMeat();
     const barfValue = FarmingStrategy.accountForNC()
-      ? (baseMeat() * FarmingStrategy.turnsToNC()) / 30
-      : baseMeat();
+      ? (FarmingStrategy.baseMeat() * FarmingStrategy.turnsToNC()) / 30
+      : FarmingStrategy.baseMeat();
 
     const totalCosts = retrievePrice(this.potion, n);
     const totalDuration = n * this.duration;
@@ -1047,6 +1048,27 @@ function variableMeatPotionsSetup(yachtzees: number, targets: number): void {
   }
 }
 
+export function effectValueWithOpportunityCost(
+  effect: Effect,
+  duration: number,
+) {
+  const value = effectValue(effect, duration);
+
+  if (value <= 0) return value;
+  const potionPrices = Item.all()
+    .filter(
+      (i) =>
+        i.potion &&
+        i.tradeable &&
+        effectsModifier(i, "Effect").includes(effect),
+    )
+    .map(
+      (i) =>
+        (getAcquirePrice(i) * duration) / getModifier("Effect Duration", i),
+    );
+  return Math.min(value, ...potionPrices);
+}
+
 /**
  * WARNING: Expensive
  */
@@ -1067,6 +1089,9 @@ export function effectValue(
   const durationOverride = maxTurnsWanted
     ? clamp(maxTurnsWanted - haveEffect(effect), 0, duration)
     : undefined;
+
+  const skill = toSkill(effect);
+  if (skill !== Skill.none && have(skill)) return 0;
 
   return new Potion($item.none, { duration, effect }).gross(
     targets,

@@ -81,7 +81,6 @@ import {
   propertyManager,
   questStep,
   requiredOvercapEquipment,
-  safeRestore,
   targetingMeat,
   targetMeat,
   userConfirmDialog,
@@ -93,6 +92,7 @@ import { potionSetup } from "./potions";
 import { endSession, startSession } from "./session";
 import { estimatedGarboTurns } from "./turns";
 import { garboAverageValue } from "./garboValue";
+import { safeRestore } from "./restore";
 
 import {
   BuffExtensionQuest,
@@ -125,7 +125,7 @@ function defaultTarget() {
 }
 
 export function main(argString = ""): void {
-  sinceKolmafiaRevision(29250); // lgr limit properties
+  sinceKolmafiaRevision(29288); // ASH method for predicting Portable Laughing Stock drops
   checkGithubVersion();
 
   Args.fill(globalOptions, argString);
