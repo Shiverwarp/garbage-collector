@@ -542,6 +542,7 @@ function swapBedToSaltwater(): GarboPostTask {
     name: "Swap Bed to Saltwater",
     ready: () =>
       have($item`saltwaterbed`) &&
+      FarmingStrategy.isUnderwater() &&
       ((get("timesRested") >= totalFreeRests() &&
         getBedding() === $item`forest canopy bed`) || // This should mean we've used up all our forest bedding rests
         (getBedding() === $item.none && !forestBeddingWorthIt())),
@@ -552,7 +553,10 @@ function swapBedToSaltwater(): GarboPostTask {
         throw new Error("Failed to swap our bed to saltwaterbed");
       }
     },
-    available: () => getBedding() !== $item`saltwaterbed`,
+    available: () =>
+      have($item`saltwaterbed`) &&
+      FarmingStrategy.isUnderwater() &&
+      getBedding() !== $item`saltwaterbed`,
   };
 }
 
