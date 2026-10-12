@@ -520,12 +520,12 @@ function getBedding(forceUpdate = false): Item {
 }
 
 function restsGainedFromBedding(): number {
-  return Math.max(
-    0,
+  const currentRestsAvailable = totalFreeRests() - get("timesRested"); // It's okay for this to be negative
+  const restsAvailableWithBed =
     totalFreeRests() +
-      (getBedding() === $item`forest canopy bed` ? 0 : 5) -
-      get("timesRested"),
-  );
+    (getBedding() === $item`forest canopy bed` ? 0 : 5) -
+    get("timesRested");
+  return Math.max(0, restsAvailableWithBed - currentRestsAvailable);
 }
 
 function forestBeddingWorthIt(): boolean {
