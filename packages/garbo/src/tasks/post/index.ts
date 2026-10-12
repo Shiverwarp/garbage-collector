@@ -524,7 +524,10 @@ function restsGainedFromBedding(): number {
     totalFreeRests() +
     (getBedding() === $item`forest canopy bed` ? 0 : 5) -
     get("timesRested");
-  return Math.max(0, restsAvailableWithBed - currentRestsAvailable);
+  if (restsAvailableWithBed > 0) {
+    return Math.max(0, restsAvailableWithBed - currentRestsAvailable);
+  }
+  return 0;
 }
 
 function forestBeddingWorthIt(): boolean {

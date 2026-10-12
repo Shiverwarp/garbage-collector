@@ -208,10 +208,10 @@ function chateauFanWorthIt(): boolean {
     (ChateauMantegna.getCeiling() === "ceiling fan" ? 0 : 5) -
     get("timesRested");
 
-  const restsGainedFromFan = Math.max(
-    0,
-    restsAvailableWithFan - currentRestsAvailable,
-  );
+  const restsGainedFromFan =
+    restsAvailableWithFan > 0
+      ? Math.max(0, restsAvailableWithFan - currentRestsAvailable)
+      : 0;
   if (restsGainedFromFan <= 0) return false;
 
   // projectile pinata costs 5 cinch and gets us 3 feliz candies, assuming these extra free rests only give 5 cinch each. Fan costs 1500
