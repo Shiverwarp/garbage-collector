@@ -33,12 +33,14 @@ import {
   BurningLeaves,
   CinchoDeMayo,
   DesignerSweatpants,
+  directlyUse,
   FloristFriar,
   get,
   getAcquirePrice,
   getModifier,
   getRemainingStomach,
   have,
+  haveInCampground,
   JuneCleaver,
   Leprecondo,
   maxBy,
@@ -54,6 +56,7 @@ import { globalOptions } from "../../config";
 import { computeDiet, consumeDiet } from "../../diet";
 import {
   bestJuneCleaverOption,
+  felizValue,
   freeRest,
   juneCleaverChoiceValues,
   unlimitedFreeRunList,
@@ -501,6 +504,85 @@ function waterBalloonChampion(): GarboPostTask {
   };
 }
 
+let beddingCached: Item | null = null;
+function getBedding(forceUpdate = false): Item {
+  if (beddingCached === null || forceUpdate) {
+    if (haveInCampground($item`saltwaterbed`)) {
+      beddingCached = $item`saltwaterbed`;
+    } else if (haveInCampground($item`forest canopy bed`)) {
+      beddingCached = $item`forest canopy bed`;
+    } else {
+      beddingCached = Item.none;
+    }
+  }
+  return beddingCached;
+}
+
+function restsGainedFromBedding(): number {
+  return Math.max(
+    0,
+    totalFreeRests() +
+      (getBedding() === $item`forest canopy bed` ? 0 : 5) -
+      get("timesRested"),
+  );
+}
+
+function forestBeddingWorthIt(): boolean {
+  const restsGained = restsGainedFromBedding();
+  if (restsGained <= 0) return false;
+  // projectile pinata costs 5 cinch and gets us 3 feliz candies, assuming these extra free rests only give 5 cinch each
+  if (restsGained * 3 * felizValue() > mallPrice($item`forest canopy bed`)) {
+    return true;
+  }
+  return false;
+}
+
+function swapBedToSaltwater(): GarboPostTask {
+  return {
+    name: "Swap Bed to Saltwater",
+    ready: () =>
+      have($item`saltwaterbed`) &&
+      ((get("timesRested") >= totalFreeRests() &&
+        getBedding() === $item`forest canopy bed`) || // This should mean we've used up all our forest bedding rests
+        (getBedding() === $item.none && !forestBeddingWorthIt())),
+    completed: () => getBedding() === $item`saltwaterbed`,
+    do: () => {
+      directlyUse($item`saltwaterbed`);
+      if (getBedding(true) !== $item`saltwaterbed`) {
+        throw new Error("Failed to swap our bed to saltwaterbed");
+      }
+    },
+    available: () => getBedding() !== $item`saltwaterbed`,
+  };
+}
+
+function swapBedToForestCanopy(): GarboPostTask {
+  return {
+    name: "Swap Bed to Forest Canopy",
+    ready: () =>
+      CinchoDeMayo.have() &&
+      myInebriety() <= inebrietyLimit() &&
+      forestBeddingWorthIt(),
+    completed: () => getBedding() === $item`forest canopy bed`,
+    do: () => {
+      acquire(
+        1,
+        $item`forest canopy bed`,
+        restsGainedFromBedding() * 3 * felizValue(),
+        true,
+      );
+      directlyUse($item`forest canopy bed`);
+      if (getBedding(true) !== $item`forest canopy bed`) {
+        throw new Error("Failed to swap our bed to forest canopy bed");
+      }
+    },
+    available: () =>
+      CinchoDeMayo.have() &&
+      myInebriety() <= inebrietyLimit() &&
+      getBedding() !== $item`forest canopy bed`,
+  };
+}
+
 export function PostQuest<C = void>(
   completed?: () => boolean,
 ): Quest<GarboTask<C>, C> {
@@ -525,6 +607,8 @@ export function PostQuest<C = void>(
       refillCinch(),
       usePorkToilet(),
       waterBalloonChampion(),
+      swapBedToForestCanopy(),
+      swapBedToSaltwater(),
       leafResin(),
       wardrobeOMatic(),
       { ...leprecondoTask(), available: Leprecondo.have() },
