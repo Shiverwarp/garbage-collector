@@ -33,7 +33,6 @@ import {
   BurningLeaves,
   CinchoDeMayo,
   DesignerSweatpants,
-  directlyUse,
   FloristFriar,
   get,
   getAcquirePrice,
@@ -549,7 +548,9 @@ function swapBedToSaltwater(): GarboPostTask {
         (getBedding() === $item.none && !forestBeddingWorthIt())),
     completed: () => getBedding() === $item`saltwaterbed`,
     do: () => {
-      directlyUse($item`saltwaterbed`);
+      visitUrl(
+        `inv_use.php?whichitem=${$item`saltwaterbed`.id}&pwd&confirm=true&which=3`, // need confirmation input url
+      );
       if (getBedding(true) !== $item`saltwaterbed`) {
         throw new Error("Failed to swap our bed to saltwaterbed");
       }
@@ -576,7 +577,9 @@ function swapBedToForestCanopy(): GarboPostTask {
         restsGainedFromBedding() * 3 * felizValue(),
         true,
       );
-      directlyUse($item`forest canopy bed`);
+      visitUrl(
+        `inv_use.php?whichitem=${$item`forest canopy bed`.id}&pwd&confirm=true&which=3`, // need confirmation input url
+      );
       if (getBedding(true) !== $item`forest canopy bed`) {
         throw new Error("Failed to swap our bed to forest canopy bed");
       }
