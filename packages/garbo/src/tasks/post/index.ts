@@ -507,7 +507,7 @@ function waterBalloonChampion(): GarboPostTask {
 let beddingCached: Item | null = null;
 function getBedding(forceUpdate = false): Item {
   if (beddingCached === null || forceUpdate) {
-    getCampground();
+    visitUrl("campground.php?action=inspectdwelling");
     if (haveInCampground($item`saltwaterbed`)) {
       beddingCached = $item`saltwaterbed`;
     } else if (haveInCampground($item`forest canopy bed`)) {
