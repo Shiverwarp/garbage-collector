@@ -44,6 +44,7 @@ import {
   JuneCleaver,
   Leprecondo,
   maxBy,
+  MayamCalendar,
   realmAvailable,
   sum,
   undelay,
@@ -550,8 +551,9 @@ function swapBedToSaltwater(): GarboPostTask {
     ready: () =>
       have($item`saltwaterbed`) &&
       FarmingStrategy.isUnderwater() &&
+      MayamCalendar.remainingUses() === 0 &&
       (!globalOptions.ascend ||
-        get("lastTempleAdventures") >= myAscensions()) && // Only do this if we've already collected our such great heights if ascending
+        get("lastTempleAdventures") >= myAscensions()) && // Only swap after we've already gotten the possible rests from Mayam
       ((get("timesRested") >= totalFreeRests() &&
         getBedding() === $item`forest canopy bed`) || // This should mean we've used up all our forest bedding rests
         (getBedding() === $item.none && !forestBeddingWorthIt())),
