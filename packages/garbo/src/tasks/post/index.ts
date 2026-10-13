@@ -11,6 +11,7 @@ import {
   itemAmount,
   mallPrice,
   myAdventures,
+  myAscensions,
   myFullness,
   myInebriety,
   myLevel,
@@ -546,6 +547,8 @@ function swapBedToSaltwater(): GarboPostTask {
     ready: () =>
       have($item`saltwaterbed`) &&
       FarmingStrategy.isUnderwater() &&
+      (!globalOptions.ascend ||
+        get("lastTempleAdventures") >= myAscensions()) && // Only do this if we've already collected our such great heights if ascending
       ((get("timesRested") >= totalFreeRests() &&
         getBedding() === $item`forest canopy bed`) || // This should mean we've used up all our forest bedding rests
         (getBedding() === $item.none && !forestBeddingWorthIt())),
