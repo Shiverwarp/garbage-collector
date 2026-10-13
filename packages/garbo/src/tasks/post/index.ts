@@ -83,7 +83,10 @@ function closetStuff(): GarboPostTask {
   return {
     name: "Closet Stuff",
     completed: () => STUFF_TO_CLOSET.every((i) => itemAmount(i) === 0),
-    do: () => STUFF_TO_CLOSET.forEach((i) => putCloset(itemAmount(i), i)),
+    do: () => {
+      STUFF_TO_CLOSET.forEach((i) => putCloset(itemAmount(i), i));
+      cliExecute("pvpcheck.ash");
+    },
     post: () => cliExecute("refresh inventory"),
   };
 }
