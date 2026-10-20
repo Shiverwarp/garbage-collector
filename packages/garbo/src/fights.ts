@@ -1266,7 +1266,7 @@ const priorityFreeRunFightSources = [
         modifier: [
           "100 ML",
           "100 Moxie", // Because it's scaling apparently this is good?
-          "100 HP",
+          "110 HP",
           "-DR",
           "-100 DA",
           "-Sleaze resistance",
