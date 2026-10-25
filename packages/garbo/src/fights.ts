@@ -1247,6 +1247,7 @@ const priorityFreeRunFightSources = [
       if (!have($effect`Singing of your Prowess`)) {
         useSkill($skill`%fn, sing a song of my prowess`);
       }
+      cliExecute(`try; gain muscle 0.1 eff`);
       acquire(2, $item`very small red dress`, 100, false);
       restoreHp(myMaxhp());
       garboAdventure(
