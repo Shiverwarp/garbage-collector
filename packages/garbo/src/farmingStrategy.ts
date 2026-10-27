@@ -231,6 +231,22 @@ const BARF_MOUNTAIN: FarmingStrategyOptions = {
   post: completeBarfQuest,
 };
 
+const underwaterOutfit: FarmingStrategyOptions["outfit"] = ({ banish }) => {
+  const banishItem = banish?.equip ? [banish.equip] : [];
+  if (banishItem[0]) {
+    print(`Planning to banish equipping ${banishItem[0]?.name}`);
+  }
+
+  const survivalItem =
+    myInebriety() > inebrietyLimit() && !globalOptions.overcapped
+      ? [$item`June cleaver`]
+      : [];
+
+  const equips = [...banishItem, ...survivalItem];
+
+  return { equip: equips };
+};
+
 const THE_CORAL_CORRAL: FarmingStrategyOptions = {
   stasisRounds: 20,
   asdonEffect: $effect`Driving Waterproofly`,
@@ -243,22 +259,7 @@ const THE_CORAL_CORRAL: FarmingStrategyOptions = {
   available:
     effectFact($monster`sea cow`) === $effect`Fishy` &&
     (!get("seahorseName") || get("lassoTrainingCount") >= 20),
-  outfit: ({ banish }) => {
-    const banishItem = banish?.equip ? [banish.equip] : [];
-    if (banishItem[0]) {
-      print(`Planning to banish equipping ${banishItem[0]?.name}`);
-    }
-
-    const survivalItem =
-      myInebriety() > inebrietyLimit() && !globalOptions.overcapped
-        ? [$item`June cleaver`]
-        : [];
-
-    const equips = [...banishItem, ...survivalItem];
-
-    return { equip: equips };
-  },
-
+  outfit: underwaterOutfit,
   combat: ({ banish }) =>
     Macro.externalIf(
       !get("seahorseName"),
@@ -283,10 +284,38 @@ const THE_CORAL_CORRAL: FarmingStrategyOptions = {
       .meatKill(),
 };
 
+const THE_MARINARA_TRENCH: FarmingStrategyOptions = {
+  stasisRounds: 5,
+  asdonEffect: $effect`Driving Waterproofly`,
+  ensureBarfAccess: false,
+  meatDrop: 300,
+  location: $location`The Marinara Trench`,
+  banishMonsters: $monsters`diving belle, fisherfish, Mer-kin diver`,
+  targetMonster: $monster`giant squid`,
+  shouldOlfact: false,
+  available: effectFact($monster`giant squid`) === $effect`Fishy`,
+  outfit: underwaterOutfit,
+  combat: ({ banish }) =>
+    Macro.farmingBanish(banish)
+      .externalIf(
+        myBuffedstat($stat`Moxie`) < $monster`giant squid`.baseAttack + 10 ||
+          (have($skill`Hero of the Half-Shell`) &&
+            itemType(equippedItem($slot`offhand`)) === "shield" &&
+            myBuffedstat($stat`Muscle`) <
+              $monster`giant squid`.baseAttack + 10),
+        Macro.delevel(),
+      )
+      .externalIf(redTaffyWorth(), Macro.tryItem($item`pulled red taffy`))
+      .meatKill(),
+};
+
 function currentStrategy(): FarmingStrategyOptions {
   switch (globalOptions.prefs.farmingMethod) {
     case FarmingMethod.THE_CORAL_CORRAL:
       return THE_CORAL_CORRAL;
+
+    case FarmingMethod.THE_MARINARA_TRENCH:
+      return THE_MARINARA_TRENCH;
 
     case FarmingMethod.BARF_MOUNTAIN:
     default:
