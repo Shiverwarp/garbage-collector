@@ -995,6 +995,7 @@ const FreeFightTasks = [
     ready: () => get("snojoAvailable"),
     completed: () => get("_snojoFreeFights") >= 10,
     do: $location`The X-32-F Combat Training Snowman`,
+    combat: new GarboStrategy(() => Macro.basicCombat(false)),
     tentacle: false,
     combatCount: () => clamp(10 - get("_snojoFreeFights"), 0, 10),
   }),
