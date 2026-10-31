@@ -19,6 +19,7 @@ import {
   itemAmount,
   itemDropsArray,
   itemType,
+  Location,
   mallPrice,
   Monster,
   myAdventures,
@@ -102,7 +103,7 @@ import { PygmyFightTasks, UnlockHiddenTavernTask } from "./pygmy";
 import { molemanReady, ThesisTask } from "../thesis";
 
 import { getBestItemStealZone } from "../itemSteal/lib";
-import { expectedShadowRiftTentacles, shadowRiftQuest } from "./shadowRift";
+import { remainingShadowRiftFights, shadowRiftQuest } from "./shadowRift";
 
 function bestWitchessPiece() {
   return maxBy(Witchess.pieces, (monster) =>
@@ -229,9 +230,10 @@ const canMap = () =>
   (have($skill`Comprehensive Cartography`) &&
     get("_monstersMapped") < (reserveCartography() ? 2 : 3));
 
-function prepareMapping(): void {
-  if (!get("mappingMonsters")) useSkill($skill`Map the Monsters`);
-  if (!get("mappingMonsters")) throw new Error("Failed to start mapping.");
+function tryMapMonster(location: Location, monster: Monster): void {
+  if (Cartography.tryMapMonster(location, monster) === "failed") {
+    throw new Error(`Failed to map ${monster} in ${location}`);
+  }
 }
 
 const remainingPartyFights = () =>
@@ -351,18 +353,12 @@ const FreeFightTasks = [
     name: "Grimacia Shelter Maps (Cartography)",
     mapSafe: true,
     ready: () => wantPills() && canMap(),
-    prepare: () => {
-      prepareGrimacia();
-      prepareMapping();
-    },
-    choices: {
-      ...GRIMACIA_TASK.choices,
-      1435: `1&heyscriptswhatsupwinkwink=${$monster`grizzled survivor`.id}`,
-    },
-    do: (): void => {
-      adv1($location`Domed City of Grimacia`, -1, "");
-      if (handlingChoice()) runChoice(-1);
-    },
+    prepare: prepareGrimacia,
+    do: () =>
+      tryMapMonster(
+        $location`Domed City of Grimacia`,
+        $monster`grizzled survivor`,
+      ),
     combat: new GarboStrategy(
       () => new Macro(),
       () => Macro.skill($skill`Use the Force`),
@@ -1064,7 +1060,7 @@ const FreeFightTasks = [
       ),
     tentacle: true,
     combatCount: () =>
-      clamp(3 - CombatLoversLocket.reminiscesLeft() - locketsToSave(), 0, 3),
+      clamp(CombatLoversLocket.reminiscesLeft() - locketsToSave(), 0, 3),
   }),
   freeFightTask({
     ...doCandyTrick(),
@@ -1179,11 +1175,8 @@ const FreeFightTasks = [
       (get("mappingMonsters") || Cartography.availableMaps() > 0),
     completed: () =>
       have($item`li'l ninja costume`) || get("_firedJokestersGun"),
-    prepare: prepareMapping,
-    choices: {
-      1435: `1&heyscriptswhatsupwinkwink=${$monster`amateur ninja`.id}`,
-    },
-    do: $location`The Haiku Dungeon`,
+    do: () =>
+      tryMapMonster($location`The Haiku Dungeon`, $monster`amateur ninja`),
     outfit: () =>
       freeFightOutfit(
         { equip: $items`The Jokester's gun` },
@@ -1263,7 +1256,6 @@ function nextBlackGardenRoseFight(): Monster {
   return monsters[0] ?? Monster.none;
 }
 
-// Possible additional free fights from tentacles
 export function possibleFreeFightQuestTentacleFights(): number {
   const availableFights = FreeFightTasks.filter(
     (task): task is GarboFreeFightTask =>
@@ -1272,7 +1264,7 @@ export function possibleFreeFightQuestTentacleFights(): number {
     (task) => task.tentacle && (task.ready?.() ?? true) && !task.completed(),
   );
   return (
-    expectedShadowRiftTentacles() +
+    remainingShadowRiftFights() +
     sum(availableFights, (task) => task.combatCount())
   );
 }
@@ -1304,13 +1296,11 @@ export function mappingRecoveryQuest(): Quest<MappingTask> {
             "red",
           );
         },
-        choices: {
-          1435: `1&heyscriptswhatsupwinkwink=${$monster`possessed silverware drawer`.id}`,
-        },
-        do: (): void => {
-          adv1($location`The Haunted Kitchen`, -1, "");
-          if (handlingChoice()) runChoice(-1);
-        },
+        do: () =>
+          tryMapMonster(
+            $location`The Haunted Kitchen`,
+            $monster`possessed silverware drawer`,
+          ),
         outfit: () =>
           freeFightOutfit(
             {},
@@ -1321,6 +1311,7 @@ export function mappingRecoveryQuest(): Quest<MappingTask> {
           ),
         combat: new GarboStrategy(() => Macro.basicCombat()),
         spendsTurn: true,
+        // Stop a stuck mapping flag from repeatedly spending adventures on recovery.
         limit: { tries: 10 },
       },
     ],
