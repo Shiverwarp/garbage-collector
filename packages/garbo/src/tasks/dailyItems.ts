@@ -66,6 +66,7 @@ import { getBestAprilInstruments } from "../resources/aprilingband";
 import { archaeologySpadeTask } from "../resources/archaelogistSpade";
 import { candyMapDailyTasks } from "../resources/candyMap";
 import { doingGregFight } from "../resources/extrovermectin";
+import { canSwapGarden } from "../resources/garden";
 import { leprecondoTask } from "../resources/leprecondo";
 import { mayamCalendarSummon } from "../resources/mayam";
 import { augustSummonTasks } from "../resources/scepter";
@@ -194,9 +195,11 @@ function getBestDevilerCandy(): Item {
 }
 
 const chooseAprilFamiliar = () => {
-  const experienceFamiliars = getExperienceFamiliars("free").filter(
-    ({ familiar }) => familiar.experience <= 360,
-  );
+  const experienceFamiliars = getExperienceFamiliars(
+    "free",
+    40,
+    "award",
+  ).filter(({ familiar }) => familiar.experience <= 360);
   if (experienceFamiliars.length) {
     return maxBy(experienceFamiliars, "expectedValue").familiar;
   }
@@ -851,7 +854,9 @@ const DailyItemTasks: GarboTask[] = [
   },
   {
     name: "Rose Garden Items",
-    ready: () => BlackRoseGarden.have(),
+    ready: () =>
+      (canSwapGarden() && BlackRoseGarden.have()) ||
+      BlackRoseGarden.installed(),
     completed: () => get("_garbo_roseGardenLooted", false),
     prepare: () => {
       if (have($item`black garden rose`)) {
@@ -866,7 +871,7 @@ const DailyItemTasks: GarboTask[] = [
       set("_garbo_roseGardenLooted", true);
     },
     post: () => {
-      if (have($item`packet of tall grass seeds`)) {
+      if (canSwapGarden() && have($item`packet of tall grass seeds`)) {
         use($item`packet of tall grass seeds`);
       }
     },

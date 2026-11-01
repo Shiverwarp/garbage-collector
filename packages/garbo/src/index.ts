@@ -5,7 +5,6 @@ import {
   cliExecute,
   currentRound,
   equip,
-  getCampground,
   guildStoreAvailable,
   handlingChoice,
   inebrietyLimit,
@@ -14,7 +13,6 @@ import {
   maximize,
   myBasestat,
   myClass,
-  myGardenType,
   myInebriety,
   myLevel,
   myTurncount,
@@ -79,10 +77,11 @@ import {
 import { printLog } from "./log";
 import { meatMood } from "./mood";
 import { potionSetup } from "./potions";
-import { endSession, startSession } from "./session";
+import { endSession, startSession, trackMarginalMpa } from "./session";
 import { estimatedGarboTurns } from "./turns";
 import { garboAverageValue } from "./garboValue";
 import { safeRestore } from "./restore";
+import { restoreGarden, setupGarden } from "./resources/garden";
 
 import {
   BuffExtensionQuest,
@@ -293,29 +292,6 @@ export function main(argString = ""): void {
     return;
   }
 
-  const gardens = $items`packet of pumpkin seeds, Peppermint Pip Packet, packet of dragon's teeth, packet of beer seeds, packet of winter seeds, packet of thanksgarden seeds, packet of tall grass seeds, packet of mushroom spores, packet of rock seeds, black garden rose`;
-  const startingGarden = gardens.find((garden) =>
-    Object.getOwnPropertyNames(getCampground()).includes(garden.name),
-  );
-  if (
-    startingGarden &&
-    !$items`packet of tall grass seeds, packet of mushroom spores`.includes(
-      startingGarden,
-    ) &&
-    getCampground()[startingGarden.name] &&
-    $items`packet of tall grass seeds, packet of mushroom spores`.some(
-      (gardenSeed) => have(gardenSeed),
-    )
-  ) {
-    if (startingGarden === $item`packet of rock seeds`) {
-      visitUrl("campground.php?action=rgarden1&pwd");
-      visitUrl("campground.php?action=rgarden2&pwd");
-      visitUrl("campground.php?action=rgarden3&pwd");
-    } else {
-      visitUrl("campground.php?action=garden&pwd");
-    }
-  }
-
   const combatFlags = getCombatFlags(["aabosses", "bothcombatinterf"]);
   let cleanupCompleted = false;
 
@@ -329,13 +305,7 @@ export function main(argString = ""): void {
     }
     print();
 
-    if (
-      have($item`packet of tall grass seeds`) &&
-      myGardenType() !== "grass" &&
-      myGardenType() !== "mushroom"
-    ) {
-      use($item`packet of tall grass seeds`);
-    }
+    setupGarden();
 
     setAutoAttack(0);
     setCombatFlags(
@@ -617,11 +587,12 @@ export function main(argString = ""): void {
     });
   } finally {
     if (prepareForCleanup()) {
+      trackMarginalMpa(0);
       stash.returnAll();
       cliExecute("spade autoconfirm");
       propertyManager.resetAll();
       setCombatFlags(...combatFlags);
-      if (startingGarden && have(startingGarden)) use(startingGarden);
+      restoreGarden();
       printEventLog();
       endSession();
       printLog(HIGHLIGHT);

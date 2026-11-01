@@ -78,7 +78,6 @@ import {
 } from "libram";
 import { WanderDetails } from "garbo-lib";
 
-import { acquire } from "./acquire";
 import { stash } from "./stash";
 import { garboAdventure, garboAdventureAuto, Macro, withMacro } from "./combat";
 import { globalOptions } from "./config";
@@ -154,10 +153,9 @@ import {
   PostBuffExtensionQuest,
 } from "./tasks/buffExtension";
 import { estimatedGarboTurns, highMeatMonsterCount } from "./turns";
-
 import { deliverThesisIfAble } from "./tasks/thesis";
 import { FarmingStrategy } from "./farmingStrategy";
-export { deliverThesisIfAble } from "./tasks/thesis";
+import { acquire } from "./acquire";
 
 const firstChainMacro = () =>
   Macro.if_(

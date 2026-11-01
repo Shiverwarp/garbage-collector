@@ -40,6 +40,7 @@ import {
 } from "../resources/stillsuit";
 import { globalOptions } from "../config";
 import { estimatedGarboTurns } from "../turns";
+import { experienceChargingValue } from "../familiar/experienceFamiliars";
 
 const famExpValue = new Map<Familiar, Delayed<number>>([
   [
@@ -62,7 +63,7 @@ const famExpValue = new Map<Familiar, Delayed<number>>([
     () =>
       $familiar`Grey Goose`.experience < 400 &&
       (!get("_meatifyMatterUsed") || !globalOptions.ascend)
-        ? 15 ** 4 / 400
+        ? experienceChargingValue($familiar`Grey Goose`, "free")
         : 0,
   ],
   [
