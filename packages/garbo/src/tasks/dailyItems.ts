@@ -48,9 +48,9 @@ import {
   CinchoDeMayo,
   ClosedCircuitPayphone,
   get,
+  getStep,
   have,
   maxBy,
-  questStep,
   set,
   SourceTerminal,
   sum,
@@ -62,6 +62,8 @@ import { aprilFoolsRufus, felizValue } from "../lib";
 import { rufusPotion } from "../potions";
 import { garboAverageValue, garboValue } from "../garboValue";
 import { GarboTask } from "./engine";
+import { Macro } from "../combat";
+import { GarboStrategy } from "../combatStrategy";
 import { getBestAprilInstruments } from "../resources/aprilingband";
 import { archaeologySpadeTask } from "../resources/archaelogistSpade";
 import { candyMapDailyTasks } from "../resources/candyMap";
@@ -669,11 +671,8 @@ const DailyItemTasks: GarboTask[] = [
         (have($item`Drunkula's wineglass`) &&
           canEquip($item`Drunkula's wineglass`))),
     completed: () => get("_candyCaneSwordOvergrownShrine"),
-    do: () => {
-      visitUrl("adventure.php?snarfblat=348");
-      runChoice(4);
-      runChoice(6);
-    },
+    do: $location`An Overgrown Shrine (Northeast)`,
+    choices: { 785: 4 },
     outfit: () => ({
       weapon: $item`candy cane sword cane`,
       offhand:
@@ -681,6 +680,9 @@ const DailyItemTasks: GarboTask[] = [
           ? $item`Drunkula's wineglass`
           : undefined,
     }),
+    combat: new GarboStrategy(() =>
+      Macro.abortWithMsg("Unexpected combat while collecting shrine Meat!"),
+    ),
     limit: { skip: 3 },
     spendsTurn: false,
   },
@@ -764,7 +766,7 @@ const DailyItemTasks: GarboTask[] = [
   },
   {
     name: "Turn In Rufus Quest for Forest",
-    ready: () => questStep("questRufus") === 1,
+    ready: () => getStep("questRufus") === 1,
     completed: () =>
       get("_shadowForestLooted") || have($item`Rufus's shadow lodestone`),
     do: () => ClosedCircuitPayphone.submitQuest(),

@@ -65,8 +65,10 @@ import {
   Delayed,
   ensureEffect,
   get,
+  getStep,
   have,
   maxBy,
+  QuestState,
   set,
   SourceTerminal,
   sum,
@@ -93,7 +95,6 @@ import {
   getUsingFreeBunnyBanish,
   isFreeAndCopyable,
   kramcoGuaranteed,
-  questStep,
   sober,
   valueDrops,
 } from "../../lib";
@@ -119,6 +120,8 @@ const locketMonster = () =>
   CombatLoversLocket.findMonster(isFreeAndCopyable, valueDrops);
 const locketsToSave = () =>
   CombatLoversLocket.canReminisce(globalOptions.target) ? 1 : 0;
+const remainingLocketFights = () =>
+  clamp(CombatLoversLocket.reminiscesLeft() - locketsToSave(), 0, 3);
 
 const maxSealsAvailable = () =>
   retrieveItem(1, $item`Claw of the Infernal Seal`) ? 10 : 5;
@@ -479,6 +482,7 @@ const FreeFightTasks = [
           ? { familiar: $familiar`Robortender` }
           : {},
         ChateauMantegna.paintingMonster() ?? $monster.none,
+        { combatCount: 1 },
       ),
     tentacle: true,
   }),
@@ -1026,8 +1030,10 @@ const FreeFightTasks = [
   freeFightTask({
     name: "Neverending Party",
     adventure: $location`The Neverending Party`,
+    // Declining the quest leaves the party open; only completing it closes it.
     ready: () =>
-      get("neverendingPartyAlways") && questStep("_questPartyFair") < 999,
+      get("neverendingPartyAlways") &&
+      getStep("_questPartyFair") !== QuestState.FINISHED,
     completed: () => remainingPartyFights() === 0,
     prepare: prepareParty,
     do: $location`The Neverending Party`,
@@ -1084,10 +1090,10 @@ const FreeFightTasks = [
           ? { familiar: $familiar`Robortender` }
           : {},
         locketMonster() ?? $monster.none,
+        { combatCount: remainingLocketFights() },
       ),
     tentacle: true,
-    combatCount: () =>
-      clamp(CombatLoversLocket.reminiscesLeft() - locketsToSave(), 0, 3),
+    combatCount: remainingLocketFights,
   }),
   freeFightTask({
     ...doCandyTrick(),
@@ -1171,7 +1177,7 @@ const FreeFightTasks = [
       !get("_firedJokestersGun") &&
       have($item`The Jokester's gun`) &&
       canEquip($item`The Jokester's gun`) &&
-      questStep("questL08Trapper") >= 2,
+      getStep("questL08Trapper", QuestState.UNSTARTED) >= 2,
     completed: () =>
       have($item`li'l ninja costume`) || get("_firedJokestersGun"),
     do: $location`Lair of the Ninja Snowmen`,
