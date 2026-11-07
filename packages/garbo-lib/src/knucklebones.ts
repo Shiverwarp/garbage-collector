@@ -65,8 +65,10 @@ export function makeKnuckleboneValue(
     if (get("shivBestKnuckPurchase") !== rewards[0].item.name) {
       set("shivBestKnuckPurchase", rewards[0].item.name);
     }
-    if (get("shivBestKnuckMeatPerBone", 0) !== rewards[0].meatPerBone) {
-      set("shivBestKnuckMeatPerBone", rewards[0].meatPerBone);
+    if (
+      get("shivBestKnuckMeatPerBone", 0) !== Math.round(rewards[0].meatPerBone)
+    ) {
+      set("shivBestKnuckMeatPerBone", Math.round(rewards[0].meatPerBone));
     }
 
     for (const { cost, meatPerBone } of rewards) {
