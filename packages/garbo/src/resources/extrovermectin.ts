@@ -363,7 +363,7 @@ function initializeCrates(): void {
 
 function getClub() {
   if (have($skill`Iron Palm Technique`) && !have($effect`Iron Palms`)) {
-    useSkill($skill`Iron Palm Technique`);
+    useSkill(1, $skill`Iron Palm Technique`);
   }
   const availableClub =
     Item.all().find(

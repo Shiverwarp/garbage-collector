@@ -537,7 +537,7 @@ const DailyItemTasks: GarboTask[] = [
     name: "Request Sandwich",
     ready: () => have($skill`Request Sandwich`),
     completed: () => get("_requestSandwichSucceeded"),
-    do: () => useSkill($skill`Request Sandwich`),
+    do: () => useSkill(1, $skill`Request Sandwich`),
     limit: { skip: 10 },
     spendsTurn: false,
   },
@@ -545,7 +545,7 @@ const DailyItemTasks: GarboTask[] = [
     name: "Demand Sandwich",
     ready: () => have($skill`Demand Sandwich`),
     completed: () => get("_demandSandwich") > 0,
-    do: () => useSkill($skill`Demand Sandwich`),
+    do: () => useSkill(1, $skill`Demand Sandwich`),
     spendsTurn: false,
   },
   {
@@ -601,7 +601,7 @@ const DailyItemTasks: GarboTask[] = [
     do: () => {
       const knives = $items`boot knife, broken beer bottle, sharpened spoon, candy knife, soap knife`;
       knives.forEach((item) => putCloset(itemAmount(item), item));
-      useSkill($skill`That's Not a Knife`);
+      useSkill(1, $skill`That's Not a Knife`);
     },
     spendsTurn: false,
   },

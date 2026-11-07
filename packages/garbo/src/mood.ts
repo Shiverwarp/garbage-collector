@@ -187,7 +187,7 @@ export function meatMood({
         numericModifier($effect`Blessing of your favorite Bird`, "Item Drop") >
           0)
     ) {
-      useSkill($skill`Visit your Favorite Bird`);
+      useSkill(1, $skill`Visit your Favorite Bird`);
     }
 
     if (
@@ -209,7 +209,7 @@ export function meatMood({
     ) &&
     !get("_incredibleSelfEsteemCast")
   ) {
-    useSkill($skill`Incredible Self-Esteem`);
+    useSkill(1, $skill`Incredible Self-Esteem`);
   }
 
   if (!get("_alliedRadioWildsunBoon") && wildsunBoonWorthIt()) {
