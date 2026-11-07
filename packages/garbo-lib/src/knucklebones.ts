@@ -1,5 +1,5 @@
 import { closetAmount, Item, itemAmount, storageAmount } from "kolmafia";
-import { $item, $items } from "libram";
+import { $item, $items, get, set } from "libram";
 
 // SoCP drop list updated 5 November 2026
 
@@ -46,7 +46,7 @@ const dailySpecials = new Map<PriceTier, Item[]>([
 export function makeKnuckleboneValue(
   value: (item: Item) => number,
 ): (bones?: number) => number {
-  let rewards: { cost: number; meatPerBone: number }[] | undefined;
+  let rewards: { item: Item; cost: number; meatPerBone: number }[] | undefined;
 
   return (
     bones = itemAmount($item`knucklebone`) +
@@ -57,10 +57,17 @@ export function makeKnuckleboneValue(
       .flatMap(([cost, items]) =>
         items
           .filter((item) => item.tradeable)
-          .map((item) => ({ cost, meatPerBone: value(item) / cost })),
+          .map((item) => ({ item, cost, meatPerBone: value(item) / cost })),
       )
       .filter(({ meatPerBone }) => meatPerBone > 0)
       .sort((a, b) => b.meatPerBone - a.meatPerBone);
+
+    if (get("shivBestKnuckPurchase") !== rewards[0].item.name) {
+      set("shivBestKnuckPurchase", rewards[0].item.name);
+    }
+    if (get("shivBestKnuckMeatPerBone", 0) !== rewards[0].meatPerBone) {
+      set("shivBestKnuckMeatPerBone", rewards[0].meatPerBone);
+    }
 
     for (const { cost, meatPerBone } of rewards) {
       if (bones < 2 * cost) return meatPerBone;
