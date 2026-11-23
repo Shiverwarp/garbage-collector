@@ -39,7 +39,7 @@ import { FarmingMethod, globalOptions } from "./config";
 import { completeBarfQuest } from "./resources/realm";
 import { FarmingContext } from "./tasks/context";
 import { garboValue } from "./garboValue";
-import { expectedDropValue, songboomMeat } from "./lib";
+import { expectedDropValue, sober, songboomMeat } from "./lib";
 import { haveEnoughBanishes } from "./resources/banish";
 
 export function averageRedTaffyValue(): number {
@@ -250,6 +250,16 @@ const BARF_MOUNTAIN: FarmingStrategyOptions = {
 const banishOutfit: FarmingStrategyOptions["outfit"] = ({ banish }) =>
   banish?.equip ? { equip: [banish.equip] } : {};
 
+const underwaterOutfit: FarmingStrategyOptions["outfit"] = ({ banish }) => {
+  const banishItem = banish?.equip ? [banish.equip] : [];
+  const survivalItem =
+    !sober() && !globalOptions.overcapped ? [$item`June cleaver`] : [];
+
+  const equips = [...banishItem, ...survivalItem];
+
+  return { equip: equips };
+};
+
 const THE_CORAL_CORRAL: FarmingStrategyOptions = {
   stasisRounds: 20,
   asdonEffect: $effect`Driving Waterproofly`,
@@ -262,7 +272,7 @@ const THE_CORAL_CORRAL: FarmingStrategyOptions = {
   available:
     effectFact($monster`sea cow`) === $effect`Fishy` &&
     (!get("seahorseName") || get("lassoTrainingCount") >= 20),
-  outfit: banishOutfit,
+  outfit: underwaterOutfit,
   combat: ({ banish }) =>
     Macro.externalIf(
       !get("seahorseName"),
@@ -297,7 +307,7 @@ const THE_MARINARA_TRENCH: FarmingStrategyOptions = {
   targetMonster: $monster`giant squid`,
   shouldOlfact: false,
   available: effectFact($monster`giant squid`) === $effect`Fishy`,
-  outfit: banishOutfit,
+  outfit: underwaterOutfit,
   combat: ({ banish }) =>
     Macro.farmingBanish(banish)
       .externalIf(
