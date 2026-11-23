@@ -14,7 +14,6 @@ import {
   guildStoreAvailable,
   handlingChoice,
   haveEquipped,
-  inebrietyLimit,
   Item,
   itemAmount,
   itemDropsArray,
@@ -26,7 +25,6 @@ import {
   myBuffedstat,
   myClass,
   myFamiliar,
-  myInebriety,
   myMaxhp,
   mySoulsauce,
   numericModifier,
@@ -87,7 +85,11 @@ import { MappingTask } from "../engine";
 import { doCandyTrick } from "../../resources/candyMap";
 import { crateStrategy, doingGregFight } from "../../resources/extrovermectin";
 import { ghostAdventure } from "../../resources/protonpack";
-import { canSwapGarden } from "../../resources/garden";
+import {
+  blackRoseGardenMonsters,
+  canSwapGarden,
+  refreshBlackRoseGardenMonsters,
+} from "../../resources/garden";
 import { shouldAugustCast } from "../../resources/scepter";
 import {
   ESTIMATED_OVERDRUNK_TURNS,
@@ -485,7 +487,7 @@ const FreeFightTasks = [
     ready: () =>
       canAdventure($location`The Red Zeppelin`) &&
       get("questL11Ron") === "finished" &&
-      myInebriety() <= inebrietyLimit() &&
+      sober() &&
       mallPrice($item`glark cable`) <= globalOptions.prefs.valueOfFreeFight,
     completed: () => get("_glarkCableUses") >= 5,
     do: $location`The Red Zeppelin`,
@@ -1262,6 +1264,7 @@ const FreeFightTasks = [
     },
     do: () => {
       BlackRoseGarden.fightMonster(nextBlackGardenRoseFight());
+      refreshBlackRoseGardenMonsters();
       if (nextBlackGardenRoseFight() === Monster.none) {
         set("_garbo_blackRoseFightsDone", true);
       }
@@ -1271,13 +1274,13 @@ const FreeFightTasks = [
         use($item`packet of tall grass seeds`);
       }
     },
+    combatCount: () => blackRoseGardenMonsters().length,
     tentacle: false,
   }),
 ];
 
 function nextBlackGardenRoseFight(): Monster {
-  const monsters = BlackRoseGarden.availableMonsters();
-  return monsters[0] ?? Monster.none;
+  return blackRoseGardenMonsters()[0] ?? Monster.none;
 }
 
 export function possibleFreeFightQuestTentacleFights(): number {

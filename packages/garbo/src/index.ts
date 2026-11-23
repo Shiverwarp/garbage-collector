@@ -7,13 +7,11 @@ import {
   equip,
   guildStoreAvailable,
   handlingChoice,
-  inebrietyLimit,
   Item,
   logprint,
   maximize,
   myBasestat,
   myClass,
-  myInebriety,
   myLevel,
   myTurncount,
   print,
@@ -126,7 +124,7 @@ export function main(argString = ""): void {
     return;
   }
 
-  if (!FarmingStrategy.available) {
+  if (!FarmingStrategy.isAvailable()) {
     throw new Error(
       `Farming strategy not available: ${globalOptions.prefs.farmingMethod}`,
     );
@@ -247,7 +245,7 @@ export function main(argString = ""): void {
   }
 
   if (
-    myInebriety() > inebrietyLimit() &&
+    !sober() &&
     (!have($item`Drunkula's wineglass`) ||
       !canEquip($item`Drunkula's wineglass`))
   ) {
@@ -426,6 +424,8 @@ export function main(argString = ""): void {
         }
         propertyManager.set({ shadowLabyrinthGoal: "effects" }); // Automate Shadow Labyrinth Quest
 
+        propertyManager.setChoices({ 855: 4 }); // Mallprice of 5-6 items always exceeds 500 meat
+
         const equipmentFamiliars = $familiars`Left-Hand Man, Disembodied Hand, Mad Hatrack, Fancypants Scarecrow`;
         for (const familiar of equipmentFamiliars.filter((familiar) =>
           have(familiar),
@@ -473,7 +473,7 @@ export function main(argString = ""): void {
         }
         const stashItems = $items`repaid diaper, Buddy Bjorn, Crown of Thrones, Pantsgiving, mafia pointer finger ring, Mayflower bouquet`;
         if (
-          myInebriety() <= inebrietyLimit() &&
+          sober() &&
           (myClass() !== $class`Seal Clubber` ||
             !have($skill`Furious Wallop`)) &&
           !have($skill`Head in the Game`)

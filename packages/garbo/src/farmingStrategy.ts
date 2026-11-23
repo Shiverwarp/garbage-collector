@@ -1,19 +1,17 @@
 import { OutfitSpec } from "grimoire-kolmafia";
 import {
+  canAdventure,
   Effect,
   effectFact,
   equippedItem,
   getMonsters,
-  inebrietyLimit,
   isBanished,
   itemType,
   Location,
   mallPrice,
   Monster,
   myBuffedstat,
-  myInebriety,
   Phylum,
-  print,
 } from "kolmafia";
 import { GarboStrategy } from "./combatStrategy";
 import {
@@ -42,6 +40,7 @@ import { completeBarfQuest } from "./resources/realm";
 import { FarmingContext } from "./tasks/context";
 import { garboValue } from "./garboValue";
 import { expectedDropValue, songboomMeat } from "./lib";
+import { haveEnoughBanishes } from "./resources/banish";
 
 export function averageRedTaffyValue(): number {
   return sum(
@@ -93,7 +92,7 @@ interface FarmingStrategyOptions {
   shouldOlfact: boolean;
   combat: (context: FarmingContext) => Macro;
   // These all need a default
-  available?: boolean;
+  available?: Delayed<boolean>;
   outfit?: (context: FarmingContext) => OutfitSpec;
   ncTurns?: Delayed<number>;
   bonusEffects?: Effect[];
@@ -121,6 +120,10 @@ const DEFAULT_OPTIONS: Readonly<{
 interface FarmingStrategySkeleton extends Required<FarmingStrategyOptions> {}
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 class FarmingStrategySkeleton {
+  isAvailable(): boolean {
+    return undelay(this.available) && haveEnoughBanishes(this.banishMonsters);
+  }
+
   isUnderwater(): boolean {
     return this.location.environment === "underwater";
   }
@@ -244,21 +247,8 @@ const BARF_MOUNTAIN: FarmingStrategyOptions = {
   post: completeBarfQuest,
 };
 
-const underwaterOutfit: FarmingStrategyOptions["outfit"] = ({ banish }) => {
-  const banishItem = banish?.equip ? [banish.equip] : [];
-  if (banishItem[0]) {
-    print(`Planning to banish equipping ${banishItem[0]?.name}`);
-  }
-
-  const survivalItem =
-    myInebriety() > inebrietyLimit() && !globalOptions.overcapped
-      ? [$item`June cleaver`]
-      : [];
-
-  const equips = [...banishItem, ...survivalItem];
-
-  return { equip: equips };
-};
+const banishOutfit: FarmingStrategyOptions["outfit"] = ({ banish }) =>
+  banish?.equip ? { equip: [banish.equip] } : {};
 
 const THE_CORAL_CORRAL: FarmingStrategyOptions = {
   stasisRounds: 20,
@@ -272,7 +262,7 @@ const THE_CORAL_CORRAL: FarmingStrategyOptions = {
   available:
     effectFact($monster`sea cow`) === $effect`Fishy` &&
     (!get("seahorseName") || get("lassoTrainingCount") >= 20),
-  outfit: underwaterOutfit,
+  outfit: banishOutfit,
   combat: ({ banish }) =>
     Macro.externalIf(
       !get("seahorseName"),
@@ -307,7 +297,7 @@ const THE_MARINARA_TRENCH: FarmingStrategyOptions = {
   targetMonster: $monster`giant squid`,
   shouldOlfact: false,
   available: effectFact($monster`giant squid`) === $effect`Fishy`,
-  outfit: underwaterOutfit,
+  outfit: banishOutfit,
   combat: ({ banish }) =>
     Macro.farmingBanish(banish)
       .externalIf(
@@ -320,6 +310,20 @@ const THE_MARINARA_TRENCH: FarmingStrategyOptions = {
       )
       .externalIf(redTaffyWorth(), Macro.tryItem($item`pulled red taffy`))
       .meatKill(),
+};
+
+const MOB_PENGUIN_CAPO: FarmingStrategyOptions = {
+  stasisRounds: 20,
+  asdonEffect: $effect`Driving Observantly`,
+  ensureBarfAccess: false,
+  meatDrop: 200,
+  location: $location`The Copperhead Club`,
+  banishMonsters: $monsters`Copperhead Club bartender, fan dancer, ninja dressed as a waiter, waiter dressed as a ninja`,
+  targetMonster: $monster`Mob Penguin Capo`,
+  shouldOlfact: false,
+  available: canAdventure($location`The Copperhead Club`),
+  outfit: banishOutfit,
+  combat: ({ banish }) => Macro.farmingBanish(banish).meatKill(),
 };
 
 let cachedStrategy: Required<FarmingStrategyOptions> | undefined;
@@ -336,6 +340,10 @@ function currentStrategy(): Required<FarmingStrategyOptions> {
 
       case FarmingMethod.THE_MARINARA_TRENCH:
         strategyOptions = THE_MARINARA_TRENCH;
+        break;
+
+      case FarmingMethod.MOB_PENGUIN_CAPO:
+        strategyOptions = MOB_PENGUIN_CAPO;
         break;
 
       case FarmingMethod.BARF_MOUNTAIN:
